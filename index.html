@@ -10,7 +10,7 @@
 body{background:var(--w);color:#0f1a14;font-family:'DM Sans',sans-serif;min-height:100vh;}
 
 /* WELCOME */
-#welcome{position:fixed;inset:0;background:var(--g8);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;}
+#welcome{position:fixed;inset:0;background:var(--g8);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;scrollbar-width:none;}#welcome::-webkit-scrollbar{display:none;}
 .wl-box{max-width:680px;width:100%;text-align:center;}
 .wl-logo{display:flex;justify-content:center;align-items:center;margin-bottom:12px;}
 .wl-lm{width:40px;height:40px;background:var(--g4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:#fff;}
@@ -47,7 +47,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 .view{display:none;}.view.active{display:block;}
 
 /* HOME */
-.hero{background:var(--g8);color:#fff;padding:80px 40px;position:relative;overflow:hidden;}
+.hero{background:var(--g8);color:#fff;padding:80px 40px;position:relative;overflow-y:auto;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 72% 50%,rgba(45,147,86,.22),transparent 65%);pointer-events:none;}
 .hgrid{display:grid;grid-template-columns:1fr 360px;gap:56px;align-items:center;max-width:1060px;margin:0 auto;position:relative;z-index:1;}
 .htag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.4px;color:var(--g3);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
@@ -270,7 +270,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 .fld2 label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:3px;}
 .fld2 input,.fld2 select,.fld2 textarea{width:100%;padding:8px 10px;border:1.5px solid var(--bd);border-radius:7px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--off);color:#0f1a14;outline:none;transition:border-color .12s;}
 .fld2 input:focus,.fld2 select:focus{border-color:var(--g5);}
-.ackmod{max-width:580px;width:92vw;padding:0;overflow:hidden;}
+.ackmod{max-width:580px;width:92vw;padding:0;overflow-y:auto;}
 .ackh{padding:22px 26px 18px;border-bottom:1.5px solid var(--bd);}
 .acks{padding:18px 26px;max-height:340px;overflow-y:auto;font-size:13px;line-height:1.78;color:#3a5a45;}
 .acks h4{font-family:'Inter',sans-serif;font-weight:700;color:var(--g9);font-size:13px;margin:14px 0 5px;}
@@ -286,7 +286,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 .btnack{width:100%;padding:11px;background:var(--g7);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
 .btnack:hover{background:var(--g6);}
 .btnack:disabled{background:var(--mu);cursor:not-allowed;opacity:.6;}
-.smod{max-width:600px;width:92vw;padding:0;overflow:hidden;}
+.smod{max-width:600px;width:92vw;padding:0;overflow-y:auto;}
 .smh{padding:22px 26px 18px;border-bottom:1.5px solid var(--bd);}
 .sms{padding:18px 26px;max-height:460px;overflow-y:auto;font-size:13px;line-height:1.78;color:#3a5a45;}
 .sms h4{font-family:'Inter',sans-serif;font-weight:700;color:var(--g9);font-size:13px;margin:14px 0 5px;}
@@ -324,7 +324,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   .wl-h1{font-size:20px;}
   .wl-btns{flex-direction:column;align-items:stretch;}
   .wlb{width:100%;text-align:center;}
-  .wl-logo img{width:120px!important;height:120px!important;object-fit:contain!important;}
+  
 
   /* HERO */
   .hero{padding:40px 20px;width:100%;}
@@ -337,7 +337,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 
   /* SECTIONS */
   .sec{padding:40px 20px;}
-  .si{width:100%;overflow:hidden;}
+  .si{width:100%;overflow-y:auto;}
   .ig2{grid-template-columns:1fr;gap:28px;}
   .ig4{grid-template-columns:1fr 1fr;}
   .ig3{grid-template-columns:1fr;}
