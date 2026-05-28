@@ -1072,7 +1072,9 @@ async function handleWrkLogin(){
 }
 function completeWrkLogin(){
   document.getElementById('wrkAckModal').classList.remove('open');
-  toast('Welcome back, Kofi. Loading your dashboard…');
+  const worker = JSON.parse(localStorage.getItem('bx_worker') || '{}');
+  const firstName = worker.fullName ? worker.fullName.split(' ')[0] : 'Worker';
+  toast(`Welcome back, ${firstName}. Loading your dashboard…`);
   setTimeout(()=>switchView('worker'),800);
 }
 
