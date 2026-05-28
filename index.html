@@ -305,6 +305,77 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .fu{animation:fu .5s ease both;}
 .d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}.d4{animation-delay:.32s}
+
+/* ═══════════════════════════════════
+   MOBILE RESPONSIVE — max-width: 768px
+═══════════════════════════════════ */
+@media(max-width:768px){
+  /* NAV */
+  nav{padding:10px 16px;}
+  .ntabs{display:none;}
+  .nr .bln{font-size:11px;padding:6px 10px;}
+
+  /* WELCOME SCREEN */
+  .wl-paths{grid-template-columns:1fr;}
+  .wl-h1{font-size:24px;}
+  .wl-btns{flex-direction:column;align-items:stretch;}
+  .wlb{width:100%;text-align:center;}
+
+  /* HERO */
+  .hero{padding:48px 20px;}
+  .hgrid{grid-template-columns:1fr;gap:32px;}
+  .hh1{font-size:34px;letter-spacing:-1px;}
+  .hsub{font-size:14px;}
+  .hcard{display:none;}
+  .hacts{flex-direction:column;}
+  .hb{width:100%;text-align:center;}
+
+  /* SECTIONS */
+  .sec{padding:48px 20px;}
+  .ig2{grid-template-columns:1fr;gap:32px;}
+  .ig4{grid-template-columns:1fr 1fr;}
+  .ig3{grid-template-columns:1fr;}
+  .cc2{grid-template-columns:1fr;}
+  .pg3{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr 1fr;gap:24px;}
+  .steps::before{display:none;}
+  .sh2{font-size:24px;}
+
+  /* EMPLOYER DASHBOARD */
+  .ebar{padding:10px 16px;}
+  .ebar-n{font-size:12px;}
+  .ebody{padding:20px 16px 80px;}
+  .ecat-g{grid-template-columns:1fr 1fr;}
+  .ecat-g3{grid-template-columns:1fr 1fr;}
+  .ewg{grid-template-columns:1fr;}
+  .epl{grid-template-columns:1fr;}
+  .eleft{position:static;}
+
+  /* WORKER DASHBOARD */
+  .wbar{padding:10px 16px;}
+
+  /* PAYMENT */
+  .payms{grid-template-columns:1fr 1fr;}
+  .conf-wr{flex-wrap:wrap;}
+
+  /* MODALS */
+  .modal{padding:24px 18px;margin:16px;}
+  .ackmod{max-height:90vh;}
+
+  /* MISC */
+  .dstrip{padding:28px 20px;}
+  .proto{font-size:9px;gap:8px;padding:6px 12px;flex-wrap:wrap;}
+}
+
+@media(max-width:420px){
+  .hh1{font-size:28px;}
+  .ig4{grid-template-columns:1fr;}
+  .ecat-g{grid-template-columns:1fr;}
+  .ecat-g3{grid-template-columns:1fr;}
+  .payms{grid-template-columns:1fr;}
+  .nr{gap:4px;}
+  .bln{font-size:10px;padding:5px 8px;}
+}
 </style>
 </head>
 <body>
