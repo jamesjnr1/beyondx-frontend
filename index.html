@@ -494,8 +494,39 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <div class="fld2"><label>Password</label><input type="password" id="ePw" placeholder="••••••••"/></div>
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleEmpLogin()">Sign In</button>
     <div class="divid">or</div>
-    <button class="bout" onclick="toast('Registration coming soon.');closeEmpLogin();">Create Employer Account</button>
+    <button class="bout" onclick="closeEmpLogin();openEmpRegister();">Create Employer Account</button>
     <p class="mnote">Verified by Ghana Prisons Service · Secure login</p>
+  </div>
+</div>
+<div class="mov" id="empRegisterModal">
+  <div class="modal" style="max-width:460px;">
+    <button class="mc" onclick="document.getElementById('empRegisterModal').classList.remove('open')">✕</button>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="width:46px;height:46px;background:var(--g6);border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;color:#fff;">BX</div>
+      <div class="mt" style="font-size:18px;">Create Employer Account</div>
+      <div class="ms" style="margin-bottom:0;">Join BeyondX and start hiring verified workers</div>
+    </div>
+    <div class="fld2"><label>Organisation Name</label><input type="text" id="regOrgName" placeholder="e.g. Accra Business Hub"/></div>
+    <div class="fld2"><label>Contact Person</label><input type="text" id="regContact" placeholder="Your full name"/></div>
+    <div class="fld2"><label>Email Address</label><input type="email" id="regEmail" placeholder="yourname@organisation.com"/></div>
+    <div class="fld2"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="e.g. 0244000000"/></div>
+    <div class="fld2"><label>Password</label><input type="password" id="regPassword" placeholder="Choose a strong password"/></div>
+    <div class="fld2"><label>Region</label>
+      <select id="regRegion">
+        <option>Greater Accra</option>
+        <option>Ashanti</option>
+        <option>Western</option>
+        <option>Central</option>
+        <option>Eastern</option>
+        <option>Northern</option>
+        <option>Volta</option>
+        <option>Upper East</option>
+        <option>Upper West</option>
+        <option>Brong-Ahafo</option>
+      </select>
+    </div>
+    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleEmpRegister()">Create Account</button>
+    <p class="mnote">Already have an account? <span style="color:var(--g6);cursor:pointer;font-weight:600;" onclick="document.getElementById('empRegisterModal').classList.remove('open');openEmployerLogin()">Sign In</span></p>
   </div>
 </div>
 <div class="mov" id="wrkLoginModal">
@@ -915,11 +946,56 @@ function updateFindBtn(){
   if(isEmpLoggedIn){b.className='hb hb-p';b.textContent='Find a Worker';}
   else{b.className='hb hb-lk';b.textContent='Find a Worker  ·  Login Required';}
 }
+function openEmpRegister(){
+  document.getElementById('empRegisterModal').classList.add('open');
+}
+
+async function handleEmpRegister(){
+  const orgName   = document.getElementById('regOrgName').value.trim();
+  const contact   = document.getElementById('regContact').value.trim();
+  const email     = document.getElementById('regEmail').value.trim();
+  const phone     = document.getElementById('regPhone').value.trim();
+  const password  = document.getElementById('regPassword').value;
+  const region    = document.getElementById('regRegion').value;
+
+  if(!orgName||!email||!password||!contact){
+    toast('Please fill in all required fields.');
+    return;
+  }
+
+  toast('Creating your account...');
+
+  try {
+    const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/employer-register', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, password, orgName, contactPerson: contact, phone, region })
+    });
+
+    const data = await resp.json();
+
+    if(!resp.ok){
+      toast(data.error || 'Registration failed. Please try again.');
+      return;
+    }
+
+    localStorage.setItem('bx_employer_token', data.token);
+    localStorage.setItem('bx_employer', JSON.stringify(data.employer));
+
+    document.getElementById('empRegisterModal').classList.remove('open');
+    document.getElementById('eAck').checked = false;
+    document.getElementById('eAckBtn').disabled = true;
+    document.getElementById('empAckModal').classList.add('open');
+
+  } catch(err) {
+    toast('Could not connect to server.');
+  }
+}
 function openEmployerLogin(r){if(r)loginRedirect=r;document.getElementById('empLoginModal').classList.add('open');}
 function closeEmpLogin(){document.getElementById('empLoginModal').classList.remove('open');}
 function openWorkerLogin(){document.getElementById('wrkLoginModal').classList.add('open');}
 function closeWrkLogin(){document.getElementById('wrkLoginModal').classList.remove('open');}
-['empLoginModal','wrkLoginModal','empAckModal','wrkAckModal','stmtModal'].forEach(id=>{
+['empLoginModal','empRegisterModal','wrkLoginModal','empAckModal','wrkAckModal','stmtModal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 });
 async function handleEmpLogin(){
