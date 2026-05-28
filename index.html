@@ -530,13 +530,14 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 <div class="view" id="view-worker">
   <div class="wbar">
     <div style="display:flex;align-items:center;gap:16px;">
-      <img src="/withouttagline.png" alt="BeyondX" style="height:28px;width:auto;object-fit:contain;cursor:pointer;" onclick="switchView('home')">
+      <div class="logo" style="color:#fff;cursor:pointer;" onclick="switchView('home')"><div class="lm">BX</div>BeyondX</div>
       <div style="width:1px;height:18px;background:rgba(255,255,255,.2);"></div>
       <div style="font-size:13px;color:rgba(255,255,255,.65);">Worker Dashboard</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
+      <span id="workerNameDisplay" style="font-size:13px;font-weight:600;color:rgba(255,255,255,.85);"></span>
       <span class="wbadge">WORKER · VERIFIED</span>
-      <span id="workerName" style="font-size:13px;font-weight:600;color:#fff;"></span>
+      <button class="btnlo" onclick="workerLogout()">Log Out</button>
     </div>
   </div>
 <div id="workerMain"></div>
@@ -632,6 +633,9 @@ const WS = { status:'idle', task:null, done:14, earned:840 };
 let declined = new Set();
 
 function renderWorker() {
+  const _wrk = JSON.parse(localStorage.getItem('bx_worker') || '{}');
+const _nameEl = document.getElementById('workerNameDisplay');
+if(_nameEl && _wrk.fullName) _nameEl.textContent = _wrk.fullName;
   const _wrk = JSON.parse(localStorage.getItem('bx_worker') || '{}');
 const _nameEl = document.getElementById('workerName');
 if(_nameEl && _wrk.fullName) _nameEl.textContent = _wrk.fullName;
@@ -1063,6 +1067,8 @@ async function handleWrkLogin(){
       toast(data.error || 'Invalid credentials.');
       return;
     }
+
+    function workerLogout(){ switchView('home'); toast('You have been logged out.'); }
 
     // Store token for future API calls
     localStorage.setItem('bx_worker_token', data.token);
