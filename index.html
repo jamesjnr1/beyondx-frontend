@@ -544,8 +544,45 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <div class="fld2"><label>PIN / Password</label><input type="password" id="wPN" placeholder="••••••••"/></div>
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;background:var(--g7);" onclick="handleWrkLogin()">Sign In to My Dashboard</button>
     <div class="divid">or</div>
-    <button class="bout" onclick="toast('Registration is managed by BeyondX.');closeWrkLogin();">Register as a Worker</button>
+    <button class="bout" onclick="closeWrkLogin();openWrkRegister();">Register as a Worker</button>
     <p class="mnote">Worker accounts are issued by the Ghana Prisons Service</p>
+  </div>
+</div>
+<div class="mov" id="wrkRegisterModal">
+  <div class="modal" style="max-width:460px;">
+    <button class="mc" onclick="document.getElementById('wrkRegisterModal').classList.remove('open')">✕</button>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="width:50px;height:50px;background:var(--g7);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">BX</div>
+      <div class="mt" style="font-size:18px;">Register as a Worker</div>
+      <div class="ms" style="margin-bottom:0;">Join BeyondX and start earning through verified work</div>
+    </div>
+    <div class="fld2"><label>Full Name</label><input type="text" id="wregName" placeholder="Your full legal name"/></div>
+    <div class="fld2"><label>Phone Number</label><input type="tel" id="wregPhone" placeholder="e.g. 0244000000"/></div>
+    <div class="fld2"><label>Prison Facility</label>
+      <select id="wregFacility">
+        <option>Nsawam Medium Security Prison</option>
+        <option>Kumasi Central Prison</option>
+        <option>James Fort Prison</option>
+        <option>Ankaful Maximum Security Prison</option>
+        <option>Sunyani Central Prison</option>
+        <option>Ho Central Prison</option>
+        <option>Tamale Central Prison</option>
+      </select>
+    </div>
+    <div class="fld2"><label>Skills</label>
+      <select id="wregSkill">
+        <option>Facility & Cleaning</option>
+        <option>Logistics & Delivery</option>
+        <option>Maintenance & Repairs</option>
+        <option>Event & Hospitality</option>
+        <option>Agriculture & Environment</option>
+        <option>Retail & Trade</option>
+        <option>Community Services</option>
+      </select>
+    </div>
+    <div class="fld2"><label>PIN (4 digits)</label><input type="password" id="wregPin" placeholder="Choose a 4-digit PIN" maxlength="4"/></div>
+    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;background:var(--g7);" onclick="handleWrkRegister()">Create My Account</button>
+    <p class="mnote">Already have an account? <span style="color:var(--g6);cursor:pointer;font-weight:600;" onclick="document.getElementById('wrkRegisterModal').classList.remove('open');openWorkerLogin()">Sign In</span></p>
   </div>
 </div>
 <div class="mov" id="empAckModal">
@@ -1002,9 +1039,58 @@ async function handleEmpRegister(){
 }
 function openEmployerLogin(r){if(r)loginRedirect=r;document.getElementById('empLoginModal').classList.add('open');}
 function closeEmpLogin(){document.getElementById('empLoginModal').classList.remove('open');}
+function openWrkRegister(){
+  document.getElementById('wrkRegisterModal').classList.add('open');
+}
+
+async function handleWrkRegister(){
+  const fullName = document.getElementById('wregName').value.trim();
+  const phone    = document.getElementById('wregPhone').value.trim();
+  const facility = document.getElementById('wregFacility').value;
+  const skill    = document.getElementById('wregSkill').value;
+  const pin      = document.getElementById('wregPin').value.trim();
+
+  if(!fullName||!phone||!pin){
+    toast('Please fill in all required fields.');
+    return;
+  }
+  if(pin.length !== 4 || isNaN(pin)){
+    toast('PIN must be exactly 4 digits.');
+    return;
+  }
+
+  toast('Creating your account...');
+
+  try {
+    const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-register', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ fullName, phone, prisonFacility: facility, skills: [skill], pin })
+    });
+
+    const data = await resp.json();
+
+    if(!resp.ok){
+      toast(data.error || 'Registration failed. Please try again.');
+      return;
+    }
+
+    localStorage.setItem('bx_worker_token', data.token);
+    localStorage.setItem('bx_worker', JSON.stringify(data.worker));
+
+    document.getElementById('wrkRegisterModal').classList.remove('open');
+    toast(`Welcome! Your Worker ID is ${data.worker.workerId}. Please save it.`);
+    document.getElementById('wAck').checked = false;
+    document.getElementById('wAckBtn').disabled = true;
+    document.getElementById('wrkAckModal').classList.add('open');
+
+  } catch(err) {
+    toast('Could not connect to server.');
+  }
+}
 function openWorkerLogin(){document.getElementById('wrkLoginModal').classList.add('open');}
 function closeWrkLogin(){document.getElementById('wrkLoginModal').classList.remove('open');}
-['empLoginModal','empRegisterModal','wrkLoginModal','empAckModal','wrkAckModal','stmtModal'].forEach(id=>{
+['empLoginModal','empRegisterModal','wrkLoginModal','wrkRegisterModal','empAckModal','wrkAckModal','stmtModal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 });
 async function handleEmpLogin(){
