@@ -529,16 +529,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 <!-- WORKER DASHBOARD -->
 <div class="view" id="view-worker">
   <div class="wbar">
-  <div style="display:flex;align-items:center;gap:16px;">
-    
-    <div style="width:1px;height:18px;background:rgba(255,255,255,.2);"></div>
-    <div style="font-size:13px;color:rgba(255,255,255,.65);">Worker Dashboard</div>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span class="wbadge">WORKER · VERIFIED</span>
-    
-  </div>
-</div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <img src="/withouttagline.png" alt="BeyondX" style="height:28px;width:auto;object-fit:contain;cursor:pointer;" onclick="switchView('home')">
+      <div style="width:1px;height:18px;background:rgba(255,255,255,.2);"></div>
+      <div style="font-size:13px;color:rgba(255,255,255,.65);">Worker Dashboard</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="wbadge">WORKER · VERIFIED</span>
+      <span id="workerName" style="font-size:13px;font-weight:600;color:#fff;"></span>
+    </div>
   </div>
 <div id="workerMain"></div>
 </div>
@@ -633,6 +632,9 @@ const WS = { status:'idle', task:null, done:14, earned:840 };
 let declined = new Set();
 
 function renderWorker() {
+  const _wrk = JSON.parse(localStorage.getItem('bx_worker') || '{}');
+const _nameEl = document.getElementById('workerName');
+if(_nameEl && _wrk.fullName) _nameEl.textContent = _wrk.fullName;
   const _wrk = JSON.parse(localStorage.getItem('bx_worker') || '{}');
 const _avEl = document.getElementById('workerAvatar');
 if(_avEl && _wrk.fullName){
