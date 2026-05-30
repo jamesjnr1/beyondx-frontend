@@ -1154,7 +1154,12 @@ async function renderHistory(){
     const completed=tasks.filter(t=>t.status==='completed');
 
     function taskCard(t){
-      const workerInfo=t.acceptedBy?`<div style="font-size:12px;color:var(--g7);margin-top:4px;font-weight:600;">Worker: ${t.acceptedBy.fullName} · ${t.acceptedBy.phone||''}</div>`:'';
+      const workerInfo=t.acceptedBy?`
+        <div style="background:var(--g0);border:1.5px solid var(--g1);border-radius:10px;padding:12px;margin-top:10px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--g6);text-transform:uppercase;margin-bottom:6px;">Assigned Worker</div>
+          <div style="font-size:14px;font-weight:700;color:var(--ink);">${t.acceptedBy.fullName}</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:2px;">${t.acceptedBy.workerId} · ${t.acceptedBy.phone||'No phone on record'}</div>
+        </div>`:'';
       const confirmBtn=t.status==='pending_confirmation'
         ?`<button onclick="confirmTaskDone('${t.id}')" style="margin-top:10px;width:100%;padding:9px;background:var(--g7);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;">Confirm Work is Done ✓</button>`:'';
       const badge=t.status==='open'
