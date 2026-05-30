@@ -1043,30 +1043,34 @@ async function renderEmp(){
   const _orgEl=document.getElementById('empOrgName');
   if(_orgEl&&_emp.orgName)_orgEl.textContent=_emp.orgName;
   const m=document.getElementById('empMain');if(!m)return;
+
+  // Always fetch workers in background if not loaded yet
+  if(EWORKERS.length===0){
+    fetch('https://beyondx-backend-production-1a08.up.railway.app/api/workers')
+      .then(r=>r.json())
+      .then(data=>{
+        EWORKERS=data.workers.map(w=>({
+          id:w.id,workerId:w.workerId,name:w.fullName,
+          charge:parseFloat(w.dailyCharge),rating:parseFloat(w.rating),
+          tasks:w.tasksCompleted,offense:w.offenseLevel,
+          offenseLabel:w.offenseLevel==='major'?'⚠️ Major Offense':w.offenseLevel==='minor'?'Minor Offense':'Clean Record',
+          gps:w.gpsVerified,skills:w.skills,
+          bio:w.bio||'Verified worker ready for deployment.',
+          months:0,released:'2026',
+          cats:w.skills.length>0?w.skills:['Facility & Cleaning','Logistics & Delivery','Community Services'],
+          seed:w.workerId.toLowerCase().replace('-',''),gender:'m'
+        }));
+        // Re-render categories now that workers are loaded
+        if(EMP.view==='categories'){
+          const m2=document.getElementById('empMain');
+          if(m2)m2.innerHTML=renderECats();
+        }
+      }).catch(()=>{});
+  }
+
   if(EMP.view==='categories'){m.innerHTML=renderECats();return;}
   if(EMP.view==='post'){m.innerHTML=renderPostTask();return;}
   if(EMP.view==='history'){m.innerHTML='<div style="padding:40px;text-align:center;color:var(--ink3);">Loading history...</div>';await renderHistory();return;}
-  if(EMP.view==='workers'&&EWORKERS.length===0){
-    m.innerHTML='<div style="padding:40px;text-align:center;color:var(--ink3);">Loading workers...</div>';
-    try{
-      const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/workers');
-      const data=await resp.json();
-      EWORKERS=data.workers.map(w=>({
-        id:w.id,workerId:w.workerId,name:w.fullName,
-        charge:parseFloat(w.dailyCharge),rating:parseFloat(w.rating),
-        tasks:w.tasksCompleted,offense:w.offenseLevel,
-        offenseLabel:w.offenseLevel==='major'?'⚠️ Major Offense':w.offenseLevel==='minor'?'Minor Offense':'Clean Record',
-        gps:w.gpsVerified,skills:w.skills,
-        bio:w.bio||'Verified worker ready for deployment.',
-        months:0,released:'2026',
-        cats:w.skills.length>0?w.skills:['Facility & Cleaning','Logistics & Delivery','Community Services'],
-        seed:w.workerId.toLowerCase().replace('-',''),gender:'m'
-      }));
-    }catch(err){
-      m.innerHTML='<div style="padding:40px;text-align:center;color:var(--ink3);">Could not load workers.</div>';
-      return;
-    }
-  }
   if(EMP.view==='workers')m.innerHTML=renderEWorkers();
   else if(EMP.view==='profile')m.innerHTML=renderEProfile();
   else if(EMP.view==='confirm')m.innerHTML=renderEConfirm();
