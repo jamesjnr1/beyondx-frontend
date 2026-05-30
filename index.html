@@ -418,6 +418,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   .payms{grid-template-columns:1fr !important;}
   .steps{grid-template-columns:1fr;}
 }
+.mobile-btns{display:none;}
+@media(max-width:768px){.mobile-btns{display:flex;gap:8px;position:fixed;bottom:52px;right:16px;z-index:300;flex-direction:column;}}
 </style>
 </head>
 <body>
@@ -715,32 +717,57 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   </div>
 </div>
 
+<div class="mobile-btns" id="mobileBtns">
+  <button onclick="openWorkerLogin()" style="padding:10px 16px;background:var(--g7);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.2);">Worker Login</button>
+  <button onclick="openEmployerLogin()" style="padding:10px 16px;background:var(--w);color:var(--ink);border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.1);">Employer Login</button>
+</div>
+
 <script>
 // ═══════════════════════════════════
 // WORKER DATA & STATE
 // ═══════════════════════════════════
-const AVAIL_TASKS = [
-  {id:1,co:"Consolidated Bank Ghana",init:"CB",task:"Office Cleaning — 2 Floors",type:"Facility & Cleaning",pay:85,loc:"Adabraka, Accra",dur:"6 hours",
-   emp:{name:"Mr. Kofi Boateng",title:"Facilities Manager",phone:"0244-123-456",addr:"18 Independence Avenue, Adabraka, Accra",instr:"Report to the main reception at 8:00am. Ask for Mr. Boateng. All cleaning supplies will be provided on site. You will clean the ground floor and first floor."}},
-  {id:2,co:"Korle Bu Teaching Hospital",init:"KB",task:"Hospital Ward Cleaning",type:"Facility & Cleaning",pay:100,loc:"Korle Bu, Accra",dur:"7 hours",
-   emp:{name:"Admin Office",title:"Hospital Administration",phone:"0302-674-252",addr:"Korle Bu Teaching Hospital, Accra",instr:"Arrive at the main gate at 7:30am. Collect your visitor badge from security. You will be escorted to the ward. Wear the protective gear that will be provided to you."}},
-  {id:3,co:"GhanaShip Logistics Ltd.",init:"GL",task:"Warehouse Stock Sorting",type:"Logistics & Delivery",pay:120,loc:"Tema Industrial Area",dur:"8 hours",
-   emp:{name:"Mrs. Akua Asante",title:"Warehouse Supervisor",phone:"0244-567-890",addr:"Plot 47, Tema Industrial Area, Tema",instr:"Report to the warehouse entrance and ask for Mrs. Asante. She will brief you on the day's sorting tasks. Heavy lifting is required. Closed-toe shoes are mandatory."}},
-  {id:4,co:"Trasacco Valley Estates",init:"TV",task:"Grass Cutting — Estate Complex",type:"Agriculture & Environment",pay:95,loc:"East Legon Hills, Accra",dur:"5 hours",
-   emp:{name:"Estate Manager",title:"Property Management",phone:"0302-789-123",addr:"Trasacco Valley Estate, East Legon Hills, Accra",instr:"Enter through the service gate on the left side of the estate. Cutting equipment is in the groundskeeper shed. Work starts at 7:00am to avoid afternoon heat. You will be shown the areas to cut."}},
-  {id:5,co:"Achimota Primary School",init:"AP",task:"School Painting — 4 Classrooms",type:"Community Services",pay:90,loc:"Achimota, Accra",dur:"7 hours",
-   emp:{name:"Mr. Asare",title:"Headmaster",phone:"0244-321-654",addr:"Achimota Primary School, Achimota Road, Accra",instr:"Report to the main school office and ask for Mr. Asare. Paint and brushes are provided. You will be painting 4 classrooms on the ground floor. Work carefully and neatly."}}
-];
+let AVAIL_TASKS = [];
+let TASKS_LOADED = false;
+
+async function loadTasks() {
+  if(TASKS_LOADED) return;
+  try {
+    const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks');
+    const data = await resp.json();
+    AVAIL_TASKS = data.tasks.map(t => ({
+      id: t.id,
+      co: t.employer.orgName,
+      init: t.employer.orgName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
+      task: t.taskType,
+      type: t.taskType,
+      pay: parseFloat(t.pay),
+      loc: t.location,
+      dur: t.duration,
+      emp: {
+        name: t.employer.contactPerson || t.employer.orgName,
+        title: t.employer.orgName,
+        phone: t.employer.phone || 'Contact via BeyondX',
+        addr: t.location,
+        instr: t.description || 'Report to the location at the agreed time. Follow all instructions given on site.'
+      }
+    }));
+    TASKS_LOADED = true;
+  } catch(err) {
+    console.error('Could not load tasks', err);
+  }
+}
 
 const WS = { status:'idle', task:null, done:14, earned:840 };
 let declined = new Set();
 
-function renderWorker() {
+async function renderWorker() {
   const _wrk=JSON.parse(localStorage.getItem('bx_worker')||'{}');
   const _nameEl=document.getElementById('workerNameDisplay');
   if(_nameEl&&_wrk.fullName)_nameEl.textContent=_wrk.fullName;
   const m = document.getElementById('workerMain');
   if (!m) return;
+  m.innerHTML='<div style="padding:40px;text-align:center;color:var(--mu);">Loading tasks...</div>';
+  await loadTasks();
   if (WS.status === 'idle') m.innerHTML = renderIdle();
   else if (WS.status === 'accepted') m.innerHTML = renderAccepted();
   else if (WS.status === 'active') m.innerHTML = renderActive();
@@ -885,11 +912,17 @@ function renderDone() {
 function acceptTask(id) {
   WS.task = AVAIL_TASKS.find(t => t.id === id);
   WS.status = 'accepted';
+  fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${id}/accept`, {method:'PATCH'});
   renderWorker();
 }
 function declineTask(id) { declined.add(id); renderWorker(); }
 function startTask() { WS.status = 'active'; renderWorker(); }
-function completeTask() { WS.done++; WS.earned += WS.task.pay; WS.status = 'done'; renderWorker(); }
+function completeTask() {
+  WS.done++; WS.earned += WS.task.pay; WS.status = 'done';
+  fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${WS.task.id}/complete`, {method:'PATCH'});
+  TASKS_LOADED = false; // refresh tasks next time
+  renderWorker();
+}
 
 // ═══════════════════════════════════
 // EMPLOYER DASHBOARD DATA
@@ -931,6 +964,8 @@ async function renderEmp(){
   if(_orgEl&&_emp.orgName)_orgEl.textContent=_emp.orgName;
   const m=document.getElementById('empMain');if(!m)return;
   if(EMP.view==='categories'){m.innerHTML=renderECats();return;}
+  if(EMP.view==='post'){m.innerHTML=renderPostTask();return;}
+  if(EMP.view==='history'){m.innerHTML='<div style="padding:40px;text-align:center;color:var(--ink3);">Loading history...</div>';await renderHistory();return;}
   if(EMP.view==='workers'&&EWORKERS.length===0){
     m.innerHTML='<div style="padding:40px;text-align:center;color:var(--ink3);">Loading workers...</div>';
     try{
@@ -958,10 +993,124 @@ async function renderEmp(){
   else if(EMP.view==='payment')m.innerHTML=renderEPayment();
   else if(EMP.view==='success')m.innerHTML=renderESuccess();
 }
+
+function empTabs(active){
+  return`<div style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;max-width:480px;">
+    <button onclick="empGo('categories')" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${active==='categories'?'var(--w)':'transparent'};color:${active==='categories'?'var(--ink)':'var(--ink3)'};box-shadow:${active==='categories'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Find Workers</button>
+    <button onclick="empGo('post')" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${active==='post'?'var(--w)':'transparent'};color:${active==='post'?'var(--ink)':'var(--ink3)'};box-shadow:${active==='post'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Post a Task</button>
+    <button onclick="empGo('history')" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${active==='history'?'var(--w)':'transparent'};color:${active==='history'?'var(--ink)':'var(--ink3)'};box-shadow:${active==='history'?'0 1px 4px rgba(0,0,0,.08)':'none'}">History</button>
+  </div>`;
+}
+
+function renderPostTask(){
+  return`<div class="ebody"><div style="max-width:520px;">
+    ${empTabs('post')}
+    <div class="ehero"><h2>Post a Task</h2><p>Post an open task and available workers will be able to accept it directly.</p></div>
+    <div style="background:var(--w);border:1.5px solid var(--bd);border-radius:14px;padding:24px;">
+      <div class="fld"><label>Task Type</label>
+        <select id="ptTaskType">
+          <option>Office Cleaning</option><option>School Compound Sweeping</option><option>Hospital Ward Cleaning</option>
+          <option>Warehouse Stock Sorting</option><option>Goods Offloading</option><option>Market Porter</option>
+          <option>Painting & Touch-Up</option><option>Plumbing Support</option><option>Building Site Labour</option>
+          <option>Chair & Table Setup</option><option>Catering Assistant</option><option>Food Serving</option>
+          <option>Farm Weeding</option><option>Grass Cutting</option><option>Tree Planting</option>
+          <option>Shop Attendant</option><option>Packing & Bagging</option><option>Loading & Offloading</option>
+          <option>Waste Collection</option><option>School Painting</option><option>Drain Maintenance</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="fld"><label>Description (optional)</label><input type="text" id="ptDesc" placeholder="e.g. Clean 3 office floors, approx 500 sqm"/></div>
+      <div class="fld"><label>Location</label><input type="text" id="ptLocation" placeholder="e.g. Adabraka, Accra"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fld"><label>Duration</label>
+          <select id="ptDuration">
+            <option>3 hours</option><option>4 hours</option><option>5 hours</option>
+            <option>6 hours</option><option>7 hours</option><option>8 hours</option>
+            <option>1 day</option><option>2 days</option><option>3 days</option>
+          </select>
+        </div>
+        <div class="fld"><label>Pay (GH₵)</label><input type="number" id="ptPay" placeholder="e.g. 80" min="20"/></div>
+      </div>
+      <button onclick="submitTask()" style="width:100%;padding:12px;background:var(--g7);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;margin-top:8px;">Post Task</button>
+    </div>
+  </div></div>`;
+}
+
+async function submitTask(){
+  const taskType=document.getElementById('ptTaskType').value;
+  const description=document.getElementById('ptDesc').value.trim();
+  const location=document.getElementById('ptLocation').value.trim();
+  const duration=document.getElementById('ptDuration').value;
+  const pay=document.getElementById('ptPay').value;
+  if(!location||!pay){toast('Please fill in location and pay.');return;}
+  const token=localStorage.getItem('bx_employer_token');
+  toast('Posting task...');
+  try{
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      body:JSON.stringify({taskType,description,location,duration,pay:parseFloat(pay)})
+    });
+    const data=await resp.json();
+    if(!resp.ok){toast(data.error||'Failed to post task.');return;}
+    toast('Task posted successfully! Workers can now see it.');
+    TASKS_LOADED=false;
+    setTimeout(()=>empGo('history'),1200);
+  }catch(err){toast('Could not connect to server.');}
+}
+
+async function renderHistory(){
+  const m=document.getElementById('empMain');
+  const token=localStorage.getItem('bx_employer_token');
+  try{
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks/all',{
+      headers:{'Authorization':`Bearer ${token}`}
+    });
+    const data=await resp.json();
+    const tasks=data.tasks||[];
+    const open=tasks.filter(t=>t.status==='open');
+    const accepted=tasks.filter(t=>t.status==='accepted');
+    const completed=tasks.filter(t=>t.status==='completed');
+
+    function taskCard(t){
+      const badge=t.status==='open'
+        ?`<span style="background:#e0f5ea;color:var(--g7);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">OPEN</span>`
+        :t.status==='accepted'
+        ?`<span style="background:#fef6e0;color:#9a6f00;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">IN PROGRESS</span>`
+        :`<span style="background:#f0f8f3;color:var(--g6);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">COMPLETED</span>`;
+      return`<div style="background:var(--w);border:1.5px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <div style="font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;color:var(--ink);">${t.taskType}</div>
+          ${badge}
+        </div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">${t.location} · ${t.duration}</div>
+        ${t.description?`<div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">${t.description}</div>`:''}
+        <div style="font-family:'Manrope',sans-serif;font-size:15px;font-weight:800;color:var(--g7);">GH₵ ${parseFloat(t.pay).toFixed(0)}</div>
+      </div>`;
+    }
+
+    function section(title, items, emptyMsg){
+      return`<div style="margin-bottom:28px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--ink3);text-transform:uppercase;margin-bottom:12px;">${title} (${items.length})</div>
+        ${items.length?items.map(taskCard).join(''):`<div style="font-size:13px;color:var(--ink3);padding:16px;background:var(--off);border-radius:10px;">${emptyMsg}</div>`}
+      </div>`;
+    }
+
+    m.innerHTML=`<div class="ebody"><div style="max-width:600px;">
+      ${empTabs('history')}
+      <div class="ehero"><h2>Task History</h2><p>All tasks you have posted on BeyondX.</p></div>
+      ${section('Awaiting Acceptance', open, 'No open tasks. Post a task to get started.')}
+      ${section('In Progress', accepted, 'No tasks currently in progress.')}
+      ${section('Completed', completed, 'No completed tasks yet.')}
+    </div></div>`;
+  }catch(err){
+    m.innerHTML=`<div class="ebody">${empTabs('history')}<div style="padding:40px;text-align:center;color:var(--ink3);">Could not load history.</div></div>`;
+  }
+}
 function renderECats(){
   const top=ECATS.slice(0,4).map((c,i)=>eCatCard(c,i)).join('');
   const bot=ECATS.slice(4).map((c,i)=>eCatCard(c,i+4)).join('');
-  return`<div class="ebody"><div class="ehero"><h2>Find the right worker.</h2><p>Select a service category to see verified workers available in Accra. Click a worker's profile to view their experience, ratings, and offense classification.</p></div><div class="ecat-g">${top}</div><div class="ecat-g3">${bot}</div></div>`;
+  return`<div class="ebody">${empTabs('categories')}<div class="ehero"><h2>Find the right worker.</h2><p>Select a service category to see verified workers available. Or post a task and let workers come to you.</p></div><div class="ecat-g">${top}</div><div class="ecat-g3">${bot}</div></div>`;
 }
 function eCatCard(c,i){
   const n=EWORKERS.filter(w=>w.cats.includes(c.name)).length;
@@ -1063,6 +1212,8 @@ function switchView(v){
   document.querySelectorAll('.ntab').forEach(t=>t.classList.toggle('active',t.dataset&&t.dataset.view===v));
   const nav=document.getElementById('mainNav');
   if(nav)nav.style.display=v==='worker'?'none':'flex';
+  const mb=document.getElementById('mobileBtns');
+  if(mb)mb.style.display=(v==='worker'||v==='dispatch')?'none':'';
   if(v==='dispatch')renderEmp();
   if(v==='worker')renderWorker();
   window.scrollTo({top:0,behavior:'smooth'});
