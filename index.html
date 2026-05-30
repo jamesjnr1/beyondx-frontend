@@ -1217,8 +1217,8 @@ async function renderHistory(){
       <div class="ehero"><h2>Task History</h2><p>All tasks you have posted on BeyondX.</p></div>
       ${section('Awaiting Acceptance', open, 'No open tasks. Post a task to get started.')}
       ${section('In Progress', accepted, 'No tasks currently in progress.')}
-      ${section('Worker Says Done — Confirm', pendingConfirm, 'No tasks awaiting your confirmation.')}
-      ${section('Completed', completed, 'No completed tasks yet.')}
+      ${section('Worker Says Done — Awaiting Your Confirmation', pendingConfirm, 'No tasks awaiting your confirmation.')}
+      ${section('Confirmed — Payment Being Processed', completed, 'No completed tasks yet.')}
     </div></div>`;
   }catch(err){
     m.innerHTML=`<div class="ebody">${empTabs('history')}<div style="padding:40px;text-align:center;color:var(--ink3);">Could not load history.</div></div>`;
@@ -1500,7 +1500,7 @@ async function confirmTaskDone(id){
     const task=(allData.tasks||[]).find(t=>t.id===id);
     const workerPay=task?(parseFloat(task.pay)*0.85).toFixed(2):'0';
     emailjs.send('service_zos658j','template_et2vlfs',{to_email:'beyondx26@gmail.com',worker_name:(task&&task.acceptedBy&&task.acceptedBy.fullName)||'Unknown',worker_id:(task&&task.acceptedBy&&task.acceptedBy.workerId)||'',worker_phone:(task&&task.acceptedBy&&task.acceptedBy.phone)||'Not provided',task_type:(task&&task.taskType)||'',location:(task&&task.location)||'',employer_name:employer.orgName||'',amount:workerPay}).then(()=>console.log('Email sent')).catch(e=>console.log('Email error:',e));
-    toast('Task confirmed as completed!');
+    toast('Work confirmed! BeyondX will process the worker payment shortly.');
     empGo('history');
   }catch(err){toast('Could not connect to server.');}
 }
