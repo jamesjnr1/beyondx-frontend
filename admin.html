@@ -17,40 +17,59 @@ body{background:#f5faf6;font-family:system-ui,sans-serif;min-height:100vh;}
 .dash{display:none;}
 .topbar{background:#1a4d30;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
 .topbar h1{color:#fff;font-size:16px;font-weight:800;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar span{color:rgba(255,255,255,.4);font-size:11px;font-family:monospace;}
 .topbar button{padding:7px 14px;background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:7px;font-size:12px;cursor:pointer;}
-.body{max-width:720px;margin:0 auto;padding:24px 16px 80px;}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px;}
-.stat{background:#fff;border:1.5px solid #b8dfc9;border-radius:12px;padding:14px;text-align:center;}
-.stat-n{font-size:24px;font-weight:900;color:#1f6138;}
-.stat-l{font-size:11px;color:#4d7a5e;margin-top:3px;}
-.tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
-.tab{padding:7px 14px;border-radius:8px;border:1.5px solid #b8dfc9;background:#fff;color:#4d7a5e;font-size:12px;font-weight:600;cursor:pointer;}
+.body{max-width:900px;margin:0 auto;padding:24px 16px 80px;}
+.tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;}
+.tab{padding:8px 16px;border-radius:8px;border:1.5px solid #b8dfc9;background:#fff;color:#4d7a5e;font-size:13px;font-weight:600;cursor:pointer;}
 .tab.active{background:#1f6138;border-color:#1f6138;color:#fff;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat{background:#fff;border:1.5px solid #b8dfc9;border-radius:12px;padding:18px;}
+.stat-n{font-size:28px;font-weight:900;color:#1f6138;}
+.stat-l{font-size:12px;color:#4d7a5e;margin-top:3px;}
+.stat.hl{background:#1a4d30;border-color:#1a4d30;}
+.stat.hl .stat-n{color:#72d49a;}
+.stat.hl .stat-l{color:rgba(255,255,255,.5);}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.ov-card{background:#fff;border:1.5px solid #b8dfc9;border-radius:12px;padding:20px;}
+.ov-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#4d7a5e;margin-bottom:14px;}
+.ov-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #edf8f2;font-size:13px;}
+.ov-row:last-child{border-bottom:none;}
+.ov-key{color:#4d7a5e;}
+.ov-val{font-weight:700;color:#0d3320;}
+.ov-val.green{color:#1f6138;}
+.ov-val.amber{color:#856404;}
+.bar-wrap{margin-top:4px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.bar-label{font-size:12px;color:#4d7a5e;width:130px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-bg{flex:1;background:#edf8f2;border-radius:4px;height:10px;}
+.bar-fill{height:10px;border-radius:4px;background:#1f6138;}
+.bar-num{font-size:12px;font-weight:700;color:#1f6138;width:30px;text-align:right;}
 .card{background:#fff;border:1.5px solid #b8dfc9;border-radius:12px;padding:18px;margin-bottom:10px;}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
 .card-title{font-size:15px;font-weight:700;color:#0d3320;}
 .badge{font-size:10px;font-family:monospace;padding:3px 9px;border-radius:4px;font-weight:600;}
-.badge-pay{background:#fff3cd;color:#856404;}
-.badge-active{background:#e0f5ea;color:#1f6138;}
-.badge-open{background:#e8f0fe;color:#1a56db;}
-.badge-done{background:#f0f8f3;color:#257a45;}
-.badge-cancelled{background:#fde8e8;color:#b91c1c;}
+.b-pay{background:#fff3cd;color:#856404;}
+.b-act{background:#e0f5ea;color:#1f6138;}
+.b-opn{background:#e8f0fe;color:#1a56db;}
+.b-don{background:#f0f8f3;color:#257a45;}
 .row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #edf8f2;}
 .row:last-of-type{border-bottom:none;}
 .row-key{color:#4d7a5e;}
 .row-val{font-weight:600;color:#0d3320;}
 .payout-box{background:#edf8f2;border:1.5px solid #b8dfc9;border-radius:10px;padding:14px;margin-top:12px;}
-.payout-amount{font-size:24px;font-weight:900;color:#1f6138;margin-bottom:4px;}
-.payout-phone{font-family:monospace;font-size:16px;font-weight:700;color:#1f6138;}
 .pay-btn{margin-top:12px;width:100%;padding:11px;background:#1f6138;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;}
-.pay-btn:hover{background:#257a45;}
 .empty{text-align:center;padding:40px 20px;color:#4d7a5e;font-size:14px;background:#fff;border:1.5px solid #b8dfc9;border-radius:12px;}
+.table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1.5px solid #b8dfc9;}
+.table th{background:#f5faf6;padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#4d7a5e;text-align:left;border-bottom:1.5px solid #b8dfc9;}
+.table td{padding:10px 14px;font-size:13px;border-bottom:1px solid #edf8f2;color:#0d3320;}
+.table tr:last-child td{border-bottom:none;}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a4d30;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;display:none;z-index:999;}
-@media(max-width:600px){.stats{grid-template-columns:repeat(3,1fr);}.tabs{gap:4px;}.tab{font-size:11px;padding:6px 10px;}}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr;}.overview-grid{grid-template-columns:1fr;}.tab{font-size:11px;padding:6px 10px;}}
 </style>
 </head>
 <body>
-
 <div class="login" id="loginScreen">
   <div class="login-box">
     <h1>BeyondX Admin</h1>
@@ -60,163 +79,160 @@ body{background:#f5faf6;font-family:system-ui,sans-serif;min-height:100vh;}
     <p id="err" style="color:#b91c1c;font-size:12px;margin-top:10px;display:none;">Incorrect password</p>
   </div>
 </div>
-
 <div class="dash" id="dash">
   <div class="topbar">
     <h1>BeyondX Admin</h1>
-    <button onclick="load()">↻ Refresh</button>
+    <div class="topbar-right">
+      <span id="lastRefresh"></span>
+      <button onclick="load()">↻ Refresh</button>
+    </div>
   </div>
   <div class="body">
-    <div class="stats">
-      <div class="stat"><div class="stat-n" id="sPayouts">-</div><div class="stat-l">Pay Now</div></div>
-      <div class="stat"><div class="stat-n" id="sActive">-</div><div class="stat-l">In Progress</div></div>
-      <div class="stat"><div class="stat-n" id="sOpen">-</div><div class="stat-l">Open</div></div>
-      <div class="stat"><div class="stat-n" id="sDone">-</div><div class="stat-l">Completed</div></div>
-      <div class="stat"><div class="stat-n" id="sAll">-</div><div class="stat-l">Total</div></div>
-    </div>
-
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('payouts',this)">Pay Now</button>
+      <button class="tab active" onclick="switchTab('overview',this)">Overview</button>
+      <button class="tab" onclick="switchTab('payouts',this)">Pay Now</button>
       <button class="tab" onclick="switchTab('active',this)">In Progress</button>
       <button class="tab" onclick="switchTab('open',this)">Open</button>
       <button class="tab" onclick="switchTab('completed',this)">Completed</button>
+      <button class="tab" onclick="switchTab('workers',this)">Workers</button>
+      <button class="tab" onclick="switchTab('employers',this)">Employers</button>
       <button class="tab" onclick="switchTab('all',this)">All Tasks</button>
     </div>
-
     <div id="content"></div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
-const API = 'https://beyondx-backend-production-1a08.up.railway.app';
-let pass = '';
-let tasks = [];
-let currentTab = 'payouts';
-
+const API="https://beyondx-backend-production-1a08.up.railway.app";
+let pass="",tasks=[],workers=[],currentTab="overview";
 function login(){
-  pass = document.getElementById('adminPass').value;
-  fetch(`${API}/admin/all`, { headers: {'x-admin-password': pass} })
-    .then(r => { if(!r.ok) throw new Error(); return r.json(); })
-    .then(data => {
-      tasks = data.tasks;
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('dash').style.display = 'block';
-      render();
-    })
-    .catch(() => document.getElementById('err').style.display = 'block');
-}
-
-async function load(){
-  try {
-    const r = await fetch(`${API}/admin/all`, { headers: {'x-admin-password': pass} });
-    const data = await r.json();
-    tasks = data.tasks;
+  pass=document.getElementById("adminPass").value;
+  Promise.all([
+    fetch(API+"/admin/all",{headers:{"x-admin-password":pass}}).then(r=>{if(!r.ok)throw new Error();return r.json();}),
+    fetch(API+"/api/workers").then(r=>r.json())
+  ]).then(([td,wd])=>{
+    tasks=td.tasks;workers=wd.workers||[];
+    document.getElementById("loginScreen").style.display="none";
+    document.getElementById("dash").style.display="block";
     render();
-    showToast('Refreshed');
-  } catch(e) { showToast('Could not refresh'); }
+  }).catch(()=>document.getElementById("err").style.display="block");
 }
-
-function switchTab(tab, el){
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  render();
+async function load(){
+  try{
+    const [td,wd]=await Promise.all([
+      fetch(API+"/admin/all",{headers:{"x-admin-password":pass}}).then(r=>r.json()),
+      fetch(API+"/api/workers").then(r=>r.json())
+    ]);
+    tasks=td.tasks;workers=wd.workers||[];
+    document.getElementById("lastRefresh").textContent="Updated "+new Date().toLocaleTimeString();
+    render();
+  }catch(e){showToast("Could not refresh");}
 }
-
+function switchTab(tab,el){
+  currentTab=tab;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");render();
+}
 function render(){
-  const payouts   = tasks.filter(t => t.status === 'pending_confirmation');
-  const active    = tasks.filter(t => t.status === 'accepted');
-  const open      = tasks.filter(t => t.status === 'open');
-  const completed = tasks.filter(t => t.status === 'completed');
-
-  document.getElementById('sPayouts').textContent = payouts.length;
-  document.getElementById('sActive').textContent  = active.length;
-  document.getElementById('sOpen').textContent    = open.length;
-  document.getElementById('sDone').textContent    = completed.length;
-  document.getElementById('sAll').textContent     = tasks.length;
-
-  const map = { payouts, active, open, completed, all: tasks };
-  const list = map[currentTab] || [];
-
-  if(!list.length){
-    document.getElementById('content').innerHTML = `<div class="empty">No tasks in this category</div>`;
-    return;
-  }
-
-  document.getElementById('content').innerHTML = list.map(t => taskCard(t)).join('');
+  const payouts=tasks.filter(t=>t.status==="pending_confirmation");
+  const active=tasks.filter(t=>t.status==="accepted");
+  const open=tasks.filter(t=>t.status==="open");
+  const completed=tasks.filter(t=>t.status==="completed");
+  if(currentTab==="overview"){renderOverview(payouts,active,open,completed);return;}
+  if(currentTab==="payouts"){renderList(payouts,"No pending payouts");return;}
+  if(currentTab==="active"){renderList(active,"No tasks in progress");return;}
+  if(currentTab==="open"){renderList(open,"No open tasks");return;}
+  if(currentTab==="completed"){renderList(completed,"No completed tasks");return;}
+  if(currentTab==="workers"){renderWorkers();return;}
+  if(currentTab==="employers"){renderEmployers();return;}
+  if(currentTab==="all"){renderList(tasks,"No tasks yet");return;}
 }
-
-function taskCard(t){
-  const worker   = t.acceptedBy;
-  const employer = t.employer;
-  const total    = parseFloat(t.pay).toFixed(2);
-  const workerPay = (parseFloat(t.pay) * 0.85).toFixed(2);
-  const fee       = (parseFloat(t.pay) * 0.15).toFixed(2);
-
-  const badges = {
-    open:                 ['badge-open',      'OPEN'],
-    accepted:             ['badge-active',    'IN PROGRESS'],
-    pending_confirmation: ['badge-pay',       'PAY NOW'],
-    completed:            ['badge-done',      'COMPLETED'],
-    cancelled:            ['badge-cancelled', 'CANCELLED']
-  };
-  const [badgeClass, badgeLabel] = badges[t.status] || ['badge-open', t.status.toUpperCase()];
-
-  const payoutSection = t.status === 'pending_confirmation' ? `
-    <div class="payout-box">
-      <div style="font-size:12px;color:#4d7a5e;margin-bottom:8px;">Send to worker via Mobile Money</div>
-      <div class="payout-amount">GH₵ ${workerPay}</div>
-      <div style="font-size:13px;font-weight:700;color:#0d3320;margin-bottom:2px;">${worker?.fullName||'Unknown'}</div>
-      <div class="payout-phone">${worker?.phone||'No phone on record'}</div>
-      <div style="font-size:11px;color:#4d7a5e;margin-top:2px;">${worker?.workerId||''}</div>
-      <button class="pay-btn" onclick="markPaid('${t.id}','${worker?.fullName||''}','${workerPay}')">✓ I've Sent the Payment — Mark as Paid</button>
-    </div>` : '';
-
-  const workerRow = worker
-    ? `<div class="row"><span class="row-key">Worker</span><span class="row-val">${worker.fullName} · ${worker.phone||'—'}</span></div>`
-    : `<div class="row"><span class="row-key">Worker</span><span class="row-val" style="color:#4d7a5e;">Not yet assigned</span></div>`;
-
-  return `<div class="card">
-    <div class="card-head">
-      <div>
-        <div class="card-title">${t.taskType}</div>
-        <div style="font-size:12px;color:#4d7a5e;margin-top:2px;">${t.location} · ${t.duration}</div>
-      </div>
-      <span class="badge ${badgeClass}">${badgeLabel}</span>
+function renderOverview(payouts,active,open,completed){
+  const totalRev=completed.reduce((s,t)=>s+parseFloat(t.pay),0);
+  const fees=totalRev*0.15;
+  const payoutsTotal=totalRev*0.85;
+  const pending=payouts.reduce((s,t)=>s+(parseFloat(t.pay)*0.85),0);
+  const avg=completed.length?(totalRev/completed.length).toFixed(2):"0.00";
+  const catCount={};tasks.forEach(t=>{catCount[t.taskType]=(catCount[t.taskType]||0)+1;});
+  const topCats=Object.entries(catCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxCat=topCats[0]?.[1]||1;
+  const empCount={};tasks.forEach(t=>{if(t.employer){const n=t.employer.orgName;empCount[n]=(empCount[n]||0)+1;}});
+  const topEmps=Object.entries(empCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById("content").innerHTML=`
+    <div class="stats-grid">
+      <div class="stat hl"><div class="stat-n">${tasks.length}</div><div class="stat-l">Total Tasks</div></div>
+      <div class="stat"><div class="stat-n">${completed.length}</div><div class="stat-l">Completed</div></div>
+      <div class="stat"><div class="stat-n">${active.length+payouts.length}</div><div class="stat-l">Active</div></div>
+      <div class="stat"><div class="stat-n">${open.length}</div><div class="stat-l">Open</div></div>
+      <div class="stat hl"><div class="stat-n">GH&#8373; ${totalRev.toFixed(0)}</div><div class="stat-l">Total Revenue</div></div>
+      <div class="stat"><div class="stat-n">GH&#8373; ${fees.toFixed(0)}</div><div class="stat-l">Platform Fees (15%)</div></div>
+      <div class="stat"><div class="stat-n">GH&#8373; ${payoutsTotal.toFixed(0)}</div><div class="stat-l">Worker Payouts</div></div>
+      <div class="stat"><div class="stat-n">GH&#8373; ${pending.toFixed(0)}</div><div class="stat-l">${pending>0?"Pending Payout ⚠️":"Pending Payout"}</div></div>
+      <div class="stat"><div class="stat-n">${workers.length}</div><div class="stat-l">Active Workers</div></div>
+      <div class="stat"><div class="stat-n">${[...new Set(tasks.map(t=>t.employerId))].length}</div><div class="stat-l">Employers</div></div>
+      <div class="stat"><div class="stat-n">GH&#8373; ${avg}</div><div class="stat-l">Avg Task Value</div></div>
+      <div class="stat"><div class="stat-n">${completed.length&&tasks.length?((completed.length/tasks.length)*100).toFixed(0)+"%":"0%"}</div><div class="stat-l">Completion Rate</div></div>
     </div>
-    <div class="row"><span class="row-key">Employer</span><span class="row-val">${employer?.orgName||'—'} ${employer?.phone?'· '+employer.phone:''}</span></div>
-    ${workerRow}
-    <div class="row"><span class="row-key">Employer Paid</span><span class="row-val">GH₵ ${total}</span></div>
-    <div class="row"><span class="row-key">Worker Gets</span><span class="row-val" style="color:#1f6138;">GH₵ ${workerPay}</span></div>
-    <div class="row"><span class="row-key">BeyondX Fee</span><span class="row-val">GH₵ ${fee}</span></div>
-    <div class="row"><span class="row-key">Date</span><span class="row-val">${new Date(t.createdAt).toLocaleDateString()}</span></div>
-    ${t.description?`<div class="row"><span class="row-key">Notes</span><span class="row-val" style="font-size:11px;max-width:300px;text-align:right;">${t.description}</span></div>`:''}
-    ${payoutSection}
-  </div>`;
+    <div class="overview-grid">
+      <div class="ov-card">
+        <div class="ov-title">Task Status</div>
+        <div class="ov-row"><span class="ov-key">Open</span><span class="ov-val">${open.length}</span></div>
+        <div class="ov-row"><span class="ov-key">In Progress</span><span class="ov-val amber">${active.length}</span></div>
+        <div class="ov-row"><span class="ov-key">Worker Done — Unconfirmed</span><span class="ov-val amber">${payouts.length}</span></div>
+        <div class="ov-row"><span class="ov-key">Completed</span><span class="ov-val green">${completed.length}</span></div>
+        <div class="ov-row"><span class="ov-key">Total</span><span class="ov-val">${tasks.length}</span></div>
+      </div>
+      <div class="ov-card">
+        <div class="ov-title">Financial Summary</div>
+        <div class="ov-row"><span class="ov-key">Total Billed</span><span class="ov-val green">GH&#8373; ${totalRev.toFixed(2)}</span></div>
+        <div class="ov-row"><span class="ov-key">Platform Revenue</span><span class="ov-val green">GH&#8373; ${fees.toFixed(2)}</span></div>
+        <div class="ov-row"><span class="ov-key">Paid to Workers</span><span class="ov-val">GH&#8373; ${payoutsTotal.toFixed(2)}</span></div>
+        <div class="ov-row"><span class="ov-key">Pending Payment</span><span class="ov-val ${pending>0?"amber":""}">GH&#8373; ${pending.toFixed(2)}</span></div>
+        <div class="ov-row"><span class="ov-key">Avg Task Value</span><span class="ov-val">GH&#8373; ${avg}</span></div>
+      </div>
+      <div class="ov-card">
+        <div class="ov-title">Top Task Categories</div>
+        <div class="bar-wrap">${topCats.map(([c,n])=>`<div class="bar-row"><span class="bar-label">${c}</span><div class="bar-bg"><div class="bar-fill" style="width:${(n/maxCat)*100}%"></div></div><span class="bar-num">${n}</span></div>`).join("")||"<div style=color:#4d7a5e;font-size:13px>No data yet</div>"}</div>
+      </div>
+      <div class="ov-card">
+        <div class="ov-title">Top Employers</div>
+        <div class="bar-wrap">${topEmps.map(([n,c])=>`<div class="bar-row"><span class="bar-label">${n}</span><div class="bar-bg"><div class="bar-fill" style="width:${(c/topEmps[0][1])*100}%"></div></div><span class="bar-num">${c}</span></div>`).join("")||"<div style=color:#4d7a5e;font-size:13px>No data yet</div>"}</div>
+      </div>
+    </div>
+    ${payouts.length>0?`<div class="ov-card" style="border-color:#ffc107;background:#fffdf0;"><div class="ov-title" style="color:#856404">⚠️ ${payouts.length} Worker${payouts.length>1?"s":""} Waiting for Payment</div>${payouts.map(t=>`<div class="ov-row"><span class="ov-key">${t.acceptedBy?.fullName||"Unknown"} · ${t.acceptedBy?.phone||"—"}</span><span class="ov-val amber">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(2)}</span></div>`).join("")}<button onclick="switchTab('payouts',document.querySelectorAll('.tab')[1])" style="margin-top:12px;padding:9px 18px;background:#856404;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Go to Payouts →</button></div>`:""}
+  `;
 }
-
-async function markPaid(id, name, amount){
-  if(!confirm(`Have you sent GH₵ ${amount} to ${name}?`)) return;
-  try {
-    const r = await fetch(`${API}/admin/tasks/${id}/paid`, {
-      method: 'PATCH',
-      headers: {'x-admin-password': pass}
-    });
-    if(r.ok){ showToast(`✓ ${name} marked as paid`); await load(); }
-    else showToast('Failed. Try again.');
-  } catch(e){ showToast('Connection error'); }
+function renderWorkers(){
+  document.getElementById("content").innerHTML=workers.length?`<table class="table"><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Skills</th><th>Tasks</th><th>Rating</th></tr></thead><tbody>${workers.map(w=>`<tr><td style="font-weight:600">${w.fullName}</td><td style="font-family:monospace;font-size:12px">${w.workerId}</td><td>${w.phone||"—"}</td><td style="font-size:12px">${(w.skills||[]).join(", ")||"—"}</td><td style="font-weight:700;color:#1f6138">${w.tasksCompleted}</td><td>${w.rating>0?"★ "+parseFloat(w.rating).toFixed(1):"—"}</td></tr>`).join("")}</tbody></table>`:`<div class="empty">No workers registered yet</div>`;
 }
-
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 3000);
+function renderEmployers(){
+  const employers=[...new Map(tasks.filter(t=>t.employer).map(t=>[t.employerId,t.employer])).values()];
+  document.getElementById("content").innerHTML=employers.length?`<table class="table"><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks Posted</th><th>Completed</th><th>Total Spent</th></tr></thead><tbody>${employers.map(e=>{const et=tasks.filter(t=>t.employer?.orgName===e.orgName);const ed=et.filter(t=>t.status==="completed");const sp=et.reduce((s,t)=>s+parseFloat(t.pay),0);return`<tr><td style="font-weight:600">${e.orgName}</td><td>${e.phone||"—"}</td><td style="font-weight:700">${et.length}</td><td style="color:#1f6138;font-weight:700">${ed.length}</td><td style="font-weight:700;color:#1f6138">GH&#8373; ${sp.toFixed(0)}</td></tr>`;}).join("")}</tbody></table>`:`<div class="empty">No employer data yet</div>`;
 }
-
-setInterval(() => { if(pass) load(); }, 60000);
+function renderList(list,emptyMsg){
+  if(!list.length){document.getElementById("content").innerHTML=`<div class="empty">${emptyMsg}</div>`;return;}
+  document.getElementById("content").innerHTML=list.map(t=>taskCard(t)).join("");
+}
+function taskCard(t){
+  const w=t.acceptedBy;
+  const tp=parseFloat(t.pay).toFixed(2);
+  const wp=(parseFloat(t.pay)*0.85).toFixed(2);
+  const fp=(parseFloat(t.pay)*0.15).toFixed(2);
+  const badges={open:["b-opn","OPEN"],accepted:["b-act","IN PROGRESS"],pending_confirmation:["b-pay","PAY NOW"],completed:["b-don","COMPLETED"]};
+  const [bc,bl]=badges[t.status]||["b-opn",t.status.toUpperCase()];
+  const po=t.status==="pending_confirmation"?`<div class="payout-box"><div style="font-size:12px;color:#4d7a5e;margin-bottom:8px">Send to worker via Mobile Money</div><div style="font-size:24px;font-weight:900;color:#1f6138;margin-bottom:4px">GH&#8373; ${wp}</div><div style="font-size:13px;font-weight:700;color:#0d3320;margin-bottom:2px">${w?.fullName||"Unknown"}</div><div style="font-family:monospace;font-size:16px;font-weight:700;color:#1f6138">${w?.phone||"No phone"}</div><div style="font-size:11px;color:#4d7a5e;margin-top:2px">${w?.workerId||""}</div><button class="pay-btn" onclick="markPaid('${t.id}','${w?.fullName||""}','${wp}')">✓ I've Sent the Payment — Mark as Paid</button></div>`:"";
+  return`<div class="card"><div class="card-head"><div><div class="card-title">${t.taskType}</div><div style="font-size:12px;color:#4d7a5e;margin-top:2px">${t.location} · ${t.duration}</div></div><span class="badge ${bc}">${bl}</span></div><div class="row"><span class="row-key">Employer</span><span class="row-val">${t.employer?.orgName||"—"}</span></div><div class="row"><span class="row-key">Worker</span><span class="row-val">${w?.fullName||"Unassigned"}${w?.phone?" · "+w.phone:""}</span></div><div class="row"><span class="row-key">Employer Paid</span><span class="row-val">GH&#8373; ${tp}</span></div><div class="row"><span class="row-key">Worker Gets</span><span class="row-val" style="color:#1f6138">GH&#8373; ${wp}</span></div><div class="row"><span class="row-key">BeyondX Fee</span><span class="row-val">GH&#8373; ${fp}</span></div><div class="row"><span class="row-key">Date</span><span class="row-val">${new Date(t.createdAt).toLocaleDateString()}</span></div>${t.description?`<div class="row"><span class="row-key">Notes</span><span class="row-val" style="font-size:11px;max-width:300px;text-align:right">${t.description}</span></div>`:""}${po}</div>`;
+}
+async function markPaid(id,name,amount){
+  if(!confirm("Have you sent GH₵ "+amount+" to "+name+"?"))return;
+  try{
+    const r=await fetch(API+"/admin/tasks/"+id+"/paid",{method:"PATCH",headers:{"x-admin-password":pass}});
+    if(r.ok){showToast("✓ "+name+" marked as paid");await load();}
+    else showToast("Failed. Try again.");
+  }catch(e){showToast("Connection error");}
+}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",3000);}
+setInterval(()=>{if(pass)load();},15000);
 </script>
 </body>
 </html>
