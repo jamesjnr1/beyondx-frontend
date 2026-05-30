@@ -681,15 +681,33 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <div class="fld2"><label>Phone Number</label><input type="tel" id="wregPhone" placeholder="e.g. 0244000000"/></div>
     <div class="fld2"><label>Prison Facility</label><select id="wregFacility"><option>Nsawam Medium Security Prison</option><option>Kumasi Central Prison</option><option>James Fort Prison</option><option>Ankaful Maximum Security Prison</option><option>Sunyani Central Prison</option><option>Ho Central Prison</option><option>Tamale Central Prison</option></select></div>
     <div class="fld2"><label>Skills (select all that apply)</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Facility &amp; Cleaning" style="accent-color:var(--g6);"> Facility &amp; Cleaning</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Logistics &amp; Delivery" style="accent-color:var(--g6);"> Logistics &amp; Delivery</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Maintenance &amp; Repairs" style="accent-color:var(--g6);"> Maintenance &amp; Repairs</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Event &amp; Hospitality" style="accent-color:var(--g6);"> Event &amp; Hospitality</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Agriculture &amp; Environment" style="accent-color:var(--g6);"> Agriculture &amp; Environment</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Retail &amp; Trade" style="accent-color:var(--g6);"> Retail &amp; Trade</label>
-        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);grid-column:1/-1;"><input type="checkbox" name="wregSkills" value="Community Services" style="accent-color:var(--g6);"> Community Services</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--bd)'">
+          <input type="checkbox" name="wregSkills" value="Facility & Cleaning" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
+          <span>🧹 Facility &amp; Cleaning</span></label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--bd)'">
+          <input type="checkbox" name="wregSkills" value="Logistics & Delivery" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
+          <span>📦 Logistics &amp; Delivery</span></label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--bd)'">
+          <input type="checkbox" name="wregSkills" value="Maintenance & Repairs" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
+          <span>🔧 Maintenance &amp; Repairs</span></label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--bd)'">
+          <input type="checkbox" name="wregSkills" value="Event & Hospitality" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
+          <span>🎪 Event &amp; Hospitality</span></label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--bd)'">
+          <input type="checkbox" name="wregSkills" value="Agriculture & Environment" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
+          <span>🌱 Agriculture &amp; Environment</span></label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--bd)'">
+          <input type="checkbox" name="wregSkills" value="Retail & Trade" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
+          <span>🛒 Retail &amp; Trade</span></label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--bd)'">
+          <input type="checkbox" name="wregSkills" value="Community Services" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
+          <span>🤝 Community Services</span></label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" id="otherSkillLabel" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input[type=checkbox]').checked)this.style.borderColor='var(--bd)'">
+          <input type="checkbox" id="otherSkillCheck" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="document.getElementById('otherSkillInput').style.display=this.checked?'block':'none';this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
+          <span>✏️ Other</span></label>
       </div>
+      <input type="text" id="otherSkillInput" placeholder="Describe your other skill(s) e.g. Carpentry, Welding" style="display:none;width:100%;margin-top:8px;padding:8px 10px;border:1.5px solid var(--g5);border-radius:7px;font-size:13px;font-family:'Manrope',sans-serif;background:var(--off);outline:none;"/>
     </div>
     <div class="fld2"><label>PIN (4 digits)</label><input type="password" id="wregPin" placeholder="Choose a 4-digit PIN" maxlength="4"/></div>
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleWrkRegister()">Create My Account</button>
@@ -1150,9 +1168,12 @@ async function handleWrkRegister(){
   const phone=document.getElementById('wregPhone').value.trim();
   const facility=document.getElementById('wregFacility').value;
   const skills=Array.from(document.querySelectorAll('input[name="wregSkills"]:checked')).map(cb=>cb.value.replace('&amp;','&'));
+  const otherSkill=document.getElementById('otherSkillCheck').checked?document.getElementById('otherSkillInput').value.trim():'';
+  if(otherSkill)skills.push(otherSkill);
   const pin=document.getElementById('wregPin').value.trim();
   if(!fullName||!phone||!pin){toast('Please fill in all required fields.');return;}
   if(skills.length===0){toast('Please select at least one skill.');return;}
+  if(document.getElementById('otherSkillCheck').checked&&!document.getElementById('otherSkillInput').value.trim()){toast('Please describe your other skill.');return;}
   if(pin.length!==4||isNaN(pin)){toast('PIN must be exactly 4 digits.');return;}
   toast('Creating your account...');
   try{
