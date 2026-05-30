@@ -631,14 +631,13 @@ let declined = new Set();
 
 function renderWorker() {
   const _wrk = JSON.parse(localStorage.getItem('bx_worker') || '{}');
-const _nameEl = document.getElementById('workerNameDisplay');
-if(_nameEl && _wrk.fullName) _nameEl.textContent = _wrk.fullName;
-  const _wrk = JSON.parse(localStorage.getItem('bx_worker') || '{}');
-const _avEl = document.getElementById('workerAvatar');
-if(_avEl && _wrk.fullName){
-  const initials = _wrk.fullName.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
-  _avEl.textContent = initials;
-}
+  const _nameEl = document.getElementById('workerNameDisplay');
+  if (_nameEl && _wrk.fullName) _nameEl.textContent = _wrk.fullName;
+  const _avEl = document.getElementById('workerAvatar');
+  if (_avEl && _wrk.fullName) {
+    const initials = _wrk.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    _avEl.textContent = initials;
+  }
   const m = document.getElementById('workerMain');
   if (!m) return;
   if (WS.status === 'idle') m.innerHTML = renderIdle();
