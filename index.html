@@ -757,7 +757,7 @@ async function loadTasks() {
   }
 }
 
-const WS = { status:'idle', task:null, done:14, earned:840 };
+const WS = { status:'idle', task:null, done:14, earned:840, workerTab:'available' };
 let declined = new Set();
 
 async function renderWorker() {
@@ -779,8 +779,15 @@ function S(s){return`<span style="${s}">`}
 function btn(onclick, style, label){return`<button onclick="${onclick}" style="padding:11px 20px;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;${style}">${label}</button>`}
 
 function renderIdle() {
-  const tasks = AVAIL_TASKS.filter(t => !declined.has(t.id));
-  const cards = tasks.map(t => `
+  const available = AVAIL_TASKS.filter(t => !declined.has(t.id));
+  const declinedTasks = AVAIL_TASKS.filter(t => declined.has(t.id));
+
+  const workerTabs = `<div style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;">
+    <button onclick="WS.workerTab='available';renderWorker();" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${!WS.workerTab||WS.workerTab==='available'?'var(--w)':'transparent'};color:${!WS.workerTab||WS.workerTab==='available'?'var(--ink)':'var(--ink3)'};box-shadow:${!WS.workerTab||WS.workerTab==='available'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Available</button>
+    <button onclick="WS.workerTab='declined';renderWorker();" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${WS.workerTab==='declined'?'var(--w)':'transparent'};color:${WS.workerTab==='declined'?'var(--ink)':'var(--ink3)'};box-shadow:${WS.workerTab==='declined'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Declined (${declinedTasks.length})</button>
+  </div>`;
+
+  const taskCard = t => `
     <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:12px;">
       <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;">
         <div style="width:50px;height:50px;border-radius:12px;background:var(--g1);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:var(--g7);flex-shrink:0;">${t.init}</div>
@@ -798,13 +805,40 @@ function renderIdle() {
         <button onclick="declineTask('${t.id}')" style="flex:1;padding:10px;background:transparent;color:var(--mu);border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Decline</button>
         <button onclick="acceptTask('${t.id}')" style="flex:2;padding:10px;background:var(--g7);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Accept Task</button>
       </div>
-    </div>`).join('');
+    </div>`;
 
-  const empty = `<div style="text-align:center;padding:48px 20px;color:var(--mu);">
+  const declinedCard = t => `
+    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:12px;opacity:0.7;">
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;">
+        <div style="width:50px;height:50px;border-radius:12px;background:var(--off);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:var(--ink3);flex-shrink:0;">${t.init}</div>
+        <div style="flex:1;">
+          <div style="font-family:'Inter',sans-serif;font-size:15px;font-weight:800;color:var(--ink);margin-bottom:3px;">${t.co}</div>
+          <div style="font-size:13px;color:var(--ink3);margin-bottom:8px;">${t.task}</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <span style="font-size:12px;color:var(--ink3);">${t.loc}</span>
+            <span style="font-size:12px;color:var(--ink3);">${t.dur}</span>
+            <span style="font-size:14px;font-weight:800;color:var(--ink3);">GH₵ ${t.pay}</span>
+          </div>
+        </div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;background:var(--off);border:1px solid var(--bd);border-radius:4px;color:var(--ink3);font-weight:600;flex-shrink:0;">DECLINED</span>
+      </div>
+      <button onclick="declined.delete('${t.id}');renderWorker();" style="width:100%;padding:9px;background:transparent;color:var(--g6);border:1.5px solid var(--g5);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Reconsider</button>
+    </div>`;
+
+  const emptyAvailable = `<div style="text-align:center;padding:48px 20px;color:var(--mu);">
     <div style="font-family:'Inter',sans-serif;font-size:15px;font-weight:600;color:var(--g9);margin-bottom:8px;">No tasks available right now</div>
     <div style="font-size:13px;line-height:1.65;">Your coordinator will notify you when new tasks are assigned.</div>
-    <button onclick="declined.clear();renderWorker();" style="margin-top:16px;padding:9px 20px;background:var(--g0);color:var(--g7);border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Show All Tasks</button>
+    <button onclick="TASKS_LOADED=false;renderWorker();" style="margin-top:16px;padding:9px 20px;background:var(--g0);color:var(--g7);border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Refresh</button>
   </div>`;
+
+  const emptyDeclined = `<div style="text-align:center;padding:48px 20px;color:var(--mu);">
+    <div style="font-size:13px;">You haven't declined any tasks.</div>
+  </div>`;
+
+  const currentTab = WS.workerTab || 'available';
+  const content = currentTab === 'declined'
+    ? (declinedTasks.length ? declinedTasks.map(declinedCard).join('') : emptyDeclined)
+    : (available.length ? available.map(taskCard).join('') : emptyAvailable);
 
   return `<div style="max-width:620px;margin:0 auto;padding:28px 24px 80px;">
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;">
@@ -812,11 +846,8 @@ function renderIdle() {
       <div style="background:var(--g0);border:1.5px solid var(--bd);border-radius:10px;padding:14px;text-align:center;"><div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:var(--g8);">GH₵ ${WS.earned}</div><div style="font-size:11px;color:var(--mu);margin-top:3px;">Total Earned</div></div>
       <div style="background:var(--g0);border:1.5px solid var(--bd);border-radius:10px;padding:14px;text-align:center;"><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:800;color:var(--g8);">4.9 ★</div><div style="font-size:11px;color:var(--mu);margin-top:3px;">Your Rating</div></div>
     </div>
-    <div style="margin-bottom:16px;">
-      <div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:var(--g9);margin-bottom:4px;">Tasks Available For You</div>
-      <div style="font-size:13px;color:var(--mu);">Accept a task to see the employer's full contact details. You can only work one task at a time.</div>
-    </div>
-    ${tasks.length ? cards : empty}
+    ${workerTabs}
+    ${content}
   </div>`;
 }
 
