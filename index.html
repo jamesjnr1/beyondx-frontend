@@ -766,26 +766,144 @@ async function renderWorker() {
   if(_nameEl&&_wrk.fullName)_nameEl.textContent=_wrk.fullName;
   const m = document.getElementById('workerMain');
   if (!m) return;
-  m.innerHTML='<div style="padding:40px;text-align:center;color:var(--mu);">Loading tasks...</div>';
+  m.innerHTML='<div style="padding:40px;text-align:center;color:var(--mu);">Loading...</div>';
   await loadTasks();
-  if (WS.status === 'idle') m.innerHTML = renderIdle();
-  else if (WS.status === 'accepted') m.innerHTML = renderAccepted();
-  else if (WS.status === 'active') m.innerHTML = renderActive();
-  else if (WS.status === 'done') m.innerHTML = renderDone();
+  // Also load worker's active tasks from backend
+  await loadMyTasks();
+  m.innerHTML = renderWorkerDashboard();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function S(s){return`<span style="${s}">`}
-function btn(onclick, style, label){return`<button onclick="${onclick}" style="padding:11px 20px;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;${style}">${label}</button>`}
+let MY_TASKS = [];
+async function loadMyTasks(){
+  const token = localStorage.getItem('bx_worker_token');
+  if(!token) return;
+  try{
+    const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks/mine',{
+      headers:{'Authorization':`Bearer ${token}`}
+    });
+    const data = await resp.json();
+    MY_TASKS = data.tasks || [];
+  }catch(err){ MY_TASKS = []; }
+}
 
-function renderIdle() {
+function renderWorkerDashboard(){
+  const tab = WS.workerTab || 'available';
   const available = AVAIL_TASKS.filter(t => !declined.has(t.id));
   const declinedTasks = AVAIL_TASKS.filter(t => declined.has(t.id));
+  const pendingTasks = MY_TASKS.filter(t => t.status === 'accepted');
+  const doneTasks = MY_TASKS.filter(t => t.status === 'pending_confirmation');
 
-  const workerTabs = `<div style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;">
-    <button onclick="WS.workerTab='available';renderWorker();" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${!WS.workerTab||WS.workerTab==='available'?'var(--w)':'transparent'};color:${!WS.workerTab||WS.workerTab==='available'?'var(--ink)':'var(--ink3)'};box-shadow:${!WS.workerTab||WS.workerTab==='available'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Available</button>
-    <button onclick="WS.workerTab='declined';renderWorker();" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${WS.workerTab==='declined'?'var(--w)':'transparent'};color:${WS.workerTab==='declined'?'var(--ink)':'var(--ink3)'};box-shadow:${WS.workerTab==='declined'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Declined (${declinedTasks.length})</button>
+  const tabs = `<div style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;">
+    <button onclick="WS.workerTab='available';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${tab==='available'?'var(--w)':'transparent'};color:${tab==='available'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='available'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Available${available.length?` (${available.length})`:''}</button>
+    <button onclick="WS.workerTab='pending';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${tab==='pending'?'var(--w)':'transparent'};color:${tab==='pending'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='pending'?'0 1px 4px rgba(0,0,0,.08)':'none'}">My Tasks${pendingTasks.length+doneTasks.length?` (${pendingTasks.length+doneTasks.length})`:''}</button>
+    <button onclick="WS.workerTab='declined';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${tab==='declined'?'var(--w)':'transparent'};color:${tab==='declined'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='declined'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Declined${declinedTasks.length?` (${declinedTasks.length})`:''}</button>
   </div>`;
+
+  const stats = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;">
+    <div style="background:var(--g0);border:1.5px solid var(--bd);border-radius:10px;padding:14px;text-align:center;"><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:800;color:var(--g8);">${WS.done}</div><div style="font-size:11px;color:var(--mu);margin-top:3px;">Tasks Done</div></div>
+    <div style="background:var(--g0);border:1.5px solid var(--bd);border-radius:10px;padding:14px;text-align:center;"><div style="font-family:'Inter',sans-serif;font-size:18px;font-weight:800;color:var(--g8);">GH₵ ${WS.earned}</div><div style="font-size:11px;color:var(--mu);margin-top:3px;">Total Earned</div></div>
+    <div style="background:var(--g0);border:1.5px solid var(--bd);border-radius:10px;padding:14px;text-align:center;"><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:800;color:var(--g8);">4.9 ★</div><div style="font-size:11px;color:var(--mu);margin-top:3px;">Your Rating</div></div>
+  </div>`;
+
+  let content = '';
+
+  if(tab === 'available'){
+    const cards = available.map(t=>`
+      <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:12px;">
+        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;">
+          <div style="width:50px;height:50px;border-radius:12px;background:var(--g1);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:var(--g7);flex-shrink:0;">${t.init}</div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:3px;">${t.co}</div>
+            <div style="font-size:13px;color:var(--ink3);margin-bottom:8px;">${t.task}</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;">
+              <span style="font-size:12px;color:var(--ink3);">${t.loc}</span>
+              <span style="font-size:12px;color:var(--ink3);">${t.dur}</span>
+              <span style="font-size:14px;font-weight:800;color:var(--g7);">GH₵ ${t.pay}</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="declineTask('${t.id}')" style="flex:1;padding:10px;background:transparent;color:var(--mu);border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;">Decline</button>
+          <button onclick="acceptTask('${t.id}')" style="flex:2;padding:10px;background:var(--g7);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;">Accept Task</button>
+        </div>
+      </div>`).join('');
+    content = available.length ? cards : `<div style="text-align:center;padding:48px 20px;color:var(--ink3);">
+      <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;">No tasks available right now</div>
+      <div style="font-size:13px;">Check back later or ask your coordinator.</div>
+      <button onclick="TASKS_LOADED=false;renderWorker();" style="margin-top:16px;padding:9px 20px;background:var(--g0);color:var(--g7);border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;">Refresh</button>
+    </div>`;
+  }
+
+  else if(tab === 'pending'){
+    const activeCards = pendingTasks.map(t=>`
+      <div style="background:#fff;border:2px solid var(--g4);border-radius:14px;padding:20px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+          <div>
+            <div style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:3px;">${t.taskType}</div>
+            <div style="font-size:12px;color:var(--ink3);">${t.location} · ${t.duration}</div>
+          </div>
+          <span style="background:#e0f5ea;color:var(--g7);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">IN PROGRESS</span>
+        </div>
+        <div style="background:var(--g0);border-radius:10px;padding:12px;margin-bottom:14px;">
+          <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;">Employer Contact</div>
+          <div style="font-size:14px;font-weight:700;color:var(--ink);">${t.employer.orgName}</div>
+          <div style="font-size:13px;color:var(--g7);">${t.employer.phone||'Contact via BeyondX'}</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:2px;">${t.employer.address||t.location}</div>
+        </div>
+        <div style="font-size:18px;font-weight:800;color:var(--g7);margin-bottom:14px;">GH₵ ${parseFloat(t.pay).toFixed(0)}</div>
+        <button onclick="markTaskDone('${t.id}')" style="width:100%;padding:12px;background:var(--gold);color:#000;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;">I'm Done — Mark as Complete</button>
+      </div>`).join('');
+
+    const doneCards = doneTasks.map(t=>`
+      <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:12px;opacity:0.8;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <div style="font-size:15px;font-weight:800;color:var(--ink);">${t.taskType}</div>
+          <span style="background:#fff3cd;color:#856404;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">AWAITING EMPLOYER</span>
+        </div>
+        <div style="font-size:12px;color:var(--ink3);">${t.location} · ${t.duration}</div>
+        <div style="font-size:14px;font-weight:800;color:var(--g7);margin-top:6px;">GH₵ ${parseFloat(t.pay).toFixed(0)}</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:8px;">Waiting for employer to confirm completion.</div>
+      </div>`).join('');
+
+    content = (pendingTasks.length + doneTasks.length) ? (activeCards + doneCards) : `<div style="text-align:center;padding:48px 20px;color:var(--ink3);">
+      <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;">No active tasks</div>
+      <div style="font-size:13px;">Accept a task from the Available tab to get started.</div>
+    </div>`;
+  }
+
+  else if(tab === 'declined'){
+    const declinedCards = declinedTasks.map(t=>`
+      <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:12px;opacity:0.7;">
+        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;">
+          <div style="width:50px;height:50px;border-radius:12px;background:var(--off);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:var(--ink3);flex-shrink:0;">${t.init}</div>
+          <div style="flex:1;">
+            <div style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:3px;">${t.co}</div>
+            <div style="font-size:13px;color:var(--ink3);margin-bottom:6px;">${t.task}</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <span style="font-size:12px;color:var(--ink3);">${t.loc}</span>
+              <span style="font-size:12px;color:var(--ink3);">${t.dur}</span>
+              <span style="font-size:13px;font-weight:700;color:var(--ink3);">GH₵ ${t.pay}</span>
+            </div>
+          </div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 8px;background:var(--off);border:1px solid var(--bd);border-radius:4px;color:var(--ink3);flex-shrink:0;">DECLINED</span>
+        </div>
+        <button onclick="declined.delete('${t.id}');renderWorker();" style="width:100%;padding:9px;background:transparent;color:var(--g6);border:1.5px solid var(--g5);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;">Reconsider this task</button>
+      </div>`).join('');
+    content = declinedTasks.length ? declinedCards : `<div style="text-align:center;padding:48px 20px;color:var(--ink3);">
+      <div style="font-size:13px;">You haven't declined any tasks.</div>
+    </div>`;
+  }
+
+  return `<div style="max-width:620px;margin:0 auto;padding:28px 24px 80px;">
+    ${stats}
+    ${tabs}
+    ${content}
+  </div>`;
+}
+
+
+async function acceptTask(id) {
 
   const taskCard = t => `
     <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:12px;">
@@ -851,94 +969,6 @@ function renderIdle() {
   </div>`;
 }
 
-function renderAccepted() {
-  const t = WS.task;
-  return `<div style="max-width:620px;margin:0 auto;padding:28px 24px 80px;">
-    <div style="background:var(--g1);border:1.5px solid var(--g4);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-      <div style="width:10px;height:10px;border-radius:50%;background:var(--g5);flex-shrink:0;"></div>
-      <div><div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--g8);">Task Accepted</div><div style="font-size:12px;color:var(--g7);margin-top:2px;">Read the instructions below carefully, then press Go when you are ready to start.</div></div>
-    </div>
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:22px;margin-bottom:16px;">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--bd);">
-        <div style="width:54px;height:54px;border-radius:12px;background:var(--g1);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:19px;font-weight:800;color:var(--g7);flex-shrink:0;">${t.init}</div>
-        <div style="flex:1;">
-          <div style="font-family:'Inter',sans-serif;font-size:16px;font-weight:800;color:var(--g9);">${t.co}</div>
-          <div style="font-size:13px;color:#3a5a45;margin-top:2px;">${t.task}</div>
-        </div>
-        <div style="text-align:right;"><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:900;color:var(--g7);">GH₵ ${t.pay}</div><div style="font-size:11px;color:var(--mu);">${t.dur}</div></div>
-      </div>
-      <div style="display:flex;gap:22px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--bd);">
-        <div><div style="font-size:11px;color:var(--mu);margin-bottom:3px;">Location</div><div style="font-size:13px;font-weight:600;color:var(--g9);">${t.loc}</div></div>
-        <div><div style="font-size:11px;color:var(--mu);margin-bottom:3px;">Duration</div><div style="font-size:13px;font-weight:600;color:var(--g9);">${t.dur}</div></div>
-        <div><div style="font-size:11px;color:var(--mu);margin-bottom:3px;">Category</div><div style="font-size:13px;font-weight:600;color:var(--g9);">${t.type}</div></div>
-      </div>
-      <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--bd);">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:10px;">Employer Contact Details</div>
-        <div style="background:var(--g0);border-radius:10px;padding:14px;">
-          <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:var(--g9);margin-bottom:2px;">${t.emp.name}</div>
-          <div style="font-size:12px;color:var(--mu);margin-bottom:8px;">${t.emp.title}</div>
-          <div style="font-size:13px;color:var(--g8);font-weight:600;margin-bottom:4px;">Phone: ${t.emp.phone}</div>
-          <div style="font-size:12.5px;color:var(--mu);">${t.emp.addr}</div>
-        </div>
-      </div>
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:8px;">Your Instructions</div>
-        <div style="font-size:13px;color:#3a5a45;line-height:1.75;background:var(--g0);border-radius:10px;padding:14px;">${t.emp.instr}</div>
-      </div>
-    </div>
-    <button onclick="startTask()" style="width:100%;padding:16px;background:var(--g7);color:#fff;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;cursor:pointer;letter-spacing:-.3px;transition:background .15s;" onmouseover="this.style.background='var(--g6)'" onmouseout="this.style.background='var(--g7)'">Go — Start This Task</button>
-    <p style="text-align:center;font-size:12px;color:var(--mu);margin-top:10px;">GPS tracking activates when you press Go</p>
-  </div>`;
-}
-
-function renderActive() {
-  const t = WS.task;
-  return `<div style="max-width:620px;margin:0 auto;padding:28px 24px 80px;">
-    <div style="background:var(--g8);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-      <div style="width:10px;height:10px;border-radius:50%;background:var(--g4);animation:pulse 2s infinite;flex-shrink:0;"></div>
-      <div style="flex:1;"><div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#fff;">Task In Progress</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px;">GPS is active. Do your best work and press Done when you are finished.</div></div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.4);">GPS LIVE</div>
-    </div>
-    <div style="background:#fff;border:2px solid var(--g4);border-radius:14px;padding:22px;margin-bottom:18px;">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--bd);">
-        <div style="width:54px;height:54px;border-radius:12px;background:var(--g1);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:19px;font-weight:800;color:var(--g7);flex-shrink:0;">${t.init}</div>
-        <div style="flex:1;"><div style="font-family:'Inter',sans-serif;font-size:15px;font-weight:800;color:var(--g9);">${t.co}</div><div style="font-size:13px;color:#3a5a45;margin-top:2px;">${t.task}</div></div>
-        <div style="text-align:right;"><div style="font-family:'Inter',sans-serif;font-size:22px;font-weight:900;color:var(--g7);">GH₵ ${t.pay}</div></div>
-      </div>
-      <div style="display:flex;gap:22px;">
-        <div><div style="font-size:11px;color:var(--mu);margin-bottom:3px;">Location</div><div style="font-size:13px;font-weight:600;color:var(--g9);">${t.loc}</div></div>
-        <div><div style="font-size:11px;color:var(--mu);margin-bottom:3px;">Duration</div><div style="font-size:13px;font-weight:600;color:var(--g9);">${t.dur}</div></div>
-      </div>
-    </div>
-    <div style="background:var(--g0);border:1.5px solid var(--bd);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
-      <div><div style="font-size:12px;color:var(--mu);margin-bottom:2px;">On-site contact</div><div style="font-size:14px;font-weight:700;color:var(--g9);">${t.emp.name}</div><div style="font-size:13px;color:var(--g7);">${t.emp.phone}</div></div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g6);">CALL IF NEEDED</div>
-    </div>
-    <button onclick="completeTask()" style="width:100%;padding:18px;background:var(--gold);color:#000;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;cursor:pointer;letter-spacing:-.3px;transition:filter .15s;" onmouseover="this.style.filter='brightness(1.08)'" onmouseout="this.style.filter='brightness(1)'">Done — I Have Completed This Task</button>
-    <p style="text-align:center;font-size:12px;color:var(--mu);margin-top:10px;">Only press Done when you have fully finished the task</p>
-    <div style="text-align:center;margin-top:18px;"><button onclick="toast('Coordinator notified. Abena Mensah will call you shortly.')" style="background:none;border:none;color:var(--g6);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;">Need help? Contact your coordinator</button></div>
-  </div>`;
-}
-
-function renderDone() {
-  const t = WS.task;
-  return `<div style="max-width:580px;margin:0 auto;padding:40px 24px 80px;text-align:center;">
-    <div style="width:80px;height:80px;border-radius:50%;background:var(--g1);border:2px solid var(--g4);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;color:var(--g6);">✓</div>
-    <div style="font-family:'Inter',sans-serif;font-size:26px;font-weight:900;color:var(--g9);letter-spacing:-.8px;margin-bottom:8px;">Task Completed!</div>
-    <div style="font-size:14px;color:var(--mu);margin-bottom:28px;line-height:1.65;">Well done. Your payment will be processed within 48 hours via MTN Mobile Money.</div>
-    <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:22px;text-align:left;margin-bottom:20px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:14px;">Completed Task</div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-        <div style="width:48px;height:48px;border-radius:12px;background:var(--g1);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:var(--g7);">${t.init}</div>
-        <div><div style="font-weight:700;color:var(--g9);font-size:14px;">${t.co}</div><div style="font-size:12px;color:var(--mu);">${t.task}</div></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--bd);"><span style="font-size:13px;color:var(--mu);">Amount earned</span><span style="font-family:'Inter',sans-serif;font-size:16px;font-weight:900;color:var(--g7);">GH₵ ${t.pay}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--bd);"><span style="font-size:13px;color:var(--mu);">Payment status</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;background:#fef6e0;color:#9a6f00;border-radius:4px;font-weight:600;">Pending · 48 hrs</span></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--bd);"><span style="font-size:13px;color:var(--mu);">Total tasks completed</span><span style="font-weight:700;color:var(--g9);">${WS.done} tasks</span></div>
-    </div>
-    <button onclick="WS.status='idle';WS.task=null;declined.clear();renderWorker();" style="width:100%;padding:14px;background:var(--g7);color:#fff;border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--g6)'" onmouseout="this.style.background='var(--g7)'">Back to Dashboard</button>
-  </div>`;
-}
 
 async function acceptTask(id) {
   const token = localStorage.getItem('bx_worker_token');
@@ -950,27 +980,28 @@ async function acceptTask(id) {
     });
     const data = await resp.json();
     if (!resp.ok) { toast(data.error || 'Could not accept task.'); return; }
-    WS.task = AVAIL_TASKS.find(t => t.id === id);
-    WS.status = 'accepted';
+    toast('Task accepted! Check My Tasks tab.');
     TASKS_LOADED = false;
+    WS.workerTab = 'pending';
     renderWorker();
   } catch(err) { toast('Could not connect to server.'); }
 }
 function declineTask(id) { declined.add(id); renderWorker(); }
-function startTask() { WS.status = 'active'; renderWorker(); }
-async function completeTask() {
+
+async function markTaskDone(id){
   const token = localStorage.getItem('bx_worker_token');
-  try {
-    await fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${WS.task.id}/worker-done`, {
-      method: 'PATCH',
-      headers: { 'Authorization': `Bearer ${token}` }
+  toast('Marking as done...');
+  try{
+    const resp = await fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${id}/worker-done`,{
+      method:'PATCH',
+      headers:{'Authorization':`Bearer ${token}`}
     });
-  } catch(err) {}
-  WS.done++;
-  WS.earned += WS.task.pay;
-  WS.status = 'done';
-  TASKS_LOADED = false;
-  renderWorker();
+    if(!resp.ok){toast('Could not update. Try again.');return;}
+    toast('Marked as done! Waiting for employer to confirm.');
+    WS.done++;
+    await loadMyTasks();
+    renderWorker();
+  }catch(err){toast('Could not connect to server.');}
 }
 
 // ═══════════════════════════════════
