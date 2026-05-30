@@ -795,8 +795,8 @@ function renderIdle() {
         </div>
       </div>
       <div style="display:flex;gap:10px;">
-        <button onclick="declineTask(${t.id})" style="flex:1;padding:10px;background:transparent;color:var(--mu);border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Decline</button>
-        <button onclick="acceptTask(${t.id})" style="flex:2;padding:10px;background:var(--g7);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Accept Task</button>
+        <button onclick="declineTask('${t.id}')" style="flex:1;padding:10px;background:transparent;color:var(--mu);border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Decline</button>
+        <button onclick="acceptTask('${t.id}')" style="flex:2;padding:10px;background:var(--g7);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Accept Task</button>
       </div>
     </div>`).join('');
 
