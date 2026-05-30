@@ -1309,38 +1309,98 @@ function renderEConfirm(){
 }
 function renderEPayment(){
   const w=EMP.worker;const fee=Math.round(w.charge*EMP.days*0.15);const total=w.charge*EMP.days+fee;
-  const methods=[{id:'mtn',name:'MTN Mobile Money',desc:'Pay via MTN MoMo',color:'#FFCC00',text:'#000',abbr:'MTN'},{id:'voda',name:'Vodafone Cash',desc:'Pay via Vodafone Cash',color:'#E60000',text:'#fff',abbr:'VOD'},{id:'airtel',name:'AirtelTigo Money',desc:'Pay via AirtelTigo',color:'#FF2E00',text:'#fff',abbr:'ATM'},{id:'bank',name:'Bank Transfer',desc:'Direct bank payment',color:'#1a4d30',text:'#fff',abbr:'BNK'}];
-  const ms=methods.map(m=>`<div class="paym${EMP.payMethod===m.id?' sel':''}" onclick="EMP.payMethod='${m.id}';empGo('payment')"><div class="paym-lg" style="background:${m.color};color:${m.text};">${m.abbr}</div><div class="paym-n">${m.name}</div><div class="paym-d">${m.desc}</div></div>`).join('');
-  const inp=EMP.payMethod==='bank'?`<div class="fld"><label>Account Name</label><input type="text" placeholder="e.g. Accra Business Hub Ltd."/></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div class="fld"><label>Bank</label><select><option>GCB Bank</option><option>Ecobank</option><option>Absa Ghana</option><option>Stanbic Bank</option></select></div><div class="fld"><label>Account Number</label><input type="text" placeholder="0000000000"/></div></div>`:
-  `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:8px;">${EMP.payMethod==='mtn'?'MTN MoMo Number':EMP.payMethod==='voda'?'Vodafone Cash Number':'AirtelTigo Money Number'}</div><div style="display:flex;gap:8px;"><span class="pfx">+233</span><input type="tel" placeholder="XX XXX XXXX" style="flex:1;padding:8px 10px;border:1.5px solid var(--bd);border-radius:7px;font-size:14px;font-family:'IBM Plex Mono',monospace;background:var(--off);outline:none;"/></div>`;
+  const methods=[
+    {id:'mtn',name:'MTN Mobile Money',color:'#FFCC00',text:'#000',abbr:'MTN',ussd:'*170#'},
+    {id:'voda',name:'Vodafone Cash',color:'#E60000',text:'#fff',abbr:'VOD',ussd:'*110#'},
+    {id:'airtel',name:'AirtelTigo Money',color:'#FF2E00',text:'#fff',abbr:'ATM',ussd:'*500#'}
+  ];
+  const selected=methods.find(m=>m.id===EMP.payMethod)||methods[0];
+  const ms=methods.map(m=>`<div class="paym${EMP.payMethod===m.id?' sel':''}" onclick="EMP.payMethod='${m.id}';empGo('payment')" style="cursor:pointer;">
+    <div class="paym-lg" style="background:${m.color};color:${m.text};">${m.abbr}</div>
+    <div class="paym-n">${m.name}</div>
+  </div>`).join('');
+
   return`<div class="ebody"><div class="pay-wrap">
     <div class="ebc"><span class="ebcl" onclick="empGo('confirm')">← Back to Confirm</span></div>
-    <div class="paysum"><div><div class="psl">Dispatching</div><div class="psn">${w.name} · ${EMP.days} day${EMP.days>1?'s':''}</div></div><div><div class="psl">Total</div><div class="psa">GH₵ ${total}</div></div></div>
+    <div class="paysum">
+      <div><div class="psl">Dispatching</div><div class="psn">${w.name} · ${EMP.days} day${EMP.days>1?'s':''}</div></div>
+      <div><div class="psl">Total</div><div class="psa">GH₵ ${total}</div></div>
+    </div>
+
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:10px;">Select Payment Method</div>
-    <div class="payms">${ms}</div>
-    <div class="pinput">${inp}</div>
-    <button class="paybtn" onclick="processDispatchPayment()">Pay GH₵ ${total}</button>
-    <p style="text-align:center;font-size:12px;color:var(--mu);margin-top:10px;">Secured by BeyondX · All transactions recorded</p>
+    <div class="payms" style="margin-bottom:20px;">${ms}</div>
+
+    <!-- Payment Instructions -->
+    <div style="background:var(--g0);border:1.5px solid var(--g1);border-radius:14px;padding:20px;margin-bottom:16px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--g6);text-transform:uppercase;margin-bottom:12px;">How to Pay</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
+          <div style="font-size:13px;color:var(--ink2);">Dial <strong style="font-family:'IBM Plex Mono',monospace;">${selected.ussd}</strong> on your phone</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
+          <div style="font-size:13px;color:var(--ink2);">Select <strong>Send Money</strong> and enter this number:</div>
+        </div>
+      </div>
+
+      <!-- Recipient details -->
+      <div style="background:var(--w);border:1.5px solid var(--bd);border-radius:10px;padding:16px;margin:14px 0;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink3);text-transform:uppercase;margin-bottom:8px;">Send Payment To</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:13px;color:var(--ink3);">Name</span>
+          <span style="font-size:14px;font-weight:700;color:var(--ink);">Elikem Ama Nyaho</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:13px;color:var(--ink3);">Number</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--g7);letter-spacing:1px;">0545213741</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:var(--ink3);">Amount</span>
+          <span style="font-family:'Inter',sans-serif;font-size:20px;font-weight:900;color:var(--g7);">GH₵ ${total}</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
+        <div style="font-size:13px;color:var(--ink2);">Enter your <strong>Mobile Money PIN</strong> to confirm the payment on your phone</div>
+      </div>
+    </div>
+
+    <!-- Reference note -->
+    <div style="background:#fff3cd;border:1.5px solid #ffc107;border-radius:10px;padding:14px;margin-bottom:16px;">
+      <div style="font-size:12px;color:#856404;line-height:1.6;"><strong>Important:</strong> After completing the payment on your phone, enter your payment reference number below and click Confirm. The worker will be notified once payment is verified.</div>
+    </div>
+
+    <div class="fld" style="margin-bottom:16px;">
+      <label>Payment Reference / Transaction ID</label>
+      <input type="text" id="payRef" placeholder="e.g. 1234567890" style="width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:8px;font-size:14px;font-family:'IBM Plex Mono',monospace;background:var(--off);outline:none;"/>
+    </div>
+
+    <button class="paybtn" onclick="processDispatchPayment()">I've Paid — Confirm Dispatch</button>
+    <p style="text-align:center;font-size:12px;color:var(--mu);margin-top:10px;">Payment is manually verified by BeyondX · +233 54 521 3741</p>
   </div></div>`;
 }
 async function processDispatchPayment(){
+  const ref=document.getElementById('payRef')?.value.trim();
+  if(!ref){toast('Please enter your payment reference number.');return;}
   const w=EMP.worker;
   const token=localStorage.getItem('bx_employer_token');
-  toast('Processing payment...');
+  toast('Confirming dispatch...');
   try{
     const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
       body:JSON.stringify({
         taskType: EMP.selectedTaskType || w.cats[0] || 'General Task',
-        description: `Dispatched worker: ${w.name} (${w.workerId})`,
+        description: `Worker: ${w.name} (${w.workerId}) | Payment Ref: ${ref}`,
         location: EMP.selectedLocation || 'To be confirmed',
         duration: EMP.days===0.5?'Half Day':EMP.days===1?'1 Day':`${EMP.days} Days`,
         pay: w.charge * EMP.days
       })
     });
     const data=await resp.json();
-    if(!resp.ok){toast(data.error||'Payment failed.');return;}
+    if(!resp.ok){toast(data.error||'Failed to confirm dispatch.');return;}
     TASKS_LOADED=false;
     empGo('success');
   }catch(err){
