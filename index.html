@@ -61,7 +61,7 @@ body{background:var(--w);color:var(--ink);font-family:'Manrope',sans-serif;min-h
    MOBILE — max-width: 768px
 ═══════════════════════════════════ */
 @media(max-width:768px){
-  body{overflow-x:hidden;}
+  html,body{overflow-x:hidden;max-width:100%;width:100%;}
 
   /* WELCOME */
   #welcome{align-items:flex-start;padding:32px 20px;}
@@ -73,22 +73,22 @@ body{background:var(--w);color:var(--ink);font-family:'Manrope',sans-serif;min-h
   .wlb{width:100%;text-align:center;}
 
   /* NAV — hide tabs and login buttons, show only logo */
-  nav{padding:10px 16px;overflow:hidden;}
+  nav{padding:10px 16px;overflow:hidden;width:100%;max-width:100%;}
   .ntabs{display:none!important;}
   .nr{display:none!important;}
 
   /* HERO */
-  .hero{padding:40px 20px;}
-  .hgrid{grid-template-columns:1fr;gap:24px;}
+  .hero{padding:40px 20px;width:100%;max-width:100%;box-sizing:border-box;}
+  .hgrid{grid-template-columns:1fr;gap:24px;width:100%;}
   .hh1{font-size:32px;letter-spacing:-1px;}
   .hsub{font-size:14px;}
   .hcard{display:none;}
-  .hacts{flex-direction:column;}
-  .hb{width:100%;text-align:center;padding:13px 20px;}
+  .hacts{flex-direction:column;width:100%;}
+  .hb{width:100%;text-align:center;padding:13px 20px;box-sizing:border-box;}
 
   /* SECTIONS */
-  .sec{padding:40px 20px;}
-  .si{width:100%;}
+  .sec{padding:40px 20px;width:100%;max-width:100%;box-sizing:border-box;}
+  .si{width:100%;max-width:100%;}
   .ig2{grid-template-columns:1fr;gap:32px;}
   .ig4{grid-template-columns:1fr 1fr;}
   .ig3{grid-template-columns:1fr;}
@@ -98,14 +98,15 @@ body{background:var(--w);color:var(--ink);font-family:'Manrope',sans-serif;min-h
   .steps::before{display:none;}
   .sh2{font-size:24px;}
   .ssub{max-width:100%;}
-  .dstrip{padding:28px 20px;}
+  .dstrip{padding:28px 20px;width:100%;max-width:100%;box-sizing:border-box;}
+  .mbar{width:100%;max-width:100%;}
 
   /* EMPLOYER DASHBOARD */
-  .ebar{padding:10px 16px;}
+  .ebar{padding:10px 16px;width:100%;max-width:100%;box-sizing:border-box;}
   .ebar-l{gap:8px;flex:1;min-width:0;}
   .ebar-n{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
   .ebar-r{display:none;}
-  .ebody{padding:20px 16px 80px;}
+  .ebody{padding:20px 16px 80px;width:100%;max-width:100%;box-sizing:border-box;}
   .ecat-g{grid-template-columns:1fr 1fr;}
   .ecat-g3{grid-template-columns:1fr 1fr;}
   .ewg{grid-template-columns:1fr;}
@@ -114,7 +115,7 @@ body{background:var(--w);color:var(--ink);font-family:'Manrope',sans-serif;min-h
   .ehero h2{font-size:20px;}
 
   /* WORKER DASHBOARD */
-  .wbar{padding:10px 16px;}
+  .wbar{padding:10px 16px;width:100%;max-width:100%;box-sizing:border-box;}
   .wbadge{font-size:9px;display:none;}
 
   /* PAYMENT */
