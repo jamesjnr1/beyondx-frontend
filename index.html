@@ -909,18 +909,36 @@ function renderDone() {
   </div>`;
 }
 
-function acceptTask(id) {
-  WS.task = AVAIL_TASKS.find(t => t.id === id);
-  WS.status = 'accepted';
-  fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${id}/accept`, {method:'PATCH'});
-  renderWorker();
+async function acceptTask(id) {
+  const token = localStorage.getItem('bx_worker_token');
+  toast('Accepting task...');
+  try {
+    const resp = await fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${id}/accept`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await resp.json();
+    if (!resp.ok) { toast(data.error || 'Could not accept task.'); return; }
+    WS.task = AVAIL_TASKS.find(t => t.id === id);
+    WS.status = 'accepted';
+    TASKS_LOADED = false;
+    renderWorker();
+  } catch(err) { toast('Could not connect to server.'); }
 }
 function declineTask(id) { declined.add(id); renderWorker(); }
 function startTask() { WS.status = 'active'; renderWorker(); }
-function completeTask() {
-  WS.done++; WS.earned += WS.task.pay; WS.status = 'done';
-  fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${WS.task.id}/complete`, {method:'PATCH'});
-  TASKS_LOADED = false; // refresh tasks next time
+async function completeTask() {
+  const token = localStorage.getItem('bx_worker_token');
+  try {
+    await fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${WS.task.id}/worker-done`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+  } catch(err) {}
+  WS.done++;
+  WS.earned += WS.task.pay;
+  WS.status = 'done';
+  TASKS_LOADED = false;
   renderWorker();
 }
 
@@ -1070,13 +1088,19 @@ async function renderHistory(){
     const tasks=data.tasks||[];
     const open=tasks.filter(t=>t.status==='open');
     const accepted=tasks.filter(t=>t.status==='accepted');
+    const pendingConfirm=tasks.filter(t=>t.status==='pending_confirmation');
     const completed=tasks.filter(t=>t.status==='completed');
 
     function taskCard(t){
+      const workerInfo=t.acceptedBy?`<div style="font-size:12px;color:var(--g7);margin-top:4px;font-weight:600;">Worker: ${t.acceptedBy.fullName} · ${t.acceptedBy.phone||''}</div>`:'';
+      const confirmBtn=t.status==='pending_confirmation'
+        ?`<button onclick="confirmTaskDone('${t.id}')" style="margin-top:10px;width:100%;padding:9px;background:var(--g7);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;">Confirm Work is Done ✓</button>`:'';
       const badge=t.status==='open'
         ?`<span style="background:#e0f5ea;color:var(--g7);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">OPEN</span>`
         :t.status==='accepted'
-        ?`<span style="background:#fef6e0;color:#9a6f00;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">IN PROGRESS</span>`
+        ?`<span style="background:#fef6e0;color:#9a6f00;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">ACCEPTED</span>`
+        :t.status==='pending_confirmation'
+        ?`<span style="background:#fff3cd;color:#856404;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">WORKER SAYS DONE</span>`
         :`<span style="background:#f0f8f3;color:var(--g6);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">COMPLETED</span>`;
       return`<div style="background:var(--w);border:1.5px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:10px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
@@ -1086,6 +1110,8 @@ async function renderHistory(){
         <div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">${t.location} · ${t.duration}</div>
         ${t.description?`<div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">${t.description}</div>`:''}
         <div style="font-family:'Manrope',sans-serif;font-size:15px;font-weight:800;color:var(--g7);">GH₵ ${parseFloat(t.pay).toFixed(0)}</div>
+        ${workerInfo}
+        ${confirmBtn}
       </div>`;
     }
 
@@ -1101,11 +1127,25 @@ async function renderHistory(){
       <div class="ehero"><h2>Task History</h2><p>All tasks you have posted on BeyondX.</p></div>
       ${section('Awaiting Acceptance', open, 'No open tasks. Post a task to get started.')}
       ${section('In Progress', accepted, 'No tasks currently in progress.')}
+      ${section('Worker Says Done — Confirm', pendingConfirm, 'No tasks awaiting your confirmation.')}
       ${section('Completed', completed, 'No completed tasks yet.')}
     </div></div>`;
   }catch(err){
     m.innerHTML=`<div class="ebody">${empTabs('history')}<div style="padding:40px;text-align:center;color:var(--ink3);">Could not load history.</div></div>`;
   }
+}
+async function confirmTaskDone(id){
+  const token=localStorage.getItem('bx_employer_token');
+  toast('Confirming...');
+  try{
+    const resp=await fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${id}/complete`,{
+      method:'PATCH',
+      headers:{'Authorization':`Bearer ${token}`}
+    });
+    if(!resp.ok){toast('Could not confirm. Try again.');return;}
+    toast('Task marked as completed!');
+    empGo('history');
+  }catch(err){toast('Could not connect to server.');}
 }
 function renderECats(){
   const rows=ECATS.map((c,i)=>{
