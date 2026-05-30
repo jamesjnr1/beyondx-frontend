@@ -1488,6 +1488,22 @@ function closeWrkLogin(){document.getElementById('wrkLoginModal').classList.remo
 function openEmpRegister(){document.getElementById('empRegisterModal').classList.add('open');}
 function openWrkRegister(){document.getElementById('wrkRegisterModal').classList.add('open');}
 function employerLogout(){isEmpLoggedIn=false;updateFindBtn();switchView('home');toast('You have been logged out.');}
+async function confirmTaskDone(id){
+  const token=localStorage.getItem('bx_employer_token');
+  const employer=JSON.parse(localStorage.getItem('bx_employer')||'{}');
+  toast('Confirming...');
+  try{
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks/'+id+'/complete',{method:'PATCH',headers:{'Authorization':'Bearer '+token}});
+    if(!resp.ok){toast('Could not confirm. Try again.');return;}
+    const allResp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks/all',{headers:{'Authorization':'Bearer '+token}});
+    const allData=await allResp.json();
+    const task=(allData.tasks||[]).find(t=>t.id===id);
+    const workerPay=task?(parseFloat(task.pay)*0.85).toFixed(2):'0';
+    emailjs.send('service_zos658j','template_et2vlfs',{to_email:'beyondx26@gmail.com',worker_name:(task&&task.acceptedBy&&task.acceptedBy.fullName)||'Unknown',worker_id:(task&&task.acceptedBy&&task.acceptedBy.workerId)||'',worker_phone:(task&&task.acceptedBy&&task.acceptedBy.phone)||'Not provided',task_type:(task&&task.taskType)||'',location:(task&&task.location)||'',employer_name:employer.orgName||'',amount:workerPay}).then(()=>console.log('Email sent')).catch(e=>console.log('Email error:',e));
+    toast('Task confirmed as completed!');
+    empGo('history');
+  }catch(err){toast('Could not connect to server.');}
+}
 function workerLogout(){localStorage.removeItem('bx_worker_token');localStorage.removeItem('bx_worker');switchView('home');toast('You have been logged out.');}
 async function handleEmpLogin(){
   const em=document.getElementById('eEm').value.trim();
