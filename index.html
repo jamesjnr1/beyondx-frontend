@@ -184,7 +184,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 .ehero p{font-size:14px;color:var(--mu);line-height:1.6;}
 .ecat-g{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;}
 .ecat-g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.ecat{background:var(--w);border:1.5px solid var(--bd);border-radius:14px;padding:20px;cursor:pointer;transition:all .2s;}
+.ecat{background:var(--w);border:1.5px solid var(--bd);border-radius:14px;padding:20px;cursor:pointer;transition:all .2s;height:100%;}
 .ecat:hover{border-color:var(--g5);box-shadow:0 6px 24px rgba(45,147,86,.1);transform:translateY(-2px);}
 .ecat-i{width:36px;height:36px;border-radius:9px;background:var(--g0);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
 .ecat-n{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--g9);margin-bottom:5px;}
@@ -1114,7 +1114,19 @@ function renderECats(){
 }
 function eCatCard(c,i){
   const n=EWORKERS.filter(w=>w.cats.includes(c.name)).length;
-  return`<div class="ecat" onclick="EMP.cat=ECATS[${i}];empGo('workers')"><div class="ecat-i"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="var(--g6)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div><div class="ecat-n">${c.name}</div><div class="ecat-c">${n} workers available</div><div class="ecat-t">${c.samples.slice(0,3).join(' · ')}</div></div>`;
+  const workerBadge=n>0
+    ?`<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--g6);background:var(--g0);border:1px solid var(--g1);padding:2px 8px;border-radius:4px;">${n} worker${n>1?'s':''} available</span>`
+    :`<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--ink3);background:var(--off);border:1px solid var(--bd);padding:2px 8px;border-radius:4px;">Post a task</span>`;
+  return`<div class="ecat" onclick="EMP.cat=ECATS[${i}];empGo('workers')" style="display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="ecat-i" style="margin-bottom:0;"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="var(--g6)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+      ${workerBadge}
+    </div>
+    <div>
+      <div class="ecat-n">${c.name}</div>
+      <div class="ecat-t" style="margin-top:4px;">${c.samples.slice(0,3).join(', ')}</div>
+    </div>
+  </div>`;
 }
 function renderEWorkers(){
   const ws=EWORKERS.filter(w=>w.cats.includes(EMP.cat.name));
