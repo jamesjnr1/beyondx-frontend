@@ -3,131 +3,141 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BeyondX — Go Beyond. Hire Purpose.</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{--w:#fff;--off:#f5faf6;--g9:#0d3320;--g8:#1a4d30;--g7:#1f6138;--g6:#257a45;--g5:#2d9356;--g4:#40b86e;--g3:#72d49a;--g1:#d6f0e0;--g0:#edf8f2;--gold:#c9a84c;--mu:#4d7a5e;--bd:#b8dfc9;--rust:#b85c2a;}
+:root{
+  /* Brand greens — used sparingly for accents only */
+  --g9:#0c2818;--g8:#163d26;--g7:#1d5233;--g6:#246640;--g5:#2a7a4c;
+  --g4:#3a9e65;--g3:#6dc490;--g1:#cceada;--g0:#f0f8f3;
+  /* Neutral palette — primary surface/text system */
+  --w:#ffffff;--off:#f8f7f5;--ink:#141210;--ink2:#3a3632;--ink3:#6b6560;
+  --bd:#e2ddd8;--bd2:#ccc8c2;
+  /* Accent */
+  --gold:#b8953a;--rust:#b85c2a;
+  /* Legacy aliases kept for compatibility */
+  --mu:#5a5450;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--w);color:#0f1a14;font-family:'DM Sans',sans-serif;min-height:100vh;}
+body{background:var(--w);color:var(--ink);font-family:'Manrope',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
 
 /* WELCOME */
-#welcome{position:fixed;inset:0;background:var(--g8);z-index:400;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;}
+#welcome{position:fixed;inset:0;background:#111009;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;}
 .wl-box{max-width:680px;width:100%;text-align:center;}
 .wl-logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:28px;}
-.wl-lm{width:40px;height:40px;background:var(--g4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:#fff;}
-.wl-lt{font-family:'Inter',sans-serif;font-size:24px;font-weight:900;color:#fff;}
-.wl-h1{font-family:'Inter',sans-serif;font-size:34px;font-weight:900;color:#fff;letter-spacing:-1.5px;margin-bottom:10px;}
-.wl-sub{font-size:14px;color:rgba(255,255,255,.6);margin-bottom:32px;line-height:1.7;}
+.wl-lm{width:40px;height:40px;background:var(--g6);border-radius:20px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:#fff;}
+.wl-lt{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff;}
+.wl-h1{font-family:'Sora',sans-serif;font-size:34px;font-weight:800;color:#fff;letter-spacing:-1.5px;margin-bottom:10px;}
+.wl-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:32px;line-height:1.75;}
 .wl-paths{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;text-align:left;}
-.wl-path{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;padding:22px;}
-.wl-pt{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.wl-pt span{background:var(--g5);width:22px;height:22px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
+.wl-path{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:22px;}
+.wl-pt{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.wl-pt span{background:rgba(255,255,255,.12);width:22px;height:22px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);}
 .wl-step{display:flex;gap:9px;margin-bottom:9px;align-items:flex-start;}
 .wl-step:last-child{margin-bottom:0;}
-.wl-sn{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);flex-shrink:0;margin-top:1px;}
-.wl-st{font-size:12.5px;color:rgba(255,255,255,.65);line-height:1.5;}
+.wl-sn{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.7);flex-shrink:0;margin-top:1px;}
+.wl-st{font-size:12.5px;color:rgba(255,255,255,.5);line-height:1.6;}
 .wl-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-.wlb{padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .18s;}
-.wlb-e{background:var(--g4);color:#fff;}.wlb-e:hover{background:var(--g3);color:var(--g9);}
-.wlb-w{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25);}.wlb-w:hover{background:rgba(255,255,255,.2);}
-.wlb-s{background:transparent;color:rgba(255,255,255,.4);font-size:13px;}.wlb-s:hover{color:rgba(255,255,255,.65);}
-.wl-note{font-size:11px;color:rgba(255,255,255,.3);margin-top:14px;}
+.wlb{padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;border:none;transition:all .18s;}
+.wlb-e{background:var(--g6);color:#fff;}.wlb-e:hover{background:var(--g5);}
+.wlb-w{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.18);}.wlb-w:hover{background:rgba(255,255,255,.14);}
+.wlb-s{background:transparent;color:rgba(255,255,255,.35);font-size:13px;}.wlb-s:hover{color:rgba(255,255,255,.6);}
+.wl-note{font-size:11px;color:rgba(255,255,255,.25);margin-top:14px;}
 
 /* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:12px 32px;border-bottom:1.5px solid var(--bd);background:var(--w);position:sticky;top:0;z-index:200;}
-.logo{font-family:'Inter',sans-serif;font-size:20px;font-weight:900;display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--g8);background:none;border:none;padding:0;}
-.logo:focus-visible{outline:2px solid var(--g5);outline-offset:3px;border-radius:8px;}
-.lm{width:28px;height:28px;background:var(--g6);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;}
-.ntabs{display:flex;gap:4px;background:var(--g0);border-radius:8px;padding:4px;}
-.ntab{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--mu);transition:all .15s;font-family:'DM Sans',sans-serif;}
-.ntab.active{background:var(--w);color:var(--g8);box-shadow:0 1px 4px rgba(0,0,0,.1);font-weight:600;}
+.logo{font-family:'Sora',sans-serif;font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--ink);}
+.lm{width:28px;height:28px;background:var(--g7);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;}
+.ntabs{display:flex;gap:4px;background:var(--off);border-radius:8px;padding:4px;}
+.ntab{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--ink3);transition:all .15s;font-family:'Manrope',sans-serif;}
+.ntab.active{background:var(--w);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08);font-weight:700;}
 .nr{display:flex;align-items:center;gap:8px;}
-.bln{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:1.5px solid var(--g6);color:var(--g7);background:transparent;transition:all .15s;}
-.bln:hover{background:var(--g0);}
+.bln{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;border:1.5px solid var(--bd2);color:var(--ink2);background:transparent;transition:all .15s;}
+.bln:hover{background:var(--off);border-color:var(--bd2);}
 .bln-w{background:var(--g7);color:#fff;border-color:var(--g7);}.bln-w:hover{background:var(--g6);}
 .view{display:none;}.view.active{display:block;}
 
 /* HOME */
-.hero{background:var(--g8);color:#fff;padding:80px 40px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 72% 50%,rgba(45,147,86,.22),transparent 65%);pointer-events:none;}
+.hero{background:#111009;color:#fff;padding:80px 40px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 72% 50%,rgba(36,102,64,.18),transparent 65%);pointer-events:none;}
 .hgrid{display:grid;grid-template-columns:1fr 360px;gap:56px;align-items:center;max-width:1060px;margin:0 auto;position:relative;z-index:1;}
 .htag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.4px;color:var(--g3);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
 .htag::before{content:'';width:24px;height:1.5px;background:var(--g3);}
-.hh1{font-family:'Inter',sans-serif;font-size:54px;font-weight:900;line-height:1.04;margin-bottom:18px;letter-spacing:-2px;}
+.hh1{font-family:'Sora',sans-serif;font-size:54px;font-weight:800;line-height:1.04;margin-bottom:18px;letter-spacing:-2px;}
 .hh1 em{font-style:normal;color:var(--g3);}
-.hsub{font-size:15px;line-height:1.78;color:rgba(255,255,255,.6);margin-bottom:32px;}
+.hsub{font-size:15px;line-height:1.82;color:rgba(255,255,255,.5);margin-bottom:32px;}
 .hacts{display:flex;gap:10px;flex-wrap:wrap;}
-.hb{padding:11px 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .18s;}
-.hb-p{background:var(--g4);color:#fff;}.hb-p:hover{background:var(--g3);color:var(--g9);}
-.hb-lk{background:rgba(255,255,255,.1);color:rgba(255,255,255,.45);border:1.5px solid rgba(255,255,255,.18);}
-.hb-g{background:var(--gold);color:#000;}.hb-g:hover{filter:brightness(1.08);}
-.hb-o{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.32);}
-.hcard{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.14);border-radius:16px;padding:22px;}
-.hcl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:rgba(255,255,255,.38);text-transform:uppercase;margin-bottom:14px;}
-.hws{display:flex;align-items:center;gap:12px;padding:11px;border-radius:9px;background:rgba(255,255,255,.07);margin-bottom:8px;}
+.hb{padding:11px 20px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;border:none;transition:all .18s;}
+.hb-p{background:var(--g6);color:#fff;}.hb-p:hover{background:var(--g5);}
+.hb-lk{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);border:1.5px solid rgba(255,255,255,.12);}
+.hb-g{background:var(--gold);color:#fff;}.hb-g:hover{filter:brightness(1.1);}
+.hb-o{background:transparent;color:rgba(255,255,255,.7);border:1.5px solid rgba(255,255,255,.22);}
+.hcard{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:16px;padding:22px;}
+.hcl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:14px;}
+.hws{display:flex;align-items:center;gap:12px;padding:11px;border-radius:9px;background:rgba(255,255,255,.05);margin-bottom:8px;}
 .hws:last-child{margin-bottom:0;}
 .hwsav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
 .hwsn{font-size:13px;font-weight:600;color:#fff;}
-.hwsm{font-size:11px;color:rgba(255,255,255,.42);}
-.hwsb{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(64,184,110,.22);color:#72d49a;font-weight:600;}
-.hwsb.amb{background:rgba(201,168,76,.18);color:#e0c060;}
-.mbar{background:var(--g6);padding:10px 0;overflow:hidden;white-space:nowrap;}
+.hwsm{font-size:11px;color:rgba(255,255,255,.38);}
+.hwsb{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(58,158,101,.2);color:#6dc490;font-weight:600;}
+.hwsb.amb{background:rgba(184,149,58,.15);color:#d4aa55;}
+.mbar{background:var(--g8);padding:10px 0;overflow:hidden;white-space:nowrap;}
 .mi{display:inline-flex;gap:48px;animation:mq 22s linear infinite;}
-.mitem{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;letter-spacing:.5px;}
-.mitem::after{content:'·';font-size:14px;opacity:.5;margin-left:10px;}
+.mitem{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);letter-spacing:.5px;}
+.mitem::after{content:'·';font-size:14px;opacity:.4;margin-left:10px;}
 @keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .sec{padding:72px 40px;}
 .si{max-width:1060px;margin:0 auto;}
 .ey{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.4px;color:var(--g6);text-transform:uppercase;margin-bottom:10px;}
-.sh2{font-family:'Inter',sans-serif;font-size:32px;font-weight:800;margin-bottom:8px;letter-spacing:-1px;color:var(--g9);}
-.ssub{font-size:14px;color:var(--mu);margin-bottom:36px;max-width:500px;line-height:1.68;}
+.sh2{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;margin-bottom:8px;letter-spacing:-1px;color:var(--ink);}
+.ssub{font-size:14px;color:var(--ink3);margin-bottom:36px;max-width:500px;line-height:1.72;}
 .ig2{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
 .ig4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .ig3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
 .ic{background:var(--w);border:1.5px solid var(--bd);border-radius:12px;padding:24px;transition:border-color .2s,box-shadow .2s;}
-.ic:hover{border-color:var(--g5);box-shadow:0 4px 20px rgba(45,147,86,.1);}
-.icn{font-family:'Inter',sans-serif;font-size:44px;font-weight:900;line-height:1;margin-bottom:8px;color:var(--g7);}
-.icn span{font-size:28px;color:var(--g4);}
-.ilab{font-size:13px;color:var(--mu);line-height:1.58;}
-.qblock{background:var(--g8);color:#fff;border-radius:16px;padding:34px;}
-.qm{font-family:'Inter',sans-serif;font-size:64px;font-weight:900;line-height:.8;color:var(--g4);margin-bottom:12px;}
-.qt{font-family:'Inter',sans-serif;font-size:17px;font-weight:500;line-height:1.6;margin-bottom:16px;color:rgba(255,255,255,.9);}
-.qa{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,.42);letter-spacing:.6px;}
-.ctitle{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--g9);margin-bottom:8px;padding-bottom:8px;border-bottom:1.5px solid var(--bd);}
+.ic:hover{border-color:var(--bd2);box-shadow:0 4px 20px rgba(0,0,0,.06);}
+.icn{font-family:'Sora',sans-serif;font-size:44px;font-weight:800;line-height:1;margin-bottom:8px;color:var(--ink);}
+.icn span{font-size:28px;color:var(--g6);}
+.ilab{font-size:13px;color:var(--ink3);line-height:1.58;}
+.qblock{background:#111009;color:#fff;border-radius:16px;padding:34px;}
+.qm{font-family:'Sora',sans-serif;font-size:64px;font-weight:800;line-height:.8;color:var(--g5);margin-bottom:12px;}
+.qt{font-family:'Manrope',sans-serif;font-size:17px;font-weight:500;line-height:1.65;margin-bottom:16px;color:rgba(255,255,255,.85);}
+.qa{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.6px;}
+.ctitle{font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px;padding-bottom:8px;border-bottom:1.5px solid var(--bd);}
 .clist{list-style:none;}
-.clist li{font-size:12px;color:var(--mu);padding:3px 0;border-bottom:1px solid var(--g0);}
+.clist li{font-size:12px;color:var(--ink3);padding:3px 0;border-bottom:1px solid var(--off);}
 .clist li:last-child{border-bottom:none;}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);margin-top:48px;position:relative;}
-.steps::before{content:'';position:absolute;top:27px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,var(--g1),var(--g4),var(--g1));z-index:0;}
+.steps::before{content:'';position:absolute;top:27px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,var(--bd),var(--g4),var(--bd));z-index:0;}
 .step{position:relative;z-index:1;text-align:center;padding:0 14px;}
-.step-n{width:54px;height:54px;border-radius:50%;background:var(--w);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:'Inter',sans-serif;font-size:19px;font-weight:900;color:var(--g7);transition:all .2s;}
+.step-n{width:54px;height:54px;border-radius:50%;background:var(--w);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:'Sora',sans-serif;font-size:19px;font-weight:800;color:var(--ink2);transition:all .2s;}
 .step:hover .step-n{background:var(--g7);color:#fff;border-color:var(--g7);}
-.step-t{font-family:'Inter',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;color:var(--g9);}
-.step-b{font-size:12.5px;color:var(--mu);line-height:1.65;}
-.stag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 8px;background:var(--g1);border-radius:4px;color:var(--g7);margin-top:10px;}
+.step-t{font-family:'Manrope',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;color:var(--ink);}
+.step-b{font-size:12.5px;color:var(--ink3);line-height:1.65;}
+.stag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 8px;background:var(--off);border-radius:4px;color:var(--ink3);margin-top:10px;border:1px solid var(--bd);}
 .cc2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .cc{border-radius:14px;padding:30px;}
-.cc-e{background:var(--g8);}
-.cc-w{background:var(--g0);border:1.5px solid var(--bd);}
+.cc-e{background:#111009;}
+.cc-w{background:var(--off);border:1.5px solid var(--bd);}
 .cc-ey{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:10px;}
 .cc-e .cc-ey{color:var(--g3);}
 .cc-w .cc-ey{color:var(--g6);}
-.cc-h{font-family:'Inter',sans-serif;font-size:19px;font-weight:800;line-height:1.2;margin-bottom:10px;letter-spacing:-.5px;}
+.cc-h{font-family:'Sora',sans-serif;font-size:19px;font-weight:700;line-height:1.2;margin-bottom:10px;letter-spacing:-.5px;}
 .cc-e .cc-h{color:#fff;}
-.cc-w .cc-h{color:var(--g9);}
-.cc-p{font-size:13px;line-height:1.72;margin-bottom:14px;}
-.cc-e .cc-p{color:rgba(255,255,255,.6);}
-.cc-w .cc-p{color:var(--mu);}
+.cc-w .cc-h{color:var(--ink);}
+.cc-p{font-size:13px;line-height:1.75;margin-bottom:14px;}
+.cc-e .cc-p{color:rgba(255,255,255,.5);}
+.cc-w .cc-p{color:var(--ink3);}
 .cc-pts{list-style:none;margin-bottom:16px;}
 .cc-pts li{font-size:12px;line-height:1.65;padding:4px 0 4px 14px;position:relative;border-bottom:1px solid rgba(255,255,255,.06);}
 .cc-w .cc-pts li{border-bottom-color:var(--bd);}
 .cc-pts li::before{content:'—';position:absolute;left:0;font-weight:700;}
-.cc-e .cc-pts li{color:rgba(255,255,255,.7);}
+.cc-e .cc-pts li{color:rgba(255,255,255,.6);}
 .cc-e .cc-pts li::before{color:var(--g4);}
-.cc-w .cc-pts li{color:#3a5a45;}
+.cc-w .cc-pts li{color:var(--ink2);}
 .cc-w .cc-pts li::before{color:var(--g5);}
-.btncc{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .18s;}
-.cc-e .btncc{background:rgba(255,255,255,.12);color:#fff;}
-.cc-e .btncc:hover{background:rgba(255,255,255,.2);}
+.btncc{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;border:none;transition:all .18s;}
+.cc-e .btncc{background:rgba(255,255,255,.1);color:#fff;}
+.cc-e .btncc:hover{background:rgba(255,255,255,.18);}
 .cc-w .btncc{background:var(--g7);color:#fff;}
 .cc-w .btncc:hover{background:var(--g6);}
 .pg3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
@@ -305,20 +315,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .fu{animation:fu .5s ease both;}
 .d1{animation-delay:.08s}.d2{animation-delay:.16s}.d3{animation-delay:.24s}.d4{animation-delay:.32s}
-
-/* ═══════════════════════════════════
-   MOBILE RESPONSIVE — max-width: 768px
-═══════════════════════════════════ */
-
-
-@media(max-width:420px){
-  .hh1{font-size:26px;}
-  .ig4{grid-template-columns:1fr;}
-  .ecat-g{grid-template-columns:1fr;}
-  .ecat-g3{grid-template-columns:1fr;}
-  .payms{grid-template-columns:1fr;}
-  .nr .bln{font-size:10px;padding:5px 8px;}
-}
 </style>
 </head>
 <body>
@@ -326,7 +322,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 <!-- WELCOME -->
 <div id="welcome">
   <div class="wl-box">
-   <div class="wl-logo"><img src="/AppIconreal.png" alt="BeyondX" style="width:120px;height:120px;object-fit:contain;"></div>
+    <div class="wl-logo fu"><div class="wl-lm"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo">
+</div><span class="wl-lt">BeyondX</span></div>
     <h1 class="wl-h1 fu d1">Welcome to BeyondX</h1>
     <p class="wl-sub fu d2">Ghana's reintegration employment platform — connecting certified, GPS-cleared workers with responsible employers who believe in second chances.</p>
     <div class="wl-paths fu d3">
@@ -350,20 +347,22 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
       <button class="wlb wlb-w" onclick="dismissWelcome();openWorkerLogin()">Enter as Worker</button>
       <button class="wlb wlb-s" onclick="dismissWelcome()">Browse the site first</button>
     </div>
-    <p class="wl-note">This is just a test for our FDE Prototype - Team Rainbow</p>
+    <p class="wl-note">Test credentials are shown on the login screens</p>
   </div>
 </div>
 
 <!-- NAV -->
-<nav id="mainNav" aria-label="Primary">
-  <button type="button" class="logo" id="homeNavBtn" aria-label="Go to home" onclick="switchView('home')"><img src="/withouttagline.png" alt="BeyondX" style="height: 40px; width: 200px; object-fit:cover; object-position:center;"></button>
+<nav id="mainNav">
+  <div class="logo" onclick="switchView('home')"><div class="lm"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo">
+</div>BeyondX</div>
   <div class="ntabs" id="navTabs">
-    <button type="button" class="ntab active" data-view="home">Home</button>
-    <button type="button" class="ntab" data-view="dispatch">Dispatch</button>
+    <button class="ntab active" data-view="home" onclick="switchView('home')">Home</button>
+    <button class="ntab" data-view="dispatch" onclick="switchView('dispatch')">Dispatch</button>
+    <button class="ntab" data-view="meet-the-team" onclick="switchView('meet-the-team')">Meet the Team</button>
   </div>
   <div class="nr">
-    <button type="button" class="bln bln-w" onclick="openWorkerLogin()">Worker Login</button>
-    <button type="button" class="bln" onclick="openEmployerLogin()">Employer Login</button>
+    <button class="bln bln-w" onclick="openWorkerLogin()">Worker Login</button>
+    <button class="bln" onclick="openEmployerLogin()">Employer Login</button>
   </div>
 </nav>
 
@@ -382,24 +381,24 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
         </div>
       </div>
       <div class="fu d4"><div class="hcard">
-        <div class="hcl">Live Worker Network · Greater Accra Region</div>
-        <div class="hws"><div class="hwsav" style="background:#1f6138">SA</div><div><div class="hwsn">Spencer Asante</div><div class="hwsm">BX-00142 · Facility Cleaning · Osu</div></div><span class="hwsb">Available</span></div>
-        <div class="hws"><div class="hwsav" style="background:#7a4520">AS</div><div><div class="hwsn">Abigail Sarpong</div><div class="hwsm">BX-00089 · Event Support · Tema</div></div><span class="hwsb amb">On Task</span></div>
-        <div class="hws"><div class="hwsav" style="background:#3a4a8a">NY</div><div><div class="hwsn">Nana Yaw Osei</div><div class="hwsm">BX-00211 · Logistics · Accra</div></div><span class="hwsb">Available</span></div>
+        <div class="hcl">Live Worker Network · Accra Region</div>
+        <div class="hws"><div class="hwsav" style="background:#1f6138">KA</div><div><div class="hwsn">Kofi Asante</div><div class="hwsm">BX-00142 · Facility Cleaning · Osu</div></div><span class="hwsb">Available</span></div>
+        <div class="hws"><div class="hwsav" style="background:#7a4520">AS</div><div><div class="hwsn">Ama Sarpong</div><div class="hwsm">BX-00089 · Event Support · Tema</div></div><span class="hwsb amb">On Task</span></div>
+        <div class="hws"><div class="hwsav" style="background:#3a4a8a">JO</div><div><div class="hwsn">James Osei</div><div class="hwsm">BX-00211 · Logistics · Accra</div></div><span class="hwsb">Available</span></div>
       </div></div>
     </div>
   </section>
-  <div class="mbar"><div class="mi"><span class="mitem">187 Tasks Completed</span><span class="mitem">Active Workers - Across Ghana</span><span class="mitem">GPS-Verified Attendance</span><span class="mitem">Greater Accra Region</span><span class="mitem">Ghana Prisons Service Partner</span><span class="mitem">4.7 Avg Rating</span><span class="mitem">0% Reoffending Rate</span><span class="mitem">187 Tasks Completed</span><span class="mitem">43 Active Workers</span><span class="mitem">GPS-Verified Attendance</span><span class="mitem">Greater Accra Region</span><span class="mitem">Ghana Prisons Service Partner</span><span class="mitem">4.7 Avg Rating</span><span class="mitem">0% Reoffending Rate</span></div></div>
+  <div class="mbar"><div class="mi"><span class="mitem">187 Tasks Completed</span><span class="mitem">43 Active Workers</span><span class="mitem">GPS-Verified Attendance</span><span class="mitem">Greater Accra Region</span><span class="mitem">Ghana Prisons Service Partner</span><span class="mitem">4.7 Avg Rating</span><span class="mitem">0% Reoffending Rate</span><span class="mitem">187 Tasks Completed</span><span class="mitem">43 Active Workers</span><span class="mitem">GPS-Verified Attendance</span><span class="mitem">Greater Accra Region</span><span class="mitem">Ghana Prisons Service Partner</span><span class="mitem">4.7 Avg Rating</span><span class="mitem">0% Reoffending Rate</span></div></div>
   <section class="sec"><div class="si ig2">
     <div><div class="ey">About the Programme</div><h2 style="font-family:'Inter',sans-serif;font-size:34px;font-weight:800;line-height:1.15;margin-bottom:18px;letter-spacing:-1px;color:var(--g9);">Work that <span style="color:var(--g6);">restores</span> dignity.<br>Hire that builds trust.</h2><div style="font-size:14px;line-height:1.82;color:#3a5a45;"><p>BeyondX is a structured work-release and reintegration programme operated in partnership with the Ghana Prisons Service. It places vetted, skill-matched workers from correctional facilities into verified short-term roles with responsible employers across Greater Accra.</p><p style="margin-top:14px;">Every worker completes skills certification and carries a digital work record tracked in real time. Every employer receives GPS-verified attendance logs and dedicated coordinator support.</p></div></div>
     <div class="qblock"><div class="qm">"</div><div class="qt">Before BeyondX, I had skills but no platform. Now I have a work record, a wage, and employers who call me back.</div><div class="qa">— KOFI A., BX-00142 · FACILITY CLEANING SPECIALIST</div></div>
   </div></section>
   <section class="sec" style="background:var(--off);border-top:1.5px solid var(--bd);border-bottom:1.5px solid var(--bd);"><div class="si">
-    <div class="ey">Impact at a Glance</div><h2 class="sh2">Real numbers. Real lives changed.</h2><p class="ssub">Since launching in all parts of Ghana, BeyondX has built a measurable record of economic and social impact.</p>
+    <div class="ey">Impact at a Glance</div><h2 class="sh2">Real numbers. Real lives changed.</h2><p class="ssub">Since launching in Greater Accra, BeyondX has built a measurable record of economic and social impact.</p>
     <div class="ig4"><div class="ic"><div class="icn">187<span>+</span></div><div class="ilab">Tasks completed across seven service categories</div></div><div class="ic"><div class="icn">43</div><div class="ilab">Active GPS-cleared workers in the network today</div></div><div class="ic"><div class="icn">31</div><div class="ilab">Verified employers onboarded across Greater Accra</div></div><div class="ic"><div class="icn">0<span>%</span></div><div class="ilab">Programme reoffending rate among active participants</div></div></div>
   </div></section>
   <section class="sec"><div class="si">
-    <div class="ey">Available Task Categories</div><h2 class="sh2">What our workers do.</h2><p class="ssub">Workers are certified across seven categories and matched to employer needs across Ghana.</p>
+    <div class="ey">Available Task Categories</div><h2 class="sh2">What our workers do.</h2><p class="ssub">Workers are certified across seven categories and matched to employer needs across Greater Accra.</p>
     <div class="ig4" style="margin-bottom:12px;"><div class="ic"><div class="ctitle">Facility &amp; Cleaning</div><ul class="clist"><li>Office cleaning</li><li>School compound sweeping</li><li>Hospital ward cleaning</li><li>Gutter &amp; drain clearing</li></ul></div><div class="ic"><div class="ctitle">Logistics &amp; Delivery</div><ul class="clist"><li>Warehouse stock sorting</li><li>Goods offloading — Tema Port</li><li>Supermarket shelf stocking</li><li>Market porter</li></ul></div><div class="ic"><div class="ctitle">Maintenance &amp; Repairs</div><ul class="clist"><li>Painting &amp; touch-up work</li><li>Tiling assistance</li><li>Plumbing support</li><li>Building site labourer</li></ul></div><div class="ic"><div class="ctitle">Event &amp; Hospitality</div><ul class="clist"><li>Chair &amp; table setup</li><li>Catering assistant</li><li>Food serving at events</li><li>Venue decoration setup</li></ul></div></div>
     <div class="ig3"><div class="ic"><div class="ctitle">Agriculture &amp; Environment</div><ul class="clist"><li>Farm weeding &amp; harvesting</li><li>Grass cutting &amp; landscaping</li><li>Tree planting</li><li>Community garden maintenance</li></ul></div><div class="ic"><div class="ctitle">Retail &amp; Trade Support</div><ul class="clist"><li>Shop attendant</li><li>Packing and bagging</li><li>Loading &amp; offloading trucks</li><li>Cold store assistant</li></ul></div><div class="ic"><div class="ctitle">Community Services</div><ul class="clist"><li>Neighbourhood waste collection</li><li>School painting</li><li>Street drain maintenance</li><li>Public park upkeep</li></ul></div></div>
   </div></section>
@@ -428,30 +427,44 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;flex-wrap:wrap;gap:14px;"><h2 class="sh2" style="margin-bottom:0;">Built on three pillars.</h2><p style="font-size:13px;color:var(--mu);max-width:260px;line-height:1.65;text-align:right;">Every decision in BeyondX is shaped by these principles.</p></div>
     <div class="pg3"><div class="pc"><div class="pt">Safety &amp; Trust</div><div class="pb">Every worker is cleared through the Ghana Prisons Service vetting process. GPS-tracked attendance ensures employers always know who is on site and when.</div></div><div class="pc"><div class="pt">Economic Dignity</div><div class="pb">Workers earn a fair market wage, paid promptly via mobile money. Earnings support both individual reintegration and family stability.</div></div><div class="pc"><div class="pt">Lasting Reintegration</div><div class="pb">BeyondX is not a one-time placement — it is a pathway. Workers build verified records that open doors to permanent employment after release.</div></div></div>
   </div></section>
+  
+  
+</div>
+
+<div class="view" id="view-meet-the-team">
   <!-- TEAM -->
   <section style="background:var(--g9);padding:64px 40px 0;overflow:hidden;">
     <div style="max-width:1060px;margin:0 auto;">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:end;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.1);">
-        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.6px;color:var(--g3);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:9px;"><span style="width:22px;height:1.5px;background:var(--g3);display:inline-block;"></span>Ashesi University · Berekuso, Ghana</div><h2 style="font-family:'Inter',sans-serif;font-size:44px;font-weight:900;line-height:1.0;letter-spacing:-2px;color:#fff;margin-bottom:14px;">Meet the<br><span style="color:var(--g3);">Team.</span></h2><p style="font-size:14px;color:rgba(255,255,255,.55);line-height:1.75;max-width:360px;">BeyondX was designed and built by six students at Ashesi University, driven by the belief that ex-convicts deserve second chances.</p></div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;"><div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:18px 26px;text-align:right;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:5px;">Team Name</div><div style="font-family:'Inter',sans-serif;font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;">Team Rainbow</div></div><div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 16px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--g4);"></div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,.6);">6 Members · Foundation of Design Thinking &amp; Entrepreneurship I</div></div></div>
+        <div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.6px;color:var(--g3);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:9px;"><span style="width:22px;height:1.5px;background:var(--g3);display:inline-block;"></span>Ashesi University · Berekuso, Ghana</div><h2 style="font-family:'Inter',sans-serif;font-size:44px;font-weight:900;line-height:1.0;letter-spacing:-2px;color:#fff;margin-bottom:14px;">Meet the<br><span style="color:var(--g3);">Team.</span></h2><p style="font-size:14px;color:rgba(255,255,255,.55);line-height:1.75;max-width:360px;">BeyondX was designed and built by eleven students at Ashesi University, driven by the belief that technology can be a genuine force for justice and second chances.</p></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;"><div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:14px;padding:18px 26px;text-align:right;"><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:5px;">Team Name</div><div style="font-family:'Inter',sans-serif;font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;">Team Rainbow</div></div><div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 16px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--g4);"></div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,.6);">11 Members · Foundation of Design Thinking &amp; Entrepreneurship</div></div></div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding-top:36px;margin-bottom:12px;">
-        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1a4d30,#2d9356);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">SA</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Spencer Amoo-Yankey</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Team Leader</div></div>
-        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1f6138,#40b86e);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">AO</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Abigail Osei-Adei</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Team Co-Lead</div></div>
-        <div style="background:rgba(255,255,255,.07);border:1.5px solid rgba(114,212,154,.25);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.11)';this.style.borderColor='var(--g3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.borderColor='rgba(114,212,154,.25)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.5)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#0d3320,#1f6138);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">ED</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Edwina Dzifa Ashigbui</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Editor</div></div>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1a4d30,#2d9356);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">SA</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Spencer Amoo-Yankey</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Chief Executive Officer</div></div>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1f6138,#40b86e);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">JD</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Jonathan James Duah</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Chief Technical Officer</div></div>
+        <div style="background:rgba(255,255,255,.07);border:1.5px solid rgba(114,212,154,.25);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.11)';this.style.borderColor='var(--g3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.borderColor='rgba(114,212,154,.25)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.5)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#0d3320,#1f6138);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">ED</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Edwina Dzifa Ashigbui</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Chief Marketing Officer</div></div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#257a45,#72d49a);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">NY</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Nana Yaw Kra Mensah</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Presenter</div></div>
-        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1f6138,#2d9356);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">JJ</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Jonathan James Duah</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Designer</div></div>
-        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1a4d30,#40b86e);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">WA</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Windin Azera</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Researcher</div></div>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#257a45,#72d49a);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">EN</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Elikem Ama Nyaho</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Chief Finance Officer</div></div>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1f6138,#2d9356);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">AO</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Abigail Aseda Osei</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Finance Team Member</div></div>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1a4d30,#40b86e);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">JA</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Jessica Joalynn Abdul</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Finance Team Member</div></div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:36px;padding:22px 0;border-top:1px solid rgba(255,255,255,.1);"><div style="display:flex;align-items:center;gap:10px;"><div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,.9);">Ashesi University</div><div style="width:1px;height:12px;background:rgba(255,255,255,.2);"></div><div style="font-size:13px;color:rgba(255,255,255,.4);">Berekuso, Eastern Region, Ghana</div></div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Foundation of Design Thinking &amp; Entrepreneurship I · April 2026</div></div>
+       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#257a45,#72d49a);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">NY</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Nana Yaw Kra Mensah</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Sales Team Member</div></div>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1f6138,#2d9356);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">CK</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Canny Eyram Kataria</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Sales Team Member</div></div>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1a4d30,#40b86e);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">WA</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Windin Azera</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Product Development Member</div></div>
+      </div>
+       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1f6138,#2d9356);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">KA</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Kwame Appiah Owiredu-Akoto</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Product Development Member</div></div>
+        <div style="background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 14px 20px;text-align:center;cursor:default;transition:all .25s;" onmouseover="this.style.background='rgba(255,255,255,.09)';this.style.borderColor='var(--g4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='translateY(0)'"><div style="position:relative;width:68px;height:68px;margin:0 auto 14px;"><svg viewBox="0 0 68 68" style="position:absolute;inset:0;width:100%;height:100%;"><circle cx="34" cy="34" r="32" fill="none" stroke="rgba(114,212,154,.3)" stroke-width="1.5" stroke-dasharray="6 3"/></svg><div style="position:absolute;inset:5px;border-radius:50%;background:linear-gradient(135deg,#1a4d30,#40b86e);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">EE</div></div><div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:5px;">Elim Essikpe</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Marketing Team Member</div></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:36px;padding:22px 0;border-top:1px solid rgba(255,255,255,.1);"><div style="display:flex;align-items:center;gap:10px;"><div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,.9);">Ashesi University</div><div style="width:1px;height:12px;background:rgba(255,255,255,.2);"></div><div style="font-size:13px;color:rgba(255,255,255,.4);">Berekuso, Eastern Region, Ghana</div></div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;">Foundation of Design Thinking &amp; Entrepreneurship · April 2026</div></div>
     </div>
   </section>
   <section class="dstrip"><div class="si"><div class="dl">Legal Notice &amp; Disclaimer</div><p class="dt"><strong>Programme Oversight:</strong> BeyondX operates in formal partnership with the Ghana Prisons Service under the National Reintegration Framework. All worker placements are voluntary and subject to eligibility screening.<br><br><strong>No Employment Contract:</strong> BeyondX serves as a coordination and record-keeping platform only. Participation does not constitute a formal employment contract between any party.</p></div></section>
   <section class="sec" style="background:var(--off);border-top:1.5px solid var(--bd);"><div style="max-width:640px;margin:0 auto;text-align:center;">
     <h2 style="font-family:'Inter',sans-serif;font-size:38px;font-weight:900;line-height:1.08;margin-bottom:14px;letter-spacing:-1.5px;color:var(--g9);">Ready to hire with purpose?</h2>
-    <p style="font-size:15px;color:var(--mu);line-height:1.78;margin-bottom:32px;">Join 70 employers across Ghana building better businesses — and better futures — through BeyondX.</p>
+    <p style="font-size:15px;color:var(--mu);line-height:1.78;margin-bottom:32px;">Join 31 employers across Greater Accra building better businesses — and better futures — through BeyondX.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;"><button class="bp" onclick="findWorkerGate()">Find a Worker</button><button class="bg" onclick="document.getElementById('sponsors').scrollIntoView({behavior:'smooth'})">Join the Movement</button><button class="bo" onclick="openEmployerLogin()">Employer Login</button></div>
   </div></section>
 </div>
@@ -460,7 +473,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 <div class="view" id="view-worker">
   <div class="wbar">
     <div style="display:flex;align-items:center;gap:16px;">
-      <div class="logo" style="color:#fff;cursor:pointer;" onclick="switchView('home')"><div class="lm">BX</div>BeyondX</div>
+      <div class="logo" style="color:#fff;cursor:pointer;" onclick="switchView('home')"><div class="lm"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo"></div>BeyondX</div>
       <div style="width:1px;height:18px;background:rgba(255,255,255,.2);"></div>
       <div style="font-size:13px;color:rgba(255,255,255,.65);">Worker Dashboard</div>
     </div>
@@ -477,23 +490,26 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 <div class="view" id="view-dispatch">
   <div class="ebar">
     <div class="ebar-l">
-      <div class="logo" style="color:#fff;cursor:pointer;font-size:16px;" onclick="switchView('home')"><div class="lm" style="width:22px;height:22px;font-size:10px;">BX</div>BeyondX</div>
+      <div class="logo" style="color:#fff;cursor:pointer;font-size:16px;" onclick="switchView('home')"><div class="lm" style="width:22px;height:22px;font-size:10px;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="35" style="border-radius:75%;" alt="BeyondX Logo"></div>BeyondX</div>
       <span class="ebar-n" id="empOrgName">BeyondX Employer</span>
       <span class="ebar-r">EMPLOYER · VERIFIED</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--g5);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo"></div>
       <button class="btnlo" onclick="employerLogout()">Log Out</button>
     </div>
   </div>
   <div id="empMain"></div>
 </div>
-
+ 
 <!-- MODALS -->
 <div class="mov" id="empLoginModal">
   <div class="modal" style="max-width:420px;">
     <button class="mc" onclick="closeEmpLogin()">✕</button>
-    <div style="text-align:center;margin-bottom:20px;"><div style="width:46px;height:46px;background:var(--g6);border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;color:#fff;">BX</div><div class="mt" style="font-size:18px;">Employer Login</div><div class="ms" style="margin-bottom:0;">Sign in to access the worker dispatch platform</div></div>
-    <div class="tcreds"><div class="tclbl">Test Credentials</div><div class="tcr"><span class="tck">Email</span><span class="tcv" onclick="document.getElementById('eEm').value='employer@beyondx.gh';this.style.color='var(--g5)'">employer@beyondx.gh</span></div><div class="tcr"><span class="tck">Password</span><span class="tcv" onclick="document.getElementById('ePw').value='Test1234';this.style.color='var(--g5)'">Test1234</span></div><div class="tchn">Click either value to auto-fill</div></div>
+    <div style="text-align:center;margin-bottom:20px;"><div style="width:46px;height:46px;background:var(--g6);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;color:#fff;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo">
+</div>
+<div class="mt" style="font-size:18px;">Employer Login</div><div class="ms" style="margin-bottom:0;">Sign in to access the worker dispatch platform</div></div>
+    <div class="tcreds"><div class="tclbl">Login Format</div><div class="tcr"><span class="tck">Email</span><span class="tcv" onclick="document.getElementById('eEm').value='employer@mailserver.domain';this.style.color='var(--g5)'">employer@mailserver.domain</span></div><div class="tcr"><span class="tck">Password</span><span class="tcv" onclick="document.getElementById('ePw').value='.........';this.style.color='var(--g5)'">.........</span></div><div class="tchn">Click either value to auto-fill</div></div>
     <div class="fld2"><label>Email Address</label><input type="email" id="eEm" placeholder="yourname@organisation.com"/></div>
     <div class="fld2"><label>Password</label><input type="password" id="ePw" placeholder="••••••••"/></div>
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleEmpLogin()">Sign In</button>
@@ -502,41 +518,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <p class="mnote">Verified by Ghana Prisons Service · Secure login</p>
   </div>
 </div>
-<div class="mov" id="empRegisterModal">
-  <div class="modal" style="max-width:460px;">
-    <button class="mc" onclick="document.getElementById('empRegisterModal').classList.remove('open')">✕</button>
-    <div style="text-align:center;margin-bottom:20px;">
-      <div style="width:46px;height:46px;background:var(--g6);border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;color:#fff;">BX</div>
-      <div class="mt" style="font-size:18px;">Create Employer Account</div>
-      <div class="ms" style="margin-bottom:0;">Join BeyondX and start hiring verified workers</div>
-    </div>
-    <div class="fld2"><label>Organisation Name</label><input type="text" id="regOrgName" placeholder="e.g. Accra Business Hub"/></div>
-    <div class="fld2"><label>Contact Person</label><input type="text" id="regContact" placeholder="Your full name"/></div>
-    <div class="fld2"><label>Email Address</label><input type="email" id="regEmail" placeholder="yourname@organisation.com"/></div>
-    <div class="fld2"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="e.g. 0244000000"/></div>
-    <div class="fld2"><label>Password</label><input type="password" id="regPassword" placeholder="Choose a strong password"/></div>
-    <div class="fld2"><label>Region</label>
-      <select id="regRegion">
-        <option>Greater Accra</option>
-        <option>Ashanti</option>
-        <option>Western</option>
-        <option>Central</option>
-        <option>Eastern</option>
-        <option>Northern</option>
-        <option>Volta</option>
-        <option>Upper East</option>
-        <option>Upper West</option>
-        <option>Brong-Ahafo</option>
-      </select>
-    </div>
-    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleEmpRegister()">Create Account</button>
-    <p class="mnote">Already have an account? <span style="color:var(--g6);cursor:pointer;font-weight:600;" onclick="document.getElementById('empRegisterModal').classList.remove('open');openEmployerLogin()">Sign In</span></p>
-  </div>
-</div>
 <div class="mov" id="wrkLoginModal">
   <div class="modal" style="max-width:420px;">
     <button class="mc" onclick="closeWrkLogin()">✕</button>
-    <div style="text-align:center;margin-bottom:20px;"><div style="width:50px;height:50px;background:var(--g7);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">KA</div><div class="mt" style="font-size:18px;">Worker Login</div><div class="ms" style="margin-bottom:0;">Access your BeyondX task dashboard</div></div>
+    <div style="text-align:center;margin-bottom:20px;"><div style="width:50px;height:50px;background:var(--g7);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo">
+</div><div class="mt" style="font-size:18px;">Worker Login</div><div class="ms" style="margin-bottom:0;">Access your BeyondX task dashboard</div></div>
     <div class="tcreds"><div class="tclbl">Test Credentials</div><div class="tcr"><span class="tck">Worker ID</span><span class="tcv" onclick="document.getElementById('wID').value='BX-00142';this.style.color='var(--g5)'">BX-00142</span></div><div class="tcr"><span class="tck">PIN</span><span class="tcv" onclick="document.getElementById('wPN').value='1234';this.style.color='var(--g5)'">1234</span></div><div class="tchn">Click either value to auto-fill</div></div>
     <div class="fld2"><label>Worker ID</label><input type="text" id="wID" placeholder="e.g. BX-00142"/></div>
     <div class="fld2"><label>PIN / Password</label><input type="password" id="wPN" placeholder="••••••••"/></div>
@@ -544,43 +530,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <div class="divid">or</div>
     <button class="bout" onclick="closeWrkLogin();openWrkRegister();">Register as a Worker</button>
     <p class="mnote">Worker accounts are issued by the Ghana Prisons Service</p>
-  </div>
-</div>
-<div class="mov" id="wrkRegisterModal">
-  <div class="modal" style="max-width:460px;">
-    <button class="mc" onclick="document.getElementById('wrkRegisterModal').classList.remove('open')">✕</button>
-    <div style="text-align:center;margin-bottom:20px;">
-      <div style="width:50px;height:50px;background:var(--g7);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;">BX</div>
-      <div class="mt" style="font-size:18px;">Register as a Worker</div>
-      <div class="ms" style="margin-bottom:0;">Join BeyondX and start earning through verified work</div>
-    </div>
-    <div class="fld2"><label>Full Name</label><input type="text" id="wregName" placeholder="Your full legal name"/></div>
-    <div class="fld2"><label>Phone Number</label><input type="tel" id="wregPhone" placeholder="e.g. 0244000000"/></div>
-    <div class="fld2"><label>Prison Facility</label>
-      <select id="wregFacility">
-        <option>Nsawam Medium Security Prison</option>
-        <option>Kumasi Central Prison</option>
-        <option>James Fort Prison</option>
-        <option>Ankaful Maximum Security Prison</option>
-        <option>Sunyani Central Prison</option>
-        <option>Ho Central Prison</option>
-        <option>Tamale Central Prison</option>
-      </select>
-    </div>
-    <div class="fld2"><label>Skills</label>
-      <select id="wregSkill">
-        <option>Facility & Cleaning</option>
-        <option>Logistics & Delivery</option>
-        <option>Maintenance & Repairs</option>
-        <option>Event & Hospitality</option>
-        <option>Agriculture & Environment</option>
-        <option>Retail & Trade</option>
-        <option>Community Services</option>
-      </select>
-    </div>
-    <div class="fld2"><label>PIN (4 digits)</label><input type="password" id="wregPin" placeholder="Choose a 4-digit PIN" maxlength="4"/></div>
-    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;background:var(--g7);" onclick="handleWrkRegister()">Create My Account</button>
-    <p class="mnote">Already have an account? <span style="color:var(--g6);cursor:pointer;font-weight:600;" onclick="document.getElementById('wrkRegisterModal').classList.remove('open');openWorkerLogin()">Sign In</span></p>
   </div>
 </div>
 <div class="mov" id="empAckModal">
@@ -607,7 +556,35 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="proto"><span><span class="pdot"></span>SYSTEM LIVE</span><span>GPS SYNC: ACTIVE</span><span>DB: GHA-PRISONS-API v2.1</span><span>REGION: ALL SIXTEEN REGIONS | © 2026 BeyondX - Same hands, New start! All rights reserved.</span></div>
+<div class="proto"><span><span class="pdot"></span>SYSTEM LIVE</span><span>GPS SYNC: ACTIVE</span><span>DB: GHA-PRISONS-API v2.1</span><span>REGION: GREATER ACCRA</span></div>
+
+<div class="mov" id="empRegisterModal">
+  <div class="modal" style="max-width:460px;">
+    <button class="mc" onclick="document.getElementById('empRegisterModal').classList.remove('open')">✕</button>
+    <div style="text-align:center;margin-bottom:20px;"><div style="width:46px;height:46px;background:var(--g7);border-radius:9px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;color:#fff;">BX</div><div class="mt" style="font-size:18px;">Create Employer Account</div><div class="ms" style="margin-bottom:0;">Join BeyondX and start hiring verified workers</div></div>
+    <div class="fld2"><label>Organisation Name</label><input type="text" id="regOrgName" placeholder="e.g. Accra Business Hub"/></div>
+    <div class="fld2"><label>Contact Person</label><input type="text" id="regContact" placeholder="Your full name"/></div>
+    <div class="fld2"><label>Email Address</label><input type="email" id="regEmail" placeholder="yourname@organisation.com"/></div>
+    <div class="fld2"><label>Phone Number</label><input type="tel" id="regPhone" placeholder="e.g. 0244000000"/></div>
+    <div class="fld2"><label>Password</label><input type="password" id="regPassword" placeholder="Choose a strong password"/></div>
+    <div class="fld2"><label>Region</label><select id="regRegion"><option>Greater Accra</option><option>Ashanti</option><option>Western</option><option>Central</option><option>Eastern</option><option>Northern</option><option>Volta</option><option>Upper East</option><option>Upper West</option><option>Brong-Ahafo</option></select></div>
+    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleEmpRegister()">Create Account</button>
+    <p class="mnote">Already have an account? <span style="color:var(--g6);cursor:pointer;font-weight:600;" onclick="document.getElementById('empRegisterModal').classList.remove('open');openEmployerLogin()">Sign In</span></p>
+  </div>
+</div>
+<div class="mov" id="wrkRegisterModal">
+  <div class="modal" style="max-width:460px;">
+    <button class="mc" onclick="document.getElementById('wrkRegisterModal').classList.remove('open')">✕</button>
+    <div style="text-align:center;margin-bottom:20px;"><div style="width:50px;height:50px;background:var(--g7);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;color:#fff;">BX</div><div class="mt" style="font-size:18px;">Register as a Worker</div><div class="ms" style="margin-bottom:0;">Join BeyondX and start earning through verified work</div></div>
+    <div class="fld2"><label>Full Name</label><input type="text" id="wregName" placeholder="Your full legal name"/></div>
+    <div class="fld2"><label>Phone Number</label><input type="tel" id="wregPhone" placeholder="e.g. 0244000000"/></div>
+    <div class="fld2"><label>Prison Facility</label><select id="wregFacility"><option>Nsawam Medium Security Prison</option><option>Kumasi Central Prison</option><option>James Fort Prison</option><option>Ankaful Maximum Security Prison</option><option>Sunyani Central Prison</option><option>Ho Central Prison</option><option>Tamale Central Prison</option></select></div>
+    <div class="fld2"><label>Skills</label><select id="wregSkill"><option>Facility &amp; Cleaning</option><option>Logistics &amp; Delivery</option><option>Maintenance &amp; Repairs</option><option>Event &amp; Hospitality</option><option>Agriculture &amp; Environment</option><option>Retail &amp; Trade</option><option>Community Services</option></select></div>
+    <div class="fld2"><label>PIN (4 digits)</label><input type="password" id="wregPin" placeholder="Choose a 4-digit PIN" maxlength="4"/></div>
+    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleWrkRegister()">Create My Account</button>
+    <p class="mnote">Already have an account? <span style="color:var(--g6);cursor:pointer;font-weight:600;" onclick="document.getElementById('wrkRegisterModal').classList.remove('open');openWorkerLogin()">Sign In</span></p>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════
@@ -630,14 +607,9 @@ const WS = { status:'idle', task:null, done:14, earned:840 };
 let declined = new Set();
 
 function renderWorker() {
-  const _wrk = JSON.parse(localStorage.getItem('bx_worker') || '{}');
-  const _nameEl = document.getElementById('workerNameDisplay');
-  if (_nameEl && _wrk.fullName) _nameEl.textContent = _wrk.fullName;
-  const _avEl = document.getElementById('workerAvatar');
-  if (_avEl && _wrk.fullName) {
-    const initials = _wrk.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-    _avEl.textContent = initials;
-  }
+  const _wrk=JSON.parse(localStorage.getItem('bx_worker')||'{}');
+  const _nameEl=document.getElementById('workerNameDisplay');
+  if(_nameEl&&_wrk.fullName)_nameEl.textContent=_wrk.fullName;
   const m = document.getElementById('workerMain');
   if (!m) return;
   if (WS.status === 'idle') m.innerHTML = renderIdle();
@@ -811,7 +783,7 @@ const ECATS=[
   {name:"Retail & Trade",desc:"Shop floor, stock, and trade assistance.",samples:["Shop attendant","Packing & bagging","Shelf stocking","Loading trucks"]},
   {name:"Community Services",desc:"Public space maintenance and community projects.",samples:["Waste collection","Drain maintenance","Park upkeep","School painting"]}
 ];
-let EWORKERS=[]
+let EWORKERS=[];
 
 function wAvatar(w,sz){
   sz=sz||80;
@@ -825,41 +797,32 @@ function wAvatar(w,sz){
 const EMP={view:'categories',cat:null,worker:null,days:1,payMethod:'mtn'};
 function empGo(v){EMP.view=v;renderEmp();}
 async function renderEmp(){
-  const _emp = JSON.parse(localStorage.getItem('bx_employer') || '{}');
-const _orgEl = document.getElementById('empOrgName');
-if(_orgEl && _emp.orgName) _orgEl.textContent = _emp.orgName;
+  const _emp=JSON.parse(localStorage.getItem('bx_employer')||'{}');
+  const _orgEl=document.getElementById('empOrgName');
+  if(_orgEl&&_emp.orgName)_orgEl.textContent=_emp.orgName;
   const m=document.getElementById('empMain');if(!m)return;
-
   if(EMP.view==='categories'){m.innerHTML=renderECats();return;}
-  
   if(EMP.view==='workers'&&EWORKERS.length===0){
-    m.innerHTML='<div style="padding:40px;text-align:center;color:var(--mu);">Loading workers...</div>';
+    m.innerHTML='<div style="padding:40px;text-align:center;color:var(--ink3);">Loading workers...</div>';
     try{
       const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/workers');
       const data=await resp.json();
       EWORKERS=data.workers.map(w=>({
-  id:      w.id,
-  workerId:w.workerId,
-  name:    w.fullName,
-  charge:  parseFloat(w.dailyCharge),
-  rating:  parseFloat(w.rating),
-  tasks:   w.tasksCompleted,
-  offense: w.offenseLevel,
-  gps:     w.gpsVerified,
-  skills:  w.skills,
-  bio:     w.bio||'Verified worker ready for deployment.',
-  months:  0,
-  cat:     w.skills[0]||'General',
-  cats:    w.skills.length>0 ? w.skills : ['Facility & Cleaning','Logistics & Delivery','Community Services'],
-  seed:    w.workerId.toLowerCase().replace('-',''),
-  gender:  'm'
-}));
+        id:w.id,workerId:w.workerId,name:w.fullName,
+        charge:parseFloat(w.dailyCharge),rating:parseFloat(w.rating),
+        tasks:w.tasksCompleted,offense:w.offenseLevel,
+        offenseLabel:w.offenseLevel==='major'?'⚠️ Major Offense':w.offenseLevel==='minor'?'Minor Offense':'Clean Record',
+        gps:w.gpsVerified,skills:w.skills,
+        bio:w.bio||'Verified worker ready for deployment.',
+        months:0,released:'2026',
+        cats:w.skills.length>0?w.skills:['Facility & Cleaning','Logistics & Delivery','Community Services'],
+        seed:w.workerId.toLowerCase().replace('-',''),gender:'m'
+      }));
     }catch(err){
-      m.innerHTML='<div style="padding:40px;text-align:center;color:var(--mu);">Could not load workers.</div>';
+      m.innerHTML='<div style="padding:40px;text-align:center;color:var(--ink3);">Could not load workers.</div>';
       return;
     }
   }
-
   if(EMP.view==='workers')m.innerHTML=renderEWorkers();
   else if(EMP.view==='profile')m.innerHTML=renderEProfile();
   else if(EMP.view==='confirm')m.innerHTML=renderEConfirm();
@@ -962,7 +925,7 @@ let isEmpLoggedIn=false, loginRedirect=null;
 
 function dismissWelcome(){
   const w=document.getElementById('welcome');
-  if(w){w.style.opacity='0';w.style.transition='opacity .4s';setTimeout(()=>{w.style.display='none';w.style.zIndex='-1';},400);}
+  if(w){w.style.opacity='0';w.style.transition='opacity .4s';setTimeout(()=>w.style.display='none',400);}
 }
 function switchView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
@@ -989,197 +952,109 @@ function updateFindBtn(){
   if(isEmpLoggedIn){b.className='hb hb-p';b.textContent='Find a Worker';}
   else{b.className='hb hb-lk';b.textContent='Find a Worker  ·  Login Required';}
 }
-function openEmpRegister(){
-  document.getElementById('empRegisterModal').classList.add('open');
-}
-
-async function handleEmpRegister(){
-  const orgName   = document.getElementById('regOrgName').value.trim();
-  const contact   = document.getElementById('regContact').value.trim();
-  const email     = document.getElementById('regEmail').value.trim();
-  const phone     = document.getElementById('regPhone').value.trim();
-  const password  = document.getElementById('regPassword').value;
-  const region    = document.getElementById('regRegion').value;
-
-  if(!orgName||!email||!password||!contact){
-    toast('Please fill in all required fields.');
-    return;
-  }
-
-  toast('Creating your account...');
-
-  try {
-    const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/employer-register', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email, password, orgName, contactPerson: contact, phone, region })
-    });
-
-    const data = await resp.json();
-
-    if(!resp.ok){
-      toast(data.error || 'Registration failed. Please try again.');
-      return;
-    }
-
-    localStorage.setItem('bx_employer_token', data.token);
-    localStorage.setItem('bx_employer', JSON.stringify(data.employer));
-
-    document.getElementById('empRegisterModal').classList.remove('open');
-    document.getElementById('eAck').checked = false;
-    document.getElementById('eAckBtn').disabled = true;
-    document.getElementById('empAckModal').classList.add('open');
-
-  } catch(err) {
-    toast('Could not connect to server.');
-  }
-}
 function openEmployerLogin(r){if(r)loginRedirect=r;document.getElementById('empLoginModal').classList.add('open');}
 function closeEmpLogin(){document.getElementById('empLoginModal').classList.remove('open');}
-function openWrkRegister(){
-  document.getElementById('wrkRegisterModal').classList.add('open');
-}
-
-async function handleWrkRegister(){
-  const fullName = document.getElementById('wregName').value.trim();
-  const phone    = document.getElementById('wregPhone').value.trim();
-  const facility = document.getElementById('wregFacility').value;
-  const skill    = document.getElementById('wregSkill').value;
-  const pin      = document.getElementById('wregPin').value.trim();
-
-  if(!fullName||!phone||!pin){
-    toast('Please fill in all required fields.');
-    return;
-  }
-  if(pin.length !== 4 || isNaN(pin)){
-    toast('PIN must be exactly 4 digits.');
-    return;
-  }
-
-  toast('Creating your account...');
-
-  try {
-    const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-register', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ fullName, phone, prisonFacility: facility, skills: [skill], pin })
-    });
-
-    const data = await resp.json();
-
-    if(!resp.ok){
-      toast(data.error || 'Registration failed. Please try again.');
-      return;
-    }
-
-    localStorage.setItem('bx_worker_token', data.token);
-    localStorage.setItem('bx_worker', JSON.stringify(data.worker));
-
-    document.getElementById('wrkRegisterModal').classList.remove('open');
-    toast(`Welcome! Your Worker ID is ${data.worker.workerId}. Please save it.`);
-    document.getElementById('wAck').checked = false;
-    document.getElementById('wAckBtn').disabled = true;
-    document.getElementById('wrkAckModal').classList.add('open');
-
-  } catch(err) {
-    toast('Could not connect to server.');
-  }
-}
 function openWorkerLogin(){document.getElementById('wrkLoginModal').classList.add('open');}
 function closeWrkLogin(){document.getElementById('wrkLoginModal').classList.remove('open');}
 ['empLoginModal','empRegisterModal','wrkLoginModal','wrkRegisterModal','empAckModal','wrkAckModal','stmtModal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 });
+function openEmpRegister(){document.getElementById('empRegisterModal').classList.add('open');}
+function openWrkRegister(){document.getElementById('wrkRegisterModal').classList.add('open');}
+function employerLogout(){isEmpLoggedIn=false;updateFindBtn();switchView('home');toast('You have been logged out.');}
+function workerLogout(){localStorage.removeItem('bx_worker_token');localStorage.removeItem('bx_worker');switchView('home');toast('You have been logged out.');}
 async function handleEmpLogin(){
-  const em = document.getElementById('eEm').value.trim();
-  const pw = document.getElementById('ePw').value;
-  if(!em||!pw){ toast('Please enter your email and password.'); return; }
-
+  const em=document.getElementById('eEm').value.trim();
+  const pw=document.getElementById('ePw').value;
+  if(!em||!pw){toast('Please enter your email and password.');return;}
   toast('Signing in...');
-
-  try {
-    const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/employer-login', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email: em, password: pw })
-    });
-
-    const data = await resp.json();
-
-    if(!resp.ok){
-      toast(data.error || 'Invalid credentials.');
-      return;
-    }
-
-    // Store token for future API calls
-    localStorage.setItem('bx_employer_token', data.token);
-    localStorage.setItem('bx_employer', JSON.stringify(data.employer));
-
+  try{
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/employer-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})});
+    const data=await resp.json();
+    if(!resp.ok){toast(data.error||'Invalid credentials.');return;}
+    localStorage.setItem('bx_employer_token',data.token);
+    localStorage.setItem('bx_employer',JSON.stringify(data.employer));
     closeEmpLogin();
-    document.getElementById('eAck').checked = false;
-    document.getElementById('eAckBtn').disabled = true;
+    document.getElementById('eAck').checked=false;
+    document.getElementById('eAckBtn').disabled=true;
     document.getElementById('empAckModal').classList.add('open');
-
-  } catch(err) {
-    toast('Could not connect to server. Make sure the backend is running.');
-  }
+  }catch(err){toast('Could not connect to server.');}
 }
 function completeEmpLogin(){
   document.getElementById('empAckModal').classList.remove('open');
   isEmpLoggedIn=true;updateFindBtn();
-  const employer = JSON.parse(localStorage.getItem('bx_employer') || '{}');
-  const orgName = employer.orgName || 'Employer';
+  const employer=JSON.parse(localStorage.getItem('bx_employer')||'{}');
+  const orgName=employer.orgName||'Employer';
   toast(`Welcome back, ${orgName}. Loading your dashboard…`);
   const d=loginRedirect||'dispatch';loginRedirect=null;
   setTimeout(()=>switchView(d),900);
 }
-function employerLogout(){isEmpLoggedIn=false;updateFindBtn();switchView('home');toast('You have been logged out.');}
-async function handleWrkLogin(){
-  const id  = document.getElementById('wID').value.trim();
-  const pin = document.getElementById('wPN').value;
-  if(!id||!pin){ toast('Please enter your Worker ID and PIN.'); return; }
-
-  toast('Signing in...');
-
-  function workerLogout(){ 
-  localStorage.removeItem('bx_worker_token');
-  localStorage.removeItem('bx_worker');
-  switchView('home'); 
-  toast('You have been logged out.'); 
+async function handleEmpRegister(){
+  const orgName=document.getElementById('regOrgName').value.trim();
+  const contact=document.getElementById('regContact').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const phone=document.getElementById('regPhone').value.trim();
+  const password=document.getElementById('regPassword').value;
+  const region=document.getElementById('regRegion').value;
+  if(!orgName||!email||!password||!contact){toast('Please fill in all required fields.');return;}
+  toast('Creating your account...');
+  try{
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/employer-register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,orgName,contactPerson:contact,phone,region})});
+    const data=await resp.json();
+    if(!resp.ok){toast(data.error||'Registration failed.');return;}
+    localStorage.setItem('bx_employer_token',data.token);
+    localStorage.setItem('bx_employer',JSON.stringify(data.employer));
+    document.getElementById('empRegisterModal').classList.remove('open');
+    document.getElementById('eAck').checked=false;
+    document.getElementById('eAckBtn').disabled=true;
+    document.getElementById('empAckModal').classList.add('open');
+  }catch(err){toast('Could not connect to server.');}
 }
-  try {
-    const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-login', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ workerId: id, pin })
-    });
-
-    const data = await resp.json();
-
-    if(!resp.ok){
-      toast(data.error || 'Invalid credentials.');
-      return;
-    }
-
-    // Store token for future API calls
-    localStorage.setItem('bx_worker_token', data.token);
-    localStorage.setItem('bx_worker', JSON.stringify(data.worker));
-
+async function handleWrkLogin(){
+  const id=document.getElementById('wID').value.trim();
+  const pin=document.getElementById('wPN').value;
+  if(!id||!pin){toast('Please enter your Worker ID and PIN.');return;}
+  toast('Signing in...');
+  try{
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({workerId:id,pin})});
+    const data=await resp.json();
+    if(!resp.ok){toast(data.error||'Invalid credentials.');return;}
+    localStorage.setItem('bx_worker_token',data.token);
+    localStorage.setItem('bx_worker',JSON.stringify(data.worker));
     closeWrkLogin();
-    document.getElementById('wAck').checked = false;
-    document.getElementById('wAckBtn').disabled = true;
+    document.getElementById('wAck').checked=false;
+    document.getElementById('wAckBtn').disabled=true;
     document.getElementById('wrkAckModal').classList.add('open');
-
-  } catch(err) {
-    toast('Could not connect to server. Make sure the backend is running.');
-  }
+  }catch(err){toast('Could not connect to server.');}
 }
 function completeWrkLogin(){
   document.getElementById('wrkAckModal').classList.remove('open');
-  const worker = JSON.parse(localStorage.getItem('bx_worker') || '{}');
-  const firstName = worker.fullName ? worker.fullName.split(' ')[0] : 'Worker';
+  const worker=JSON.parse(localStorage.getItem('bx_worker')||'{}');
+  const firstName=worker.fullName?worker.fullName.split(' ')[0]:'Worker';
   toast(`Welcome back, ${firstName}. Loading your dashboard…`);
   setTimeout(()=>switchView('worker'),800);
+}
+async function handleWrkRegister(){
+  const fullName=document.getElementById('wregName').value.trim();
+  const phone=document.getElementById('wregPhone').value.trim();
+  const facility=document.getElementById('wregFacility').value;
+  const skill=document.getElementById('wregSkill').value;
+  const pin=document.getElementById('wregPin').value.trim();
+  if(!fullName||!phone||!pin){toast('Please fill in all required fields.');return;}
+  if(pin.length!==4||isNaN(pin)){toast('PIN must be exactly 4 digits.');return;}
+  toast('Creating your account...');
+  try{
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fullName,phone,prisonFacility:facility,skills:[skill],pin})});
+    const data=await resp.json();
+    if(!resp.ok){toast(data.error||'Registration failed.');return;}
+    localStorage.setItem('bx_worker_token',data.token);
+    localStorage.setItem('bx_worker',JSON.stringify(data.worker));
+    document.getElementById('wrkRegisterModal').classList.remove('open');
+    toast(`Welcome! Your Worker ID is ${data.worker.workerId}. Please save it.`);
+    document.getElementById('wAck').checked=false;
+    document.getElementById('wAckBtn').disabled=true;
+    document.getElementById('wrkAckModal').classList.add('open');
+  }catch(err){toast('Could not connect to server.');}
 }
 
 // ═══════════════════════════════════
@@ -1198,6 +1073,9 @@ function openStmt(type){
   document.getElementById('stmtModal').classList.add('open');
 }
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+
+
+
 </script>
 </body>
 </html>
