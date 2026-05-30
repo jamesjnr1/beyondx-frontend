@@ -1007,15 +1007,6 @@ async function markTaskDone(id){
 
     // Send email notification to BeyondX
     emailjs.send('service_zos658j','template_et2vlfs',{
-      to_email: 'beyondx26@gmail.com',
-      worker_name:  worker.fullName || 'Unknown Worker',
-      worker_id:    worker.workerId || '—',
-      worker_phone: worker.phone || 'Not provided',
-      task_type:    task?.taskType || '—',
-      location:     task?.location || '—',
-      employer_name:task?.employer?.orgName || '—',
-      amount:       workerPay
-    }).catch(e=>console.log('Email error:',e));
 
     toast('Marked as done! Waiting for employer to confirm.');
     WS.done++;
