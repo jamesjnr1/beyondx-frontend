@@ -1005,9 +1005,7 @@ async function markTaskDone(id){
     const task = MY_TASKS.find(t=>t.id===id);
     const workerPay = task ? (parseFloat(task.pay)*0.85).toFixed(2) : '—';
 
-    // Send email notification to BeyondX
-    emailjs.send('service_zos658j','template_et2vlfs',{
-
+    // Email sent on employer confirmation instead
     toast('Marked as done! Waiting for employer to confirm.');
     WS.done++;
     await loadMyTasks();
