@@ -1189,11 +1189,11 @@ function renderEConfirm(){
     <div class="ebc"><span class="ebcl" onclick="empGo('profile')">← Back to Profile</span></div>
     <div class="ehero" style="margin-bottom:18px;"><h2>Confirm your dispatch.</h2><p>Review the details and pricing before proceeding to payment.</p></div>
     <div class="conf-wr"><div class="wph" style="width:50px;height:50px;flex-shrink:0;"><img src="${wAvatar(w,50)}" alt="${w.name}"/></div><div><div style="font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:var(--g9);">${w.name}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mu);">${w.id} · GH₵ ${w.charge}/day</div></div><div style="margin-left:auto;"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--g6);font-weight:600;">GPS Cleared</span></div></div>
-    <div class="fld"><label>Task Type</label><select>${opts}</select></div>
+    <div class="fld"><label>Task Type</label><select id="ptTaskTypeDisp">${opts}</select></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fld"><label>Start Date</label><input type="date" value="${new Date().toISOString().slice(0,10)}"/></div><div class="fld"><label>Duration</label><select onchange="EMP.days=+this.value;empGo('confirm')"><option value="1">1 Day</option><option value="0.5">Half Day</option><option value="2">2 Days</option><option value="3">3 Days</option></select></div></div>
-    <div class="fld"><label>Location / Organisation</label><input type="text" placeholder="e.g. Accra Business Hub, Osu"/></div>
+    <div class="fld"><label>Location / Organisation</label><input type="text" id="ptLocDisp" placeholder="e.g. Accra Business Hub, Osu"/></div>
     <div class="pbox"><div class="pr"><span class="pkey">Worker rate (${EMP.days} day${EMP.days>1?'s':''})</span><span class="pval">GH₵ ${w.charge*EMP.days}</span></div><div class="pr"><span class="pkey">Platform fee (15%)</span><span class="pval">GH₵ ${fee}</span></div><div class="pr"><span class="pkey">Total due today</span><span class="pval">GH₵ ${total}</span></div></div>
-    <button class="btnpro" onclick="empGo('payment')">Proceed to Payment →</button>
+    <button class="btnpro" onclick="EMP.selectedTaskType=document.getElementById('ptTaskTypeDisp').value;EMP.selectedLocation=document.getElementById('ptLocDisp').value;empGo('payment')">Proceed to Payment →</button>
   </div></div>`;
 }
 function renderEPayment(){
@@ -1208,9 +1208,33 @@ function renderEPayment(){
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:10px;">Select Payment Method</div>
     <div class="payms">${ms}</div>
     <div class="pinput">${inp}</div>
-    <button class="paybtn" onclick="empGo('success')">Pay GH₵ ${total}</button>
+    <button class="paybtn" onclick="processDispatchPayment()">Pay GH₵ ${total}</button>
     <p style="text-align:center;font-size:12px;color:var(--mu);margin-top:10px;">Secured by BeyondX · All transactions recorded</p>
   </div></div>`;
+}
+async function processDispatchPayment(){
+  const w=EMP.worker;
+  const token=localStorage.getItem('bx_employer_token');
+  toast('Processing payment...');
+  try{
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      body:JSON.stringify({
+        taskType: EMP.selectedTaskType || w.cats[0] || 'General Task',
+        description: `Dispatched worker: ${w.name} (${w.workerId})`,
+        location: EMP.selectedLocation || 'To be confirmed',
+        duration: EMP.days===0.5?'Half Day':EMP.days===1?'1 Day':`${EMP.days} Days`,
+        pay: w.charge * EMP.days
+      })
+    });
+    const data=await resp.json();
+    if(!resp.ok){toast(data.error||'Payment failed.');return;}
+    TASKS_LOADED=false;
+    empGo('success');
+  }catch(err){
+    toast('Could not connect to server.');
+  }
 }
 function renderESuccess(){
   const w=EMP.worker;
