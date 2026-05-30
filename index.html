@@ -624,9 +624,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <button class="mc" onclick="closeWrkLogin()">✕</button>
     <div style="text-align:center;margin-bottom:20px;"><div style="width:50px;height:50px;background:var(--g7);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#fff;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo">
 </div><div class="mt" style="font-size:18px;">Worker Login</div><div class="ms" style="margin-bottom:0;">Access your BeyondX task dashboard</div></div>
-    <div class="tcreds"><div class="tclbl">Test Credentials</div><div class="tcr"><span class="tck">Worker ID</span><span class="tcv" onclick="document.getElementById('wID').value='BX-00142';this.style.color='var(--g5)'">BX-00142</span></div><div class="tcr"><span class="tck">PIN</span><span class="tcv" onclick="document.getElementById('wPN').value='1234';this.style.color='var(--g5)'">1234</span></div><div class="tchn">Click either value to auto-fill</div></div>
-    <div class="fld2"><label>Worker ID</label><input type="text" id="wID" placeholder="e.g. BX-00142"/></div>
-    <div class="fld2"><label>PIN / Password</label><input type="password" id="wPN" placeholder="••••••••"/></div>
+    <div class="tcreds"><div class="tclbl">Test Credentials</div><div class="tcr"><span class="tck">Phone</span><span class="tcv" onclick="document.getElementById('wID').value='0244000000';this.style.color='var(--g5)'">0244000000</span></div><div class="tcr"><span class="tck">PIN</span><span class="tcv" onclick="document.getElementById('wPN').value='1234';this.style.color='var(--g5)'">1234</span></div><div class="tchn">Click either value to auto-fill</div></div>
+    <div class="fld2"><label>Phone Number</label><input type="tel" id="wID" placeholder="e.g. 0244000000"/></div>
+    <div class="fld2"><label>PIN</label><input type="password" id="wPN" placeholder="••••••••"/></div>
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;background:var(--g7);" onclick="handleWrkLogin()">Sign In to My Dashboard</button>
     <div class="divid">or</div>
     <button class="bout" onclick="closeWrkLogin();openWrkRegister();">Register as a Worker</button>
@@ -680,7 +680,17 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <div class="fld2"><label>Full Name</label><input type="text" id="wregName" placeholder="Your full legal name"/></div>
     <div class="fld2"><label>Phone Number</label><input type="tel" id="wregPhone" placeholder="e.g. 0244000000"/></div>
     <div class="fld2"><label>Prison Facility</label><select id="wregFacility"><option>Nsawam Medium Security Prison</option><option>Kumasi Central Prison</option><option>James Fort Prison</option><option>Ankaful Maximum Security Prison</option><option>Sunyani Central Prison</option><option>Ho Central Prison</option><option>Tamale Central Prison</option></select></div>
-    <div class="fld2"><label>Skills</label><select id="wregSkill"><option>Facility &amp; Cleaning</option><option>Logistics &amp; Delivery</option><option>Maintenance &amp; Repairs</option><option>Event &amp; Hospitality</option><option>Agriculture &amp; Environment</option><option>Retail &amp; Trade</option><option>Community Services</option></select></div>
+    <div class="fld2"><label>Skills (select all that apply)</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Facility &amp; Cleaning" style="accent-color:var(--g6);"> Facility &amp; Cleaning</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Logistics &amp; Delivery" style="accent-color:var(--g6);"> Logistics &amp; Delivery</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Maintenance &amp; Repairs" style="accent-color:var(--g6);"> Maintenance &amp; Repairs</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Event &amp; Hospitality" style="accent-color:var(--g6);"> Event &amp; Hospitality</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Agriculture &amp; Environment" style="accent-color:var(--g6);"> Agriculture &amp; Environment</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);"><input type="checkbox" name="wregSkills" value="Retail &amp; Trade" style="accent-color:var(--g6);"> Retail &amp; Trade</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);cursor:pointer;padding:7px 10px;border:1.5px solid var(--bd);border-radius:7px;background:var(--off);grid-column:1/-1;"><input type="checkbox" name="wregSkills" value="Community Services" style="accent-color:var(--g6);"> Community Services</label>
+      </div>
+    </div>
     <div class="fld2"><label>PIN (4 digits)</label><input type="password" id="wregPin" placeholder="Choose a 4-digit PIN" maxlength="4"/></div>
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleWrkRegister()">Create My Account</button>
     <p class="mnote">Already have an account? <span style="color:var(--g6);cursor:pointer;font-weight:600;" onclick="document.getElementById('wrkRegisterModal').classList.remove('open');openWorkerLogin()">Sign In</span></p>
@@ -1112,12 +1122,12 @@ async function handleEmpRegister(){
   }catch(err){toast('Could not connect to server.');}
 }
 async function handleWrkLogin(){
-  const id=document.getElementById('wID').value.trim();
+  const phone=document.getElementById('wID').value.trim();
   const pin=document.getElementById('wPN').value;
-  if(!id||!pin){toast('Please enter your Worker ID and PIN.');return;}
+  if(!phone||!pin){toast('Please enter your phone number and PIN.');return;}
   toast('Signing in...');
   try{
-    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({workerId:id,pin})});
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,pin})});
     const data=await resp.json();
     if(!resp.ok){toast(data.error||'Invalid credentials.');return;}
     localStorage.setItem('bx_worker_token',data.token);
@@ -1139,13 +1149,14 @@ async function handleWrkRegister(){
   const fullName=document.getElementById('wregName').value.trim();
   const phone=document.getElementById('wregPhone').value.trim();
   const facility=document.getElementById('wregFacility').value;
-  const skill=document.getElementById('wregSkill').value;
+  const skills=Array.from(document.querySelectorAll('input[name="wregSkills"]:checked')).map(cb=>cb.value.replace('&amp;','&'));
   const pin=document.getElementById('wregPin').value.trim();
   if(!fullName||!phone||!pin){toast('Please fill in all required fields.');return;}
+  if(skills.length===0){toast('Please select at least one skill.');return;}
   if(pin.length!==4||isNaN(pin)){toast('PIN must be exactly 4 digits.');return;}
   toast('Creating your account...');
   try{
-    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fullName,phone,prisonFacility:facility,skills:[skill],pin})});
+    const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/auth/worker-register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fullName,phone,prisonFacility:facility,skills,pin})});
     const data=await resp.json();
     if(!resp.ok){toast(data.error||'Registration failed.');return;}
     localStorage.setItem('bx_worker_token',data.token);
