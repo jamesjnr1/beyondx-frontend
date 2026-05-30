@@ -722,7 +722,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   <button onclick="openEmployerLogin()" style="padding:10px 16px;background:var(--w);color:var(--ink);border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.1);">Employer Login</button>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
+emailjs.init('YPgDxDhg1HjKZK3H6');
 // ═══════════════════════════════════
 // WORKER DATA & STATE
 // ═══════════════════════════════════
@@ -990,6 +992,7 @@ function declineTask(id) { declined.add(id); renderWorker(); }
 
 async function markTaskDone(id){
   const token = localStorage.getItem('bx_worker_token');
+  const worker = JSON.parse(localStorage.getItem('bx_worker')||'{}');
   toast('Marking as done...');
   try{
     const resp = await fetch(`https://beyondx-backend-production-1a08.up.railway.app/api/tasks/${id}/worker-done`,{
@@ -997,6 +1000,22 @@ async function markTaskDone(id){
       headers:{'Authorization':`Bearer ${token}`}
     });
     if(!resp.ok){toast('Could not update. Try again.');return;}
+
+    // Find the task details
+    const task = MY_TASKS.find(t=>t.id===id);
+    const workerPay = task ? (parseFloat(task.pay)*0.85).toFixed(2) : '—';
+
+    // Send email notification to BeyondX
+    emailjs.send('service_zos658j','template_et2vlfs',{
+      worker_name:  worker.fullName || 'Unknown Worker',
+      worker_id:    worker.workerId || '—',
+      worker_phone: worker.phone || 'Not provided',
+      task_type:    task?.taskType || '—',
+      location:     task?.location || '—',
+      employer_name:task?.employer?.orgName || '—',
+      amount:       workerPay
+    }).catch(e=>console.log('Email error:',e));
+
     toast('Marked as done! Waiting for employer to confirm.');
     WS.done++;
     await loadMyTasks();
