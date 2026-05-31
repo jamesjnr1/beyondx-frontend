@@ -5,304 +5,245 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BeyondX Admin</title>
 <style>
+:root{--bg:#f4f6f4;--s:#fff;--b:#e2e8e2;--b2:#edf1ed;--ink:#0d1a0f;--ink2:#3a5a3e;--ink3:#7a9a7e;--g:#1a4d2a;--g2:#22623a;--g3:#2d8a4e;--g4:#e8f5ec;--amb:#854d0e;--amb-bg:#fefce8;--amb-b:#fde047;--f:'Inter',system-ui,sans-serif;--m:'Menlo','Courier New',monospace;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#f5f7f5;color:#111;font-family:system-ui,sans-serif;font-size:14px;}
-.login{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1a4d2a;}
-.login-box{background:#fff;border-radius:16px;padding:40px;width:340px;text-align:center;}
-.login-box h1{font-size:20px;font-weight:700;margin-bottom:4px;}
-.login-box p{font-size:13px;color:#666;margin-bottom:24px;}
-.login-box input{width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;outline:none;margin-bottom:10px;}
-.login-box input:focus{border-color:#1a4d2a;}
-.login-box button{width:100%;padding:11px;background:#1a4d2a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
-.err{font-size:12px;color:#dc2626;margin-top:8px;display:none;}
-.app{display:flex;min-height:100vh;}
-.sidebar{width:200px;background:#1a4d2a;flex-shrink:0;display:flex;flex-direction:column;}
-.brand{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,.1);}
-.brand-name{font-size:15px;font-weight:700;color:#fff;}
-.brand-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;letter-spacing:.5px;}
-.nav{padding:12px 0;flex:1;}
-.nav-group{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:10px 16px 4px;}
-.nav-item{padding:8px 16px;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-left:2px solid transparent;transition:all .12s;}
-.nav-item:hover{color:#fff;background:rgba(255,255,255,.06);}
-.nav-item.active{color:#fff;background:rgba(255,255,255,.1);border-left-color:#6ee7b7;}
-.nav-badge{background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;}
-.sidebar-time{padding:14px 16px;font-size:10px;color:rgba(255,255,255,.25);border-top:1px solid rgba(255,255,255,.08);}
-.main{flex:1;padding:24px;overflow:auto;}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.page-title{font-size:18px;font-weight:700;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.live{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:4px 10px;}
-.live-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:blink 2s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.refresh{padding:6px 12px;background:#fff;border:1.5px solid #ddd;border-radius:7px;font-size:12px;cursor:pointer;}
-.last{font-size:11px;color:#999;}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
-.stat{background:#fff;border:1.5px solid #e5e7e5;border-radius:12px;padding:16px 18px;}
-.stat.dark{background:#1a4d2a;border-color:#1a4d2a;}
-.stat-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:#999;margin-bottom:8px;}
-.stat.dark .stat-label{color:rgba(255,255,255,.4);}
-.stat-value{font-size:24px;font-weight:700;color:#111;line-height:1;}
-.stat.dark .stat-value{color:#fff;}
-.stat-note{font-size:11px;color:#999;margin-top:5px;}
-.stat.dark .stat-note{color:rgba(255,255,255,.4);}
-.stat-note.warn{color:#d97706;}
-.alert{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
-.alert-text{font-size:13px;font-weight:600;color:#92400e;}
-.alert-sub{font-size:11px;color:#b45309;margin-top:2px;}
-.alert-btn{padding:6px 14px;background:#d97706;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;}
-.section{display:none;}
-.section.active{display:block;}
-.payout-card{background:#fff;border:1.5px solid #e5e7e5;border-radius:12px;padding:18px;margin-bottom:10px;}
-.pc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
-.pc-name{font-size:15px;font-weight:700;}
-.pc-task{font-size:12px;color:#666;margin-top:2px;}
-.pc-amount{font-size:24px;font-weight:700;color:#1a4d2a;}
-.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.pc-item{background:#f5f7f5;border-radius:8px;padding:10px 12px;}
-.pc-item-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:#999;margin-bottom:3px;}
-.pc-item-value{font-size:13px;font-weight:600;}
-.pc-item-value.phone{font-family:monospace;color:#1a4d2a;font-size:14px;}
-.pc-note{font-size:12px;color:#666;margin-bottom:10px;}
-.btn-pay{width:100%;padding:11px;background:#1a4d2a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
-.btn-pay:hover{background:#257a3e;}
-.task-card{background:#fff;border:1.5px solid #e5e7e5;border-radius:10px;padding:14px 16px;margin-bottom:8px;}
-.tc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
-.tc-name{font-size:14px;font-weight:600;}
-.tc-meta{font-size:11px;color:#999;margin-top:2px;font-family:monospace;}
-.tc-rows{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-.tcr{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;}
-.tcr span:first-child{color:#999;}
-.tcr span:last-child{font-weight:500;}
-.tcr span.g{color:#1a4d2a;font-weight:600;}
-.badge{display:inline-block;font-size:10px;font-family:monospace;font-weight:600;padding:2px 7px;border-radius:4px;}
-.b-open{background:#eff6ff;color:#1d4ed8;}
-.b-active{background:#f0fdf4;color:#16a34a;}
-.b-pay{background:#fffbeb;color:#92400e;}
-.b-done{background:#f0fdf4;color:#166534;}
-.btn-pay-sm{margin-top:10px;width:100%;padding:8px;background:#1a4d2a;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;}
-.table-card{background:#fff;border:1.5px solid #e5e7e5;border-radius:12px;overflow:hidden;}
-.table-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1.5px solid #e5e7e5;}
-.table-top-title{font-size:14px;font-weight:600;}
-.table-top-count{font-size:11px;color:#999;font-family:monospace;}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:13px;-webkit-font-smoothing:antialiased;}
+.login{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--g);}
+.lbox{background:var(--s);border-radius:18px;padding:44px 40px;width:360px;box-shadow:0 24px 64px rgba(0,0,0,.2);}
+.lbox h1{font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px;}
+.lbox p{font-size:12px;color:var(--ink3);margin-bottom:26px;}
+.lbox input{width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:9px;font-size:13px;font-family:var(--f);color:var(--ink);background:var(--bg);outline:none;margin-bottom:10px;transition:border-color .15s;}
+.lbox input:focus{border-color:var(--g2);}
+.lbox button{width:100%;padding:11px;background:var(--g);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;font-family:var(--f);cursor:pointer;}
+.lbox button:hover{background:var(--g2);}
+.lerr{font-size:12px;color:#dc2626;margin-top:8px;display:none;}
+.app{display:none;min-height:100vh;}
+.sb{position:fixed;inset:0 auto 0 0;width:196px;background:var(--g);display:flex;flex-direction:column;z-index:10;}
+.sb-brand{padding:18px 16px 16px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-name{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.sb-tag{font-size:9px;color:rgba(255,255,255,.3);font-family:var(--m);letter-spacing:.8px;text-transform:uppercase;margin-top:2px;}
+.sb-nav{padding:10px 0;flex:1;}
+.sb-grp{font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:12px 16px 4px;font-family:var(--m);}
+.sb-a{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;font-size:12px;font-weight:500;color:rgba(255,255,255,.55);cursor:pointer;border-left:2px solid transparent;transition:all .12s;}
+.sb-a:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05);}
+.sb-a.on{color:#fff;background:rgba(255,255,255,.1);border-left-color:#6ee7b7;}
+.sb-bdg{background:rgba(239,68,68,.9);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:6px;font-family:var(--m);}
+.sb-ft{padding:12px 16px;border-top:1px solid rgba(255,255,255,.07);font-size:10px;color:rgba(255,255,255,.2);font-family:var(--m);}
+.main{margin-left:196px;display:flex;flex-direction:column;min-height:100vh;}
+.tb{padding:14px 24px;background:var(--s);border-bottom:1.5px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;}
+.tb-title{font-size:15px;font-weight:700;letter-spacing:-.3px;}
+.tb-r{display:flex;align-items:center;gap:10px;}
+.live{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:4px 9px;font-family:var(--m);}
+.dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+.tb-t{font-size:10px;color:var(--ink3);font-family:var(--m);}
+.btn-r{padding:6px 12px;background:var(--s);border:1.5px solid var(--b);border-radius:7px;font-size:11px;font-weight:600;color:var(--ink2);cursor:pointer;font-family:var(--f);transition:all .12s;}
+.btn-r:hover{border-color:var(--g2);color:var(--g);}
+.body{padding:20px 24px 40px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.sc{background:var(--s);border:1.5px solid var(--b);border-radius:12px;padding:16px 18px;}
+.sc.dk{background:var(--g);border-color:var(--g);}
+.sc-l{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;font-family:var(--m);}
+.sc.dk .sc-l{color:rgba(255,255,255,.4);}
+.sc-v{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.5px;line-height:1;}
+.sc.dk .sc-v{color:#fff;}
+.sc-s{font-size:11px;color:var(--ink3);margin-top:5px;}
+.sc.dk .sc-s{color:rgba(255,255,255,.4);}
+.sc-s.w{color:var(--amb);}
+.alrt{background:var(--amb-bg);border:1.5px solid var(--amb-b);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.alrt-t{font-size:12px;font-weight:600;color:var(--amb);}
+.alrt-s{font-size:11px;color:#a16207;margin-top:2px;}
+.alrt-btn{padding:6px 13px;background:var(--amb);color:#fff;border:none;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--f);}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.tc{background:var(--s);border:1.5px solid var(--b);border-radius:12px;overflow:hidden;margin-bottom:12px;}
+.tc-h{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1.5px solid var(--b2);}
+.tc-ht{font-size:12px;font-weight:700;color:var(--ink);}
+.tc-hm{font-size:10px;color:var(--ink3);font-family:var(--m);}
 table{width:100%;border-collapse:collapse;}
-th{padding:9px 14px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:#999;text-align:left;border-bottom:1px solid #e5e7e5;background:#f9faf9;}
-td{padding:10px 14px;font-size:13px;border-bottom:1px solid #f0f0f0;color:#333;}
+thead tr{background:var(--bg);}
+th{padding:8px 14px;font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--ink3);text-align:left;border-bottom:1px solid var(--b2);font-family:var(--m);}
+td{padding:10px 14px;border-bottom:1px solid var(--b2);color:var(--ink2);}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:#fafafa;}
-.td-bold{font-weight:600;color:#111;}
-.td-mono{font-family:monospace;font-size:11px;color:#999;}
-.td-green{color:#1a4d2a;font-weight:600;}
-.empty{text-align:center;padding:48px;color:#999;font-size:13px;}
-.toast{position:fixed;bottom:20px;right:20px;background:#1a4d2a;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;display:none;z-index:999;}
+tr:hover td{background:var(--bg);}
+.tn{font-weight:600;color:var(--ink);}
+.tm{font-family:var(--m);font-size:10px;color:var(--ink3);}
+.tg{color:var(--g2);font-weight:600;font-variant-numeric:tabular-nums;}
+.badge{display:inline-block;font-size:9px;font-family:var(--m);font-weight:600;padding:2px 7px;border-radius:4px;}
+.bo{background:#eff6ff;color:#1d4ed8;}
+.ba{background:var(--g4);color:var(--g2);}
+.bp{background:var(--amb-bg);color:var(--amb);}
+.bd{background:#f0fdf4;color:#166534;}
+.pc{background:var(--s);border:1.5px solid var(--b);border-radius:12px;padding:18px;margin-bottom:10px;}
+.pc-hd{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--b2);margin-bottom:14px;}
+.pc-n{font-size:15px;font-weight:700;color:var(--ink);}
+.pc-tk{font-size:11px;color:var(--ink3);margin-top:3px;}
+.pc-am{font-size:22px;font-weight:800;color:var(--g);letter-spacing:-.5px;}
+.pc-aml{font-size:9px;color:var(--ink3);text-align:right;font-family:var(--m);text-transform:uppercase;letter-spacing:.5px;}
+.pc-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.pc-f{background:var(--bg);border:1px solid var(--b2);border-radius:8px;padding:10px 12px;}
+.pc-fl{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);margin-bottom:3px;font-family:var(--m);}
+.pc-fv{font-size:12px;font-weight:600;color:var(--ink);}
+.pc-fv.ph{font-family:var(--m);font-size:14px;color:var(--g2);}
+.pc-nt{font-size:11px;color:var(--ink3);margin-bottom:10px;line-height:1.55;}
+.btn-p{width:100%;padding:11px;background:var(--g);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--f);transition:background .15s;}
+.btn-p:hover{background:var(--g2);}
+.tsk{background:var(--s);border:1.5px solid var(--b);border-radius:10px;padding:14px 16px;margin-bottom:8px;}
+.tsk-tp{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.tsk-n{font-size:13px;font-weight:700;color:var(--ink);}
+.tsk-m{font-size:10px;color:var(--ink3);margin-top:2px;font-family:var(--m);}
+.tsk-b{display:grid;grid-template-columns:1fr 1fr;gap:1px;}
+.tr{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--b2);}
+.tr:last-child{border-bottom:none;}
+.tr-k{font-size:11px;color:var(--ink3);}
+.tr-v{font-size:11px;font-weight:500;color:var(--ink2);}
+.tr-v.g{color:var(--g2);font-weight:600;}
+.btn-ps{margin-top:10px;width:100%;padding:8px;background:var(--g);color:#fff;border:none;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--f);}
+.empty{text-align:center;padding:48px;color:var(--ink3);font-size:12px;}
+.sec{display:none;}
+.sec.on{display:block;}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--g);color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;display:none;z-index:999;box-shadow:0 8px 20px rgba(0,0,0,.15);}
 </style>
 </head>
 <body>
-
 <div class="login" id="loginScreen">
-  <div class="login-box">
+  <div class="lbox">
     <h1>BeyondX Admin</h1>
     <p>Operations and payout dashboard</p>
     <input type="password" id="adminPass" placeholder="Admin password" onkeydown="if(event.key==='Enter')login()"/>
     <button onclick="login()">Sign in</button>
-    <div class="err" id="err">Incorrect password</div>
+    <div class="lerr" id="err">Incorrect password</div>
   </div>
 </div>
-
-<div class="app" id="app" style="display:none">
-  <div class="sidebar">
-    <div class="brand"><div class="brand-name">BeyondX</div><div class="brand-sub">Admin Console</div></div>
-    <div class="nav">
-      <div class="nav-group">Dashboard</div>
-      <div class="nav-item active" onclick="nav('overview',this)">Overview</div>
-      <div class="nav-item" onclick="nav('payouts',this)">Pay Now <span class="nav-badge" id="payBadge" style="display:none">0</span></div>
-      <div class="nav-group">Tasks</div>
-      <div class="nav-item" onclick="nav('active',this)">In Progress</div>
-      <div class="nav-item" onclick="nav('open',this)">Open Tasks</div>
-      <div class="nav-item" onclick="nav('completed',this)">Completed</div>
-      <div class="nav-item" onclick="nav('all',this)">All Tasks</div>
-      <div class="nav-group">People</div>
-      <div class="nav-item" onclick="nav('workers',this)">Workers</div>
-      <div class="nav-item" onclick="nav('employers',this)">Employers</div>
+<div class="app" id="app">
+  <div class="sb">
+    <div class="sb-brand"><div class="sb-name">BeyondX</div><div class="sb-tag">Admin Console</div></div>
+    <div class="sb-nav">
+      <div class="sb-grp">Dashboard</div>
+      <div class="sb-a on" onclick="nav('overview',this)">Overview</div>
+      <div class="sb-a" onclick="nav('payouts',this)">Pay Now <span class="sb-bdg" id="payBadge" style="display:none">0</span></div>
+      <div class="sb-grp">Tasks</div>
+      <div class="sb-a" onclick="nav('active',this)">In Progress</div>
+      <div class="sb-a" onclick="nav('open',this)">Open Tasks</div>
+      <div class="sb-a" onclick="nav('completed',this)">Completed</div>
+      <div class="sb-a" onclick="nav('all',this)">All Tasks</div>
+      <div class="sb-grp">People</div>
+      <div class="sb-a" onclick="nav('workers',this)">Workers</div>
+      <div class="sb-a" onclick="nav('employers',this)">Employers</div>
     </div>
-    <div class="sidebar-time" id="sTime"></div>
+    <div class="sb-ft" id="sbTime"></div>
   </div>
-
   <div class="main">
-    <div class="topbar">
-      <div class="page-title" id="pageTitle">Overview</div>
-      <div class="topbar-right">
-        <span class="last" id="lastUp"></span>
-        <div class="live"><div class="live-dot"></div>Live</div>
-        <button class="refresh" onclick="load()">Refresh</button>
+    <div class="tb">
+      <div class="tb-title" id="pageTitle">Overview</div>
+      <div class="tb-r">
+        <span class="tb-t" id="tbTime"></span>
+        <div class="live"><div class="dot"></div>Live</div>
+        <button class="btn-r" onclick="load()">Refresh</button>
       </div>
     </div>
-
-    <div class="section active" id="sec-overview">
-      <div class="stats" id="statsGrid"></div>
-      <div id="alertArea"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-        <div class="table-card">
-          <div class="table-top"><span class="table-top-title">Top Categories</span></div>
-          <table><thead><tr><th>Category</th><th>Tasks</th></tr></thead><tbody id="catTable"></tbody></table>
-        </div>
-        <div class="table-card">
-          <div class="table-top"><span class="table-top-title">Top Employers</span></div>
-          <table><thead><tr><th>Organisation</th><th>Tasks</th><th>Spent</th></tr></thead><tbody id="empOverview"></tbody></table>
+    <div class="body">
+      <div class="sec on" id="sec-overview">
+        <div class="stats" id="sg"></div>
+        <div id="aa"></div>
+        <div class="two">
+          <div class="tc"><div class="tc-h"><span class="tc-ht">Top Categories</span></div><table><thead><tr><th>Category</th><th>Tasks</th><th>Revenue</th></tr></thead><tbody id="catT"></tbody></table></div>
+          <div class="tc"><div class="tc-h"><span class="tc-ht">Top Employers</span></div><table><thead><tr><th>Organisation</th><th>Tasks</th><th>Spent</th></tr></thead><tbody id="empT"></tbody></table></div>
         </div>
       </div>
-    </div>
-
-    <div class="section" id="sec-payouts"><div id="payoutsList"></div></div>
-    <div class="section" id="sec-active"><div id="activeList"></div></div>
-    <div class="section" id="sec-open"><div id="openList"></div></div>
-    <div class="section" id="sec-completed"><div id="completedList"></div></div>
-    <div class="section" id="sec-all"><div id="allList"></div></div>
-
-    <div class="section" id="sec-workers">
-      <div class="table-card">
-        <div class="table-top"><span class="table-top-title">Workers</span><span class="table-top-count" id="wCount"></span></div>
-        <table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Skills</th><th>Tasks</th><th>Rating</th></tr></thead>
-        <tbody id="wTable"></tbody></table>
-      </div>
-    </div>
-
-    <div class="section" id="sec-employers">
-      <div class="table-card">
-        <div class="table-top"><span class="table-top-title">Employers</span><span class="table-top-count" id="eCount"></span></div>
-        <table><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks</th><th>Completed</th><th>Total Spent</th></tr></thead>
-        <tbody id="eTable"></tbody></table>
-      </div>
+      <div class="sec" id="sec-payouts"><div id="pl"></div></div>
+      <div class="sec" id="sec-active"><div id="al"></div></div>
+      <div class="sec" id="sec-open"><div id="ol"></div></div>
+      <div class="sec" id="sec-completed"><div id="cl"></div></div>
+      <div class="sec" id="sec-all"><div id="xl"></div></div>
+      <div class="sec" id="sec-workers"><div class="tc"><div class="tc-h"><span class="tc-ht">Workers</span><span class="tc-hm" id="wc"></span></div><table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Skills</th><th>Tasks</th><th>Rating</th></tr></thead><tbody id="wt"></tbody></table></div></div>
+      <div class="sec" id="sec-employers"><div class="tc"><div class="tc-h"><span class="tc-ht">Employers</span><span class="tc-hm" id="ec"></span></div><table><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks</th><th>Completed</th><th>Total Spent</th></tr></thead><tbody id="et"></tbody></table></div></div>
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
-const API="https://beyondx-backend-production-1a08.up.railway.app";
-let pass="",tasks=[],workers=[];
-
+const API='https://beyondx-backend-production-1a08.up.railway.app';
+let pass='',tasks=[],workers=[];
 function login(){
-  pass=document.getElementById("adminPass").value;
-  Promise.all([
-    fetch(API+"/admin/all",{headers:{"x-admin-password":pass}}).then(r=>{if(!r.ok)throw new Error();return r.json();}),
-    fetch(API+"/api/workers").then(r=>r.json())
-  ]).then(([td,wd])=>{
-    tasks=td.tasks;workers=wd.workers||[];
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("app").style.display="flex";
-    render();
-  }).catch(()=>document.getElementById("err").style.display="block");
+  pass=document.getElementById('adminPass').value;
+  Promise.all([fetch(API+'/admin/all',{headers:{'x-admin-password':pass}}).then(r=>{if(!r.ok)throw new Error();return r.json();}),fetch(API+'/api/workers').then(r=>r.json())])
+  .then(([td,wd])=>{tasks=td.tasks;workers=wd.workers||[];document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='flex';render();})
+  .catch(()=>document.getElementById('err').style.display='block');
 }
-
 async function load(){
   try{
-    const[td,wd]=await Promise.all([
-      fetch(API+"/admin/all",{headers:{"x-admin-password":pass}}).then(r=>r.json()),
-      fetch(API+"/api/workers").then(r=>r.json())
-    ]);
+    const[td,wd]=await Promise.all([fetch(API+'/admin/all',{headers:{'x-admin-password':pass}}).then(r=>r.json()),fetch(API+'/api/workers').then(r=>r.json())]);
     tasks=td.tasks;workers=wd.workers||[];
     const t=new Date().toLocaleTimeString();
-    document.getElementById("lastUp").textContent="Updated "+t;
-    document.getElementById("sTime").textContent=t;
+    document.getElementById('tbTime').textContent='Updated '+t;
+    document.getElementById('sbTime').textContent=t;
     render();
-  }catch(e){showToast("Could not refresh");}
+  }catch(e){showToast('Could not refresh');}
 }
-
 function nav(id,el){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-  document.getElementById("sec-"+id).classList.add("active");
-  el.classList.add("active");
-  const titles={overview:"Overview",payouts:"Pay Now",active:"In Progress",open:"Open Tasks",completed:"Completed Tasks",all:"All Tasks",workers:"Workers",employers:"Employers"};
-  document.getElementById("pageTitle").textContent=titles[id]||id;
-  if(id!=="overview")renderSection(id);
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.sb-a').forEach(n=>n.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  el.classList.add('on');
+  const T={overview:'Overview',payouts:'Pay Now',active:'In Progress',open:'Open Tasks',completed:'Completed Tasks',all:'All Tasks',workers:'Workers',employers:'Employers'};
+  document.getElementById('pageTitle').textContent=T[id]||id;
+  if(id!=='overview')rs(id);
 }
-
 function render(){
-  const py=tasks.filter(t=>t.status==="pending_confirmation");
-  const pb=document.getElementById("payBadge");
-  pb.style.display=py.length?"inline":"none";
-  if(py.length)pb.textContent=py.length;
-  renderOverview();
-  const active=document.querySelector(".section.active");
-  if(active){const id=active.id.replace("sec-","");if(id!=="overview")renderSection(id);}
+  const py=tasks.filter(t=>t.status==='pending_confirmation');
+  const pb=document.getElementById('payBadge');
+  pb.style.display=py.length?'inline':'none';if(py.length)pb.textContent=py.length;
+  ro();
+  const a=document.querySelector('.sec.on');
+  if(a){const id=a.id.replace('sec-','');if(id!=='overview')rs(id);}
 }
-
-function renderOverview(){
-  const py=tasks.filter(t=>t.status==="pending_confirmation");
-  const ac=tasks.filter(t=>t.status==="accepted");
-  const op=tasks.filter(t=>t.status==="open");
-  const co=tasks.filter(t=>t.status==="completed");
+function ro(){
+  const py=tasks.filter(t=>t.status==='pending_confirmation');
+  const co=tasks.filter(t=>t.status==='completed');
+  const op=tasks.filter(t=>t.status==='open');
   const rev=co.reduce((s,t)=>s+parseFloat(t.pay),0);
   const pend=py.reduce((s,t)=>s+(parseFloat(t.pay)*.85),0);
   const uniq=[...new Set(tasks.map(t=>t.employerId))].length;
-
-  document.getElementById("statsGrid").innerHTML=`
-    <div class="stat dark"><div class="stat-label">Total Tasks</div><div class="stat-value">${tasks.length}</div><div class="stat-note">${co.length} completed · ${op.length} open</div></div>
-    <div class="stat"><div class="stat-label">Revenue</div><div class="stat-value">GH₵ ${rev.toFixed(0)}</div><div class="stat-note">GH₵ ${(rev*.15).toFixed(0)} platform fees</div></div>
-    <div class="stat"><div class="stat-label">Pending Payouts</div><div class="stat-value">GH₵ ${pend.toFixed(0)}</div><div class="stat-note ${pend>0?"warn":""}">${py.length} worker${py.length!==1?"s":""} waiting</div></div>
-    <div class="stat"><div class="stat-label">Network</div><div class="stat-value">${workers.length} workers</div><div class="stat-note">${uniq} employer${uniq!==1?"s":""}</div></div>`;
-
-  document.getElementById("alertArea").innerHTML=pend>0?`
-    <div class="alert">
-      <div><div class="alert-text">${py.length} worker${py.length!==1?"s":""} waiting for payment — GH₵ ${pend.toFixed(2)}</div>
-      <div class="alert-sub">Go to Pay Now to send payments</div></div>
-      <button class="alert-btn" onclick="nav('payouts',document.querySelectorAll('.nav-item')[1])">Pay Now</button>
-    </div>`:"";
-
-  const catC={};tasks.forEach(t=>{catC[t.taskType]=(catC[t.taskType]||0)+1;});
-  const tCats=Object.entries(catC).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  document.getElementById("catTable").innerHTML=tCats.map(([c,n])=>`<tr><td class="td-bold">${c}</td><td class="td-green">${n}</td></tr>`).join("")||`<tr><td colspan="2" class="empty">No data</td></tr>`;
-
-  const empC={};tasks.forEach(t=>{if(t.employer&&t.employerId){if(!empC[t.employerId])empC[t.employerId]={name:t.employer.orgName,count:0,spent:0};empC[t.employerId].count++;empC[t.employerId].spent+=parseFloat(t.pay);}});
-  const tEmps=Object.values(empC).sort((a,b)=>b.count-a.count).slice(0,6);
-  document.getElementById("empOverview").innerHTML=tEmps.map(e=>`<tr><td class="td-bold">${e.name}</td><td>${e.count}</td><td class="td-green">GH₵ ${e.spent.toFixed(0)}</td></tr>`).join("")||`<tr><td colspan="3" class="empty">No data</td></tr>`;
+  document.getElementById('sg').innerHTML=`
+    <div class="sc dk"><div class="sc-l">Total Tasks</div><div class="sc-v">${tasks.length}</div><div class="sc-s">${co.length} completed &middot; ${op.length} open</div></div>
+    <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v">GH&#8373; ${rev.toFixed(0)}</div><div class="sc-s">GH&#8373; ${(rev*.15).toFixed(0)} platform fees</div></div>
+    <div class="sc"><div class="sc-l">Pending Payouts</div><div class="sc-v">GH&#8373; ${pend.toFixed(0)}</div><div class="sc-s ${pend>0?'w':''}">${py.length} worker${py.length!==1?'s':''} waiting</div></div>
+    <div class="sc"><div class="sc-l">Network</div><div class="sc-v">${workers.length} workers</div><div class="sc-s">${uniq} employer${uniq!==1?'s':''}</div></div>`;
+  document.getElementById('aa').innerHTML=pend>0?`<div class="alrt"><div><div class="alrt-t">${py.length} worker${py.length!==1?'s':''} waiting for payment &mdash; GH&#8373; ${pend.toFixed(2)}</div><div class="alrt-s">Go to Pay Now to send these payments</div></div><button class="alrt-btn" onclick="nav('payouts',document.querySelectorAll('.sb-a')[1])">Pay Now</button></div>`:'';
+  const catC={};tasks.forEach(t=>{if(!catC[t.taskType])catC[t.taskType]={c:0,r:0};catC[t.taskType].c++;if(t.status==='completed')catC[t.taskType].r+=parseFloat(t.pay);});
+  const tC=Object.entries(catC).sort((a,b)=>b[1].c-a[1].c).slice(0,6);
+  document.getElementById('catT').innerHTML=tC.map(([c,d])=>`<tr><td class="tn">${c}</td><td>${d.c}</td><td class="tg">GH&#8373; ${d.r.toFixed(0)}</td></tr>`).join('')||`<tr><td colspan="3" class="empty">No data</td></tr>`;
+  const empC={};tasks.forEach(t=>{if(t.employer&&t.employerId){if(!empC[t.employerId])empC[t.employerId]={name:t.employer.orgName,c:0,s:0};empC[t.employerId].c++;empC[t.employerId].s+=parseFloat(t.pay);}});
+  const tE=Object.values(empC).sort((a,b)=>b.c-a.c).slice(0,6);
+  document.getElementById('empT').innerHTML=tE.map(e=>`<tr><td class="tn">${e.name}</td><td>${e.c}</td><td class="tg">GH&#8373; ${e.s.toFixed(0)}</td></tr>`).join('')||`<tr><td colspan="3" class="empty">No data</td></tr>`;
 }
-
-function renderSection(id){
-  const map={active:"accepted",open:"open",completed:"completed"};
-  if(id==="payouts"){
-    const py=tasks.filter(t=>t.status==="pending_confirmation");
-    document.getElementById("payoutsList").innerHTML=py.length?py.map(payoutCard).join(""):`<div class="empty">No pending payouts</div>`;
-  }else if(map[id]){
-    document.getElementById(id+"List").innerHTML=taskList(tasks.filter(t=>t.status===map[id]));
-  }else if(id==="all"){
-    document.getElementById("allList").innerHTML=taskList(tasks);
-  }else if(id==="workers")renderWorkers();
-  else if(id==="employers")renderEmployers();
+function rs(id){
+  const m={active:'accepted',open:'open',completed:'completed'};
+  const ids={payouts:'pl',active:'al',open:'ol',completed:'cl',all:'xl'};
+  if(id==='payouts'){const py=tasks.filter(t=>t.status==='pending_confirmation');document.getElementById('pl').innerHTML=py.length?py.map(pc).join(''):`<div class="empty">No pending payouts &mdash; all clear</div>`;}
+  else if(m[id])document.getElementById(ids[id]).innerHTML=tl(tasks.filter(t=>t.status===m[id]));
+  else if(id==='all')document.getElementById('xl').innerHTML=tl(tasks);
+  else if(id==='workers')rw();
+  else if(id==='employers')re();
 }
-
-function payoutCard(t){
+function pc(t){
   const w=t.acceptedBy;const wp=(parseFloat(t.pay)*.85).toFixed(2);const fp=(parseFloat(t.pay)*.15).toFixed(2);
-  return`<div class="payout-card"><div class="pc-top"><div><div class="pc-name">${w?.fullName||"Unknown"}</div><div class="pc-task">${t.taskType} · ${t.location}</div></div><div class="pc-amount">GH₵ ${wp}</div></div><div class="pc-grid"><div class="pc-item"><div class="pc-item-label">Phone</div><div class="pc-item-value phone">${w?.phone||"Not provided"}</div></div><div class="pc-item"><div class="pc-item-label">Worker ID</div><div class="pc-item-value">${w?.workerId||"—"}</div></div><div class="pc-item"><div class="pc-item-label">Employer</div><div class="pc-item-value">${t.employer?.orgName||"—"}</div></div><div class="pc-item"><div class="pc-item-label">BeyondX Keeps</div><div class="pc-item-value">GH₵ ${fp}</div></div></div><div class="pc-note">Send GH₵ ${wp} via Mobile Money to the number above, then confirm below.</div><button class="btn-pay" onclick="markPaid('${t.id}','${w?.fullName||""}','${wp}')">Confirm Payment Sent — GH₵ ${wp}</button></div>`;
+  return`<div class="pc"><div class="pc-hd"><div><div class="pc-n">${w?.fullName||'Unknown Worker'}</div><div class="pc-tk">${t.taskType} &middot; ${t.location} &middot; ${t.duration}</div></div><div style="text-align:right"><div class="pc-aml">Send to worker</div><div class="pc-am">GH&#8373; ${wp}</div></div></div><div class="pc-g"><div class="pc-f"><div class="pc-fl">Mobile Money Number</div><div class="pc-fv ph">${w?.phone||'Not on record'}</div></div><div class="pc-f"><div class="pc-fl">Worker ID</div><div class="pc-fv">${w?.workerId||'&mdash;'}</div></div><div class="pc-f"><div class="pc-fl">Employer</div><div class="pc-fv">${t.employer?.orgName||'&mdash;'}</div></div><div class="pc-f"><div class="pc-fl">BeyondX Keeps</div><div class="pc-fv">GH&#8373; ${fp}</div></div></div><div class="pc-nt">Send GH&#8373; ${wp} via Mobile Money to the number above, then confirm below.</div><button class="btn-p" onclick="mkp('${t.id}','${w?.fullName||''}','${wp}')">I Have Sent GH&#8373; ${wp} &mdash; Mark as Paid</button></div>`;
 }
-
-function taskList(list){
+function tl(list){
   if(!list.length)return`<div class="empty">No tasks here</div>`;
-  const bmap={open:["b-open","Open"],accepted:["b-active","In Progress"],pending_confirmation:["b-pay","Awaiting Payment"],completed:["b-done","Completed"]};
-  return list.map(t=>{const w=t.acceptedBy;const[bc,bl]=bmap[t.status]||["b-open","Unknown"];const wp=(parseFloat(t.pay)*.85).toFixed(2);
-  return`<div class="task-card"><div class="tc-top"><div><div class="tc-name">${t.taskType}</div><div class="tc-meta">${t.location} · ${t.duration} · ${new Date(t.createdAt).toLocaleDateString()}</div></div><span class="badge ${bc}">${bl}</span></div><div class="tc-rows"><div class="tcr"><span>Employer</span><span>${t.employer?.orgName||"—"}</span></div><div class="tcr"><span>Worker</span><span>${w?.fullName||"Unassigned"}${w?.phone?" · "+w.phone:""}</span></div><div class="tcr"><span>Employer Paid</span><span>GH₵ ${parseFloat(t.pay).toFixed(2)}</span></div><div class="tcr"><span>Worker Gets</span><span class="g">GH₵ ${wp}</span></div></div>${t.status==="pending_confirmation"?`<button class="btn-pay-sm" onclick="markPaid('${t.id}','${w?.fullName||""}','${wp}')">Confirm Payment Sent</button>`:""}</div>`;
-  }).join("");
+  const bm={open:['bo','Open'],accepted:['ba','In Progress'],pending_confirmation:['bp','Awaiting Payment'],completed:['bd','Completed']};
+  return list.map(t=>{const w=t.acceptedBy;const[bc,bl]=bm[t.status]||['bo','Unknown'];const wp=(parseFloat(t.pay)*.85).toFixed(2);
+  return`<div class="tsk"><div class="tsk-tp"><div><div class="tsk-n">${t.taskType}</div><div class="tsk-m">${t.location} &middot; ${t.duration} &middot; ${new Date(t.createdAt).toLocaleDateString()}</div></div><span class="badge ${bc}">${bl}</span></div><div class="tsk-b"><div class="tr"><span class="tr-k">Employer</span><span class="tr-v">${t.employer?.orgName||'&mdash;'}</span></div><div class="tr"><span class="tr-k">Worker</span><span class="tr-v">${w?.fullName||'Unassigned'}${w?.phone?' &middot; '+w.phone:''}</span></div><div class="tr"><span class="tr-k">Employer Paid</span><span class="tr-v">GH&#8373; ${parseFloat(t.pay).toFixed(2)}</span></div><div class="tr"><span class="tr-k">Worker Gets</span><span class="tr-v g">GH&#8373; ${wp}</span></div></div>${t.status==='pending_confirmation'?`<button class="btn-ps" onclick="mkp('${t.id}','${w?.fullName||''}','${wp}')">Confirm Payment Sent</button>`:''}</div>`;
+  }).join('');
 }
-
-function renderWorkers(){
-  document.getElementById("wCount").textContent=workers.length+" total";
-  document.getElementById("wTable").innerHTML=workers.map(w=>`<tr><td class="td-bold">${w.fullName}</td><td class="td-mono">${w.workerId}</td><td class="td-mono">${w.phone||"—"}</td><td style="font-size:12px;color:#999">${(w.skills||[]).slice(0,2).join(", ")+(w.skills?.length>2?"…":"")}</td><td class="td-green">${w.tasksCompleted}</td><td>${w.rating>0?parseFloat(w.rating).toFixed(1):"—"}</td></tr>`).join("");
+function rw(){document.getElementById('wc').textContent=workers.length+' registered';document.getElementById('wt').innerHTML=workers.map(w=>`<tr><td class="tn">${w.fullName}</td><td class="tm">${w.workerId}</td><td class="tm">${w.phone||'&mdash;'}</td><td style="font-size:11px;color:var(--ink3)">${(w.skills||[]).slice(0,2).join(', ')+(w.skills?.length>2?'&hellip;':'')}</td><td class="tg">${w.tasksCompleted}</td><td>${w.rating>0?parseFloat(w.rating).toFixed(1)+'&star;':'&mdash;'}</td></tr>`).join('');}
+function re(){const emps=[...new Map(tasks.filter(t=>t.employer).map(t=>[t.employerId,{...t.employer,eid:t.employerId}])).values()];document.getElementById('ec').textContent=emps.length+' registered';document.getElementById('et').innerHTML=emps.map(e=>{const et=tasks.filter(t=>t.employerId===e.eid);const ed=et.filter(t=>t.status==='completed');const sp=et.reduce((s,t)=>s+parseFloat(t.pay),0);return`<tr><td class="tn">${e.orgName}</td><td class="tm">${e.phone||'&mdash;'}</td><td style="font-weight:600">${et.length}</td><td class="tg">${ed.length}</td><td class="tg">GH&#8373; ${sp.toFixed(0)}</td></tr>`;}).join('');}
+async function mkp(id,name,amount){
+  if(!confirm('Confirm you sent GH₵'+amount+' to '+name+'?'))return;
+  try{const r=await fetch(API+'/admin/tasks/'+id+'/paid',{method:'PATCH',headers:{'x-admin-password':pass}});if(r.ok){showToast(name+' marked as paid');await load();}else showToast('Failed. Try again.');}catch(e){showToast('Connection error');}
 }
-
-function renderEmployers(){
-  const emps=[...new Map(tasks.filter(t=>t.employer).map(t=>[t.employerId,{...t.employer,eid:t.employerId}])).values()];
-  document.getElementById("eCount").textContent=emps.length+" total";
-  document.getElementById("eTable").innerHTML=emps.map(e=>{const et=tasks.filter(t=>t.employerId===e.eid);const ed=et.filter(t=>t.status==="completed");const sp=et.reduce((s,t)=>s+parseFloat(t.pay),0);return`<tr><td class="td-bold">${e.orgName}</td><td class="td-mono">${e.phone||"—"}</td><td style="font-weight:600">${et.length}</td><td class="td-green">${ed.length}</td><td class="td-green">GH₵ ${sp.toFixed(0)}</td></tr>`;}).join("");
-}
-
-async function markPaid(id,name,amount){
-  if(!confirm("Confirm you sent GH₵ "+amount+" to "+name+"?"))return;
-  try{const r=await fetch(API+"/admin/tasks/"+id+"/paid",{method:"PATCH",headers:{"x-admin-password":pass}});if(r.ok){showToast(name+" marked as paid");await load();}else showToast("Failed. Try again.");}catch(e){showToast("Connection error");}
-}
-
-function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",3000);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',3200);}
 setInterval(()=>{if(pass)load();},15000);
 </script>
 </body>
