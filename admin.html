@@ -129,6 +129,9 @@ tr:hover td{background:var(--bg);}
       <div class="sb-grp">People</div>
       <div class="sb-a" onclick="nav('workers',this)">Workers</div>
       <div class="sb-a" onclick="nav('employers',this)">Employers</div>
+      <div class="sb-grp">History</div>
+      <div class="sb-a" onclick="nav('history',this)">Work History</div>
+      <div class="sb-a" onclick="nav('transactions',this)">Transactions</div>
     </div>
     <div class="sb-ft" id="sbTime"></div>
   </div>
@@ -156,6 +159,8 @@ tr:hover td{background:var(--bg);}
       <div class="sec" id="sec-completed"><div id="cl"></div></div>
       <div class="sec" id="sec-all"><div id="xl"></div></div>
       <div class="sec" id="sec-workers"><div class="tc"><div class="tc-h"><span class="tc-ht">Workers</span><span class="tc-hm" id="wc"></span></div><table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Skills</th><th>Tasks</th><th>Rating</th></tr></thead><tbody id="wt"></tbody></table></div></div>
+      <div class="sec" id="sec-history"><div id="historyContent"></div></div>
+      <div class="sec" id="sec-transactions"><div id="txContent"></div></div>
       <div class="sec" id="sec-employers"><div class="tc"><div class="tc-h"><span class="tc-ht">Employers</span><span class="tc-hm" id="ec"></span></div><table><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks</th><th>Completed</th><th>Total Spent</th></tr></thead><tbody id="et"></tbody></table></div></div>
     </div>
   </div>
@@ -185,12 +190,12 @@ function nav(id,el){
   document.querySelectorAll('.sb-a').forEach(n=>n.classList.remove('on'));
   document.getElementById('sec-'+id).classList.add('on');
   el.classList.add('on');
-  const T={overview:'Overview',payouts:'Pay Now',active:'In Progress',open:'Open Tasks',completed:'Completed Tasks',all:'All Tasks',workers:'Workers',employers:'Employers'};
+  const T={overview:'Overview',payouts:'Pay Now',active:'In Progress',open:'Open Tasks',completed:'Completed Tasks',all:'All Tasks',workers:'Workers',employers:'Employers',history:'Work History',transactions:'Transactions'};
   document.getElementById('pageTitle').textContent=T[id]||id;
   if(id!=='overview')rs(id);
 }
 function render(){
-  const py=tasks.filter(t=>t.status==='pending_confirmation');
+  const py=tasks.filter(t=>t.status==='employer_confirmed');
   const pb=document.getElementById('payBadge');
   pb.style.display=py.length?'inline':'none';if(py.length)pb.textContent=py.length;
   ro();
@@ -198,7 +203,7 @@ function render(){
   if(a){const id=a.id.replace('sec-','');if(id!=='overview')rs(id);}
 }
 function ro(){
-  const py=tasks.filter(t=>t.status==='pending_confirmation');
+  const py=tasks.filter(t=>t.status==='employer_confirmed');
   const co=tasks.filter(t=>t.status==='completed');
   const op=tasks.filter(t=>t.status==='open');
   const rev=co.reduce((s,t)=>s+parseFloat(t.pay),0);
@@ -220,11 +225,13 @@ function ro(){
 function rs(id){
   const m={active:'accepted',open:'open',completed:'completed'};
   const ids={payouts:'pl',active:'al',open:'ol',completed:'cl',all:'xl'};
-  if(id==='payouts'){const py=tasks.filter(t=>t.status==='pending_confirmation');document.getElementById('pl').innerHTML=py.length?py.map(pc).join(''):`<div class="empty">No pending payouts &mdash; all clear</div>`;}
+  if(id==='payouts'){const py=tasks.filter(t=>t.status==='employer_confirmed');document.getElementById('pl').innerHTML=py.length?py.map(pc).join(''):`<div class="empty">No pending payouts &mdash; all clear</div>`;}
   else if(m[id])document.getElementById(ids[id]).innerHTML=tl(tasks.filter(t=>t.status===m[id]));
   else if(id==='all')document.getElementById('xl').innerHTML=tl(tasks);
   else if(id==='workers')rw();
   else if(id==='employers')re();
+  else if(id==='history')rh();
+  else if(id==='transactions')rt();
 }
 function pc(t){
   const w=t.acceptedBy;const wp=(parseFloat(t.pay)*.85).toFixed(2);const fp=(parseFloat(t.pay)*.15).toFixed(2);
@@ -242,6 +249,49 @@ function re(){const emps=[...new Map(tasks.filter(t=>t.employer).map(t=>[t.emplo
 async function mkp(id,name,amount){
   if(!confirm('Confirm you sent GH₵'+amount+' to '+name+'?'))return;
   try{const r=await fetch(API+'/admin/tasks/'+id+'/paid',{method:'PATCH',headers:{'x-admin-password':pass}});if(r.ok){showToast(name+' marked as paid');await load();}else showToast('Failed. Try again.');}catch(e){showToast('Connection error');}
+}
+
+function rh(){
+  const completed = tasks.filter(t=>t.status==='completed');
+  const html = completed.length ? `
+    <div class="tc" style="margin-bottom:12px;">
+      <div class="tc-h"><span class="tc-ht">Work History</span><span class="tc-hm">${completed.length} completed tasks</span></div>
+      <table><thead><tr><th>Task</th><th>Worker</th><th>Employer</th><th>Date</th><th>Amount</th><th>Worker Paid</th></tr></thead>
+      <tbody>${completed.map(t=>`<tr>
+        <td class="tn">${t.taskType}</td>
+        <td>${t.acceptedBy?.fullName||'—'}</td>
+        <td>${t.employer?.orgName||'—'}</td>
+        <td class="tm">${new Date(t.createdAt).toLocaleDateString()}</td>
+        <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
+        <td class="tg">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(0)}</td>
+      </tr>`).join('')}</tbody></table>
+    </div>` : `<div class="empty">No completed tasks yet</div>`;
+  document.getElementById('historyContent').innerHTML = html;
+}
+
+function rt(){
+  const paid = tasks.filter(t=>t.status==='completed');
+  const totalRev = paid.reduce((s,t)=>s+parseFloat(t.pay),0);
+  const html = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+      <div class="sc"><div class="sc-l">Total Transactions</div><div class="sc-v">${paid.length}</div></div>
+      <div class="sc dk"><div class="sc-l">Total Revenue</div><div class="sc-v">GH&#8373; ${totalRev.toFixed(0)}</div></div>
+      <div class="sc"><div class="sc-l">Platform Earnings</div><div class="sc-v">GH&#8373; ${(totalRev*0.15).toFixed(0)}</div></div>
+    </div>
+    <div class="tc">
+      <div class="tc-h"><span class="tc-ht">Transaction Log</span><span class="tc-hm">${paid.length} transactions</span></div>
+      ${paid.length ? `<table><thead><tr><th>Task</th><th>Employer</th><th>Worker</th><th>Date</th><th>Total</th><th>Worker Cut</th><th>Platform Fee</th></tr></thead>
+      <tbody>${paid.map(t=>`<tr>
+        <td class="tn">${t.taskType}</td>
+        <td>${t.employer?.orgName||'—'}</td>
+        <td>${t.acceptedBy?.fullName||'—'}</td>
+        <td class="tm">${new Date(t.createdAt).toLocaleDateString()}</td>
+        <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
+        <td class="tg">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(0)}</td>
+        <td class="tm">GH&#8373; ${(parseFloat(t.pay)*0.15).toFixed(0)}</td>
+      </tr>`).join('')}</tbody></table>` : `<div class="empty">No transactions yet</div>`}
+    </div>`;
+  document.getElementById('txContent').innerHTML = html;
 }
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',3200);}
 setInterval(()=>{if(pass)load();},15000);

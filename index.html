@@ -793,13 +793,14 @@ function renderWorkerDashboard(){
   const tab = WS.workerTab || 'available';
   const available = AVAIL_TASKS.filter(t => !declined.has(t.id));
   const declinedTasks = AVAIL_TASKS.filter(t => declined.has(t.id));
-  const pendingTasks = MY_TASKS.filter(t => t.status === 'accepted');
-  const doneTasks = MY_TASKS.filter(t => t.status === 'pending_confirmation');
+  const pendingTasks = MY_TASKS.filter(t => t.status === 'accepted' || t.status === 'employer_confirmed');
+  const doneTasks = MY_TASKS.filter(t => t.status === 'pending_confirmation' || t.status === 'employer_confirmed');
 
   const tabs = `<div style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;">
     <button onclick="WS.workerTab='available';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${tab==='available'?'var(--w)':'transparent'};color:${tab==='available'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='available'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Available${available.length?` (${available.length})`:''}</button>
     <button onclick="WS.workerTab='pending';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${tab==='pending'?'var(--w)':'transparent'};color:${tab==='pending'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='pending'?'0 1px 4px rgba(0,0,0,.08)':'none'}">My Tasks${pendingTasks.length+doneTasks.length?` (${pendingTasks.length+doneTasks.length})`:''}</button>
     <button onclick="WS.workerTab='declined';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${tab==='declined'?'var(--w)':'transparent'};color:${tab==='declined'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='declined'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Declined${declinedTasks.length?` (${declinedTasks.length})`:''}</button>
+    <button onclick="WS.workerTab='history';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;transition:all .15s;background:${tab==='history'?'var(--w)':'transparent'};color:${tab==='history'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='history'?'0 1px 4px rgba(0,0,0,.08)':'none'}">History</button>
   </div>`;
 
   const stats = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;">
@@ -895,6 +896,46 @@ function renderWorkerDashboard(){
     content = declinedTasks.length ? declinedCards : `<div style="text-align:center;padding:48px 20px;color:var(--ink3);">
       <div style="font-size:13px;">You haven't declined any tasks.</div>
     </div>`;
+  }
+
+  // History tab
+  if(tab === 'history'){
+    // Fetch completed tasks for this worker
+    const token = localStorage.getItem('bx_worker_token');
+    const worker = JSON.parse(localStorage.getItem('bx_worker') || '{}');
+    content = `<div style="text-align:center;padding:20px;color:var(--ink3);font-size:13px;">Loading history...</div>`;
+    // Return early and load async
+    const wrapper = `<div style="max-width:620px;margin:0 auto;padding:28px 24px 80px;">${stats}${tabs}<div id="workerHistoryContent"><div style="text-align:center;padding:20px;color:var(--ink3);font-size:13px;">Loading...</div></div></div>`;
+    setTimeout(async () => {
+      try {
+        const resp = await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks/worker-history', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await resp.json();
+        const completed = (data.tasks || []).filter(t => t.status === 'completed');
+        const totalEarned = completed.reduce((s,t) => s + parseFloat(t.pay)*0.85, 0);
+        const el = document.getElementById('workerHistoryContent');
+        if(!el) return;
+        if(!completed.length){ el.innerHTML = `<div style="text-align:center;padding:48px 20px;color:var(--ink3);font-size:13px;">No completed tasks yet.</div>`; return; }
+        el.innerHTML = `
+          <div style="background:var(--g0);border:1.5px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+            <div><div style="font-size:11px;color:var(--ink3);margin-bottom:3px;">Total Earned</div><div style="font-size:22px;font-weight:800;color:var(--g7);">GH₵ ${totalEarned.toFixed(0)}</div></div>
+            <div style="text-align:right"><div style="font-size:11px;color:var(--ink3);margin-bottom:3px;">Tasks Completed</div><div style="font-size:22px;font-weight:800;color:var(--ink);">${completed.length}</div></div>
+          </div>
+          ${completed.map(t => `
+            <div style="background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <div><div style="font-size:14px;font-weight:700;color:var(--ink);">${t.taskType}</div><div style="font-size:11px;color:var(--ink3);margin-top:2px;">${t.location} · ${t.duration}</div></div>
+                <div style="text-align:right"><div style="font-size:16px;font-weight:800;color:var(--g7);">GH₵ ${(parseFloat(t.pay)*0.85).toFixed(0)}</div><div style="font-size:10px;color:var(--ink3);">${new Date(t.createdAt).toLocaleDateString()}</div></div>
+              </div>
+              <div style="font-size:12px;color:var(--ink3);">Employer: ${t.employer?.orgName || '—'}</div>
+            </div>`).join('')}`;
+      } catch(e) {
+        const el = document.getElementById('workerHistoryContent');
+        if(el) el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--ink3);">Could not load history.</div>`;
+      }
+    }, 100);
+    return wrapper;
   }
 
   return `<div style="max-width:620px;margin:0 auto;padding:28px 24px 80px;">
