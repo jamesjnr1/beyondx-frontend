@@ -576,13 +576,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <div style="text-align:center;margin-bottom:20px;"><div style="width:46px;height:46px;background:var(--g6);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:700;color:#fff;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo">
 </div>
 <div class="mt" style="font-size:18px;">Employer Login</div><div class="ms" style="margin-bottom:0;">Sign in to access the worker dispatch platform</div></div>
-    <div class="tcreds"><div class="tclbl">Login Format</div><div class="tcr"><span class="tck">Email</span><span class="tcv" onclick="document.getElementById('eEm').value='employer@mailserver.domain';this.style.color='var(--g5)'">employer@mailserver.domain</span></div><div class="tcr"><span class="tck">Password</span><span class="tcv" onclick="document.getElementById('ePw').value='.........';this.style.color='var(--g5)'">.........</span></div><div class="tchn">Click either value to auto-fill</div></div>
     <div class="fld2"><label>Email Address</label><input type="email" id="eEm" placeholder="yourname@organisation.com"/></div>
     <div class="fld2"><label>Password</label><input type="password" id="ePw" placeholder="••••••••"/></div>
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleEmpLogin()">Sign In</button>
     <div class="divid">or</div>
     <button class="bout" onclick="closeEmpLogin();openEmpRegister();">Create Employer Account</button>
-    <p class="mnote">Verified by Ghana Prisons Service · Secure login</p>
   </div>
 </div>
 <div class="mov" id="wrkLoginModal">
@@ -595,7 +593,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;background:var(--g7);" onclick="handleWrkLogin()">Sign In to My Dashboard</button>
     <div class="divid">or</div>
     <button class="bout" onclick="closeWrkLogin();openWrkRegister();">Register as a Worker</button>
-    <p class="mnote">Worker accounts are issued by the Ghana Prisons Service</p>
   </div>
 </div>
 <div class="mov" id="empAckModal">
