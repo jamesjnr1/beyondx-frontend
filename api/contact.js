@@ -43,10 +43,7 @@ try {
   console.error('Resend client failed to initialize (non-fatal):', err);
 }
 
-const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL;
-if (!NOTIFY_EMAIL) {
-  console.error('NOTIFY_EMAIL environment variable is not set. Set it in Vercel → Settings → Environment Variables.');
-}
+const RECIPIENTS = ['edwina.ashigbui@ashesi.edu.gh', 'beyondx26@gmail.com'];
 
 function isValidEmail(email) {
   return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -107,20 +104,25 @@ module.exports = async function handler(req, res) {
     }
 
     // 2. Send the notification email, if Resend is configured.
-    if (resend && NOTIFY_EMAIL) {
+    if (resend) {
       const safeName = name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       const safeMessage = message.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       const categoryLabels = {
         get_in_touch: 'New "Get in Touch" request',
+        worker_onboarding: '👋 New Worker Onboarding',
+        employer_onboarding: '👋 New Employer Onboarding',
         worker_support: 'Worker support request',
         worker_report: '⚠️ Worker report — please review',
         employer_support: 'Employer support request',
         employer_report: '⚠️ Employer report — please review'
       };
+      // All categories go to the same two recipients now (matching the
+      // landing page). Support/report categories still get a distinct
+      // subject line so they're easy to spot and triage.
       const subjectLine = `${categoryLabels[safeCategory] || 'New contact request'} — BeyondX`;
       const { error: emailError } = await resend.emails.send({
         from: 'BeyondX Website <onboarding@resend.dev>', // test sender — swap for your own verified domain later
-        to: [NOTIFY_EMAIL],
+        to: RECIPIENTS,
         reply_to: hasValidEmail ? email : undefined,
         subject: subjectLine,
         html: `
@@ -140,7 +142,7 @@ module.exports = async function handler(req, res) {
         return res.status(502).json({ error: 'Saved your request, but the notification email failed to send.' });
       }
     } else {
-      console.error('Skipped email notification: resend client or NOTIFY_EMAIL missing.');
+      console.error('Skipped email notification: resend client not configured.');
     }
 
     return res.status(200).json({ ok: true });
