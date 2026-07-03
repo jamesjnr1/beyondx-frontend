@@ -171,6 +171,7 @@ tr:hover td{background:var(--bg);}
         <div class="live"><div class="dot"></div>Live</div>
         <button class="btn-r" onclick="load()">Refresh</button>
         <button class="btn-r" style="color:#b91c1c;border-color:#f3c9c9;" onclick="confirmClearData()">Clear All Data</button>
+        <button class="btn-r" style="color:#b91c1c;border-color:#f3c9c9;" onclick="confirmClearEmployers()">Delete All Employers</button>
       </div>
     </div>
     <div class="body">
@@ -234,6 +235,21 @@ async function clearAllData(){
     showToast('All tasks, dispatches, and payments cleared.');
     await load();
   }catch(e){ showToast('Connection error while clearing data.'); }
+}
+function confirmClearEmployers(){
+  const typed = prompt('This will PERMANENTLY DELETE every employer account, along with all of their tasks, dispatches, payments, and reviews. Workers themselves will NOT be deleted, but their stats will reset to zero since the related tasks are gone.\n\nThis cannot be undone.\n\nType DELETE EMPLOYERS to confirm:');
+  if(typed !== 'DELETE EMPLOYERS'){ if(typed !== null) showToast('Cancelled — you must type DELETE EMPLOYERS exactly.'); return; }
+  clearAllEmployers();
+}
+async function clearAllEmployers(){
+  showToast('Deleting all employers…');
+  try{
+    const r = await fetch(API+'/admin/clear-employers', { method:'DELETE', headers:{'x-admin-password':pass} });
+    const data = await r.json();
+    if(!r.ok){ showToast(data.error || 'Failed to delete employers.'); return; }
+    showToast('All employers and their tasks, dispatches, payments, and reviews have been deleted.');
+    await load();
+  }catch(e){ showToast('Connection error while deleting employers.'); }
 }
 function nav(id,el){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
