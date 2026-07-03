@@ -1958,11 +1958,23 @@ function submitOnboarding(){
     message,
     category: role + '_onboarding'
   })})
-    .then(async r=>{ try{ await r.json(); }catch(e){} })
-    .catch(err=>console.error('Onboarding submit error:',err))
-    .finally(()=>{
+    .then(async r=>{
+      let data={};
+      try{ data=await r.json(); }catch(e){}
+      if(!r.ok){
+        console.error('Onboarding submit failed:',r.status,data);
+        throw new Error(data.error || `Server returned ${r.status}.`);
+      }
+    })
+    .then(()=>{
       document.getElementById('onboardModal').classList.remove('open');
       toast(`Thanks, ${(name||'').split(' ')[0]}! This helps us match you to the right ${role==='worker'?'jobs':'people'}.`);
+      if(window._onboardDone) window._onboardDone();
+    })
+    .catch(err=>{
+      console.error('Onboarding submit error:',err);
+      document.getElementById('onboardModal').classList.remove('open');
+      toast(err.message||'Could not send your answers right now, but your account is set up — please try again from your Profile page.');
       if(window._onboardDone) window._onboardDone();
     });
 }
