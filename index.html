@@ -2296,8 +2296,12 @@ async function confirmCrop(){
         method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
         body:JSON.stringify({photoUrl:upData.url})
       });
-      const saveData=await saveResp.json();
-      if(!saveResp.ok) throw new Error(saveData.error||'Could not save photo.');
+      let saveData={};
+      try{ saveData=await saveResp.json(); }catch(e){}
+      if(!saveResp.ok){
+        console.error('Photo save failed:',saveResp.status,saveData);
+        throw new Error(saveData.error || `Server returned ${saveResp.status} while saving your photo.`);
+      }
       _wrk.photoUrl=upData.url;
       localStorage.setItem('bx_worker',JSON.stringify(_wrk));
       toast('Photo updated!');
@@ -2319,8 +2323,12 @@ async function confirmCrop(){
         method:'PATCH',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
         body:JSON.stringify({logoUrl:upData.url})
       });
-      const saveData=await saveResp.json();
-      if(!saveResp.ok) throw new Error(saveData.error||'Could not save logo.');
+      let saveData={};
+      try{ saveData=await saveResp.json(); }catch(e){}
+      if(!saveResp.ok){
+        console.error('Logo save failed:',saveResp.status,saveData);
+        throw new Error(saveData.error || `Server returned ${saveResp.status} while saving your logo.`);
+      }
       emp.logoUrl=upData.url;
       localStorage.setItem('bx_employer',JSON.stringify(emp));
       toast('Logo updated!');
