@@ -4,8 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BeyondX Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#f4f6f4;--s:#fff;--b:#e2e8e2;--b2:#edf1ed;--ink:#0d1a0f;--ink2:#3a5a3e;--ink3:#7a9a7e;--g:#1a4d2a;--g2:#22623a;--g3:#2d8a4e;--g4:#e8f5ec;--amb:#854d0e;--amb-bg:#fefce8;--amb-b:#fde047;--f:'Inter',system-ui,sans-serif;--m:'Menlo','Courier New',monospace;}
+:root{--bg:#f4f6f4;--s:#fff;--b:#e2e8e2;--b2:#edf1ed;--ink:#0d1a0f;--ink2:#3a5a3e;--ink3:#7a9a7e;--g:#1a4d2a;--g2:#22623a;--g3:#2d8a4e;--g4:#e8f5ec;--amb:#854d0e;--amb-bg:#fefce8;--amb-b:#fde047;--f:'DM Sans',sans-serif;--m:'DM Sans',sans-serif;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:13px;-webkit-font-smoothing:antialiased;}
 .login{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--g);}
@@ -157,6 +158,7 @@ tr:hover td{background:var(--bg);}
       <div class="sb-grp">People</div>
       <div class="sb-a" onclick="nav('workers',this)">Workers</div>
       <div class="sb-a" onclick="nav('employers',this)">Employers</div>
+      <div class="sb-a" onclick="nav('reviews',this)">Ratings &amp; Reviews</div>
       <div class="sb-grp">History</div>
       <div class="sb-a" onclick="nav('history',this)">Work History</div>
       <div class="sb-a" onclick="nav('transactions',this)">Transactions</div>
@@ -198,6 +200,7 @@ tr:hover td{background:var(--bg);}
       <div class="sec" id="sec-history"><div id="historyContent"></div></div>
       <div class="sec" id="sec-transactions"><div id="txContent"></div></div>
       <div class="sec" id="sec-employers"><input class="srch" id="eSearch" placeholder="Search employers by organisation or phone…" oninput="re()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Employers</span><span class="tc-hm" id="ec"></span></div><table><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks</th><th>Completed</th><th>Total Spent</th></tr></thead><tbody id="et"></tbody></table></div></div>
+      <div class="sec" id="sec-reviews"><div id="reviewsContent"></div></div>
     </div>
   </div>
 </div>
@@ -256,7 +259,7 @@ function nav(id,el){
   document.querySelectorAll('.sb-a').forEach(n=>n.classList.remove('on'));
   document.getElementById('sec-'+id).classList.add('on');
   el.classList.add('on');
-  const T={overview:'Overview',payouts:'Pay Now',active:'In Progress',open:'Open Tasks',completed:'Completed Tasks',all:'All Tasks',workers:'Workers',employers:'Employers',history:'Work History',transactions:'Transactions'};
+  const T={overview:'Overview',payouts:'Pay Now',active:'In Progress',open:'Open Tasks',completed:'Completed Tasks',all:'All Tasks',workers:'Workers',employers:'Employers',reviews:'Ratings & Reviews',history:'Work History',transactions:'Transactions'};
   document.getElementById('pageTitle').textContent=T[id]||id;
   if(id!=='overview')rs(id);
 }
@@ -321,8 +324,51 @@ function rs(id){
   }
   else if(id==='workers')rw();
   else if(id==='employers')re();
+  else if(id==='reviews')rv();
   else if(id==='history')rh();
   else if(id==='transactions')rt();
+}
+function stars(n){ return '★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n)); }
+function rv(){
+  const all=[];
+  tasks.forEach(t=>{
+    (t.reviews||[]).forEach(r=>{
+      all.push({
+        ...r,
+        taskType: t.taskType,
+        workerName: t.acceptedBy?.fullName || 'Unknown Worker',
+        empName: t.employer?.orgName || 'Unknown Employer'
+      });
+    });
+  });
+  all.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+
+  const empReviews=all.filter(r=>r.fromRole==='worker');   // written by workers, about employers
+  const workerReviews=all.filter(r=>r.fromRole==='employer'); // written by employers, about workers
+  const avg=(arr)=>arr.length?(arr.reduce((s,r)=>s+r.rating,0)/arr.length):0;
+
+  const summary=`<div class="stats" style="margin-bottom:20px;grid-template-columns:repeat(3,1fr);">    <div class="sc"><div class="sc-l">Total Reviews</div><div class="sc-v">${all.length}</div></div>
+    <div class="sc"><div class="sc-l">Avg Worker Rating</div><div class="sc-v">${workerReviews.length?avg(workerReviews).toFixed(1):'—'}</div></div>
+    <div class="sc"><div class="sc-l">Avg Employer Rating</div><div class="sc-v">${empReviews.length?avg(empReviews).toFixed(1):'—'}</div></div>
+  </div>`;
+
+  const row=(r)=>{
+    const isAboutWorker=r.fromRole==='employer';
+    const from=isAboutWorker?r.empName:r.workerName;
+    const about=isAboutWorker?r.workerName:r.empName;
+    const dateStr=r.createdAt?new Date(r.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+    return`<div class="pc" style="margin-bottom:10px;">
+      <div class="pc-hd">
+        <div><div class="pc-n">${from} <span style="color:var(--ink3);font-weight:400;">rated</span> ${about}</div><div class="pc-tk">${r.taskType} &middot; ${dateStr}</div></div>
+        <div style="text-align:right;"><span class="stars" style="color:#b8953a;font-size:14px;">${stars(r.rating)}</span></div>
+      </div>
+      ${r.comment?`<div style="font-size:12.5px;color:var(--ink2);margin-top:8px;line-height:1.6;">${r.comment}</div>`:`<div style="font-size:12px;color:var(--ink3);font-style:italic;margin-top:8px;">No comment left.</div>`}
+    </div>`;
+  };
+
+  document.getElementById('reviewsContent').innerHTML = all.length
+    ? summary + `<div class="tc-h" style="padding:0 0 10px;"><span class="tc-ht">All Reviews</span><span class="tc-hm">${all.length}</span></div>` + all.map(row).join('')
+    : summary + `<div class="empty">No reviews yet.</div>`;
 }
 function pc(t){
   const w=t.acceptedBy;const wp=parseFloat(t.pay).toFixed(2);const fp=(parseFloat(t.pay)*.15).toFixed(2);
