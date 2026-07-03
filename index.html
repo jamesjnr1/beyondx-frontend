@@ -357,6 +357,14 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   html,body{overflow-x:hidden !important;max-width:100% !important;}
   *{box-sizing:border-box;}
 
+  /* TAB BARS (worker dashboard, employer dashboard) — scroll instead of squishing on narrow screens */
+  .tabrow{overflow-x:auto !important;-webkit-overflow-scrolling:touch;scrollbar-width:none;max-width:100% !important;}
+  .tabrow::-webkit-scrollbar{display:none;}
+  .tabrow button{flex:0 0 auto !important;white-space:nowrap;padding-left:14px !important;padding-right:14px !important;}
+
+  /* SKILL SELECTOR GRIDS (registration + profile) — single column on narrow screens for readability */
+  .skillgrid{grid-template-columns:1fr !important;}
+
   /* WELCOME */
   #welcome{align-items:flex-start;padding:32px 20px;}
   .wl-box{padding-top:20px;width:100%;}
@@ -724,7 +732,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <div class="fld2"><label>Phone Number</label><input type="tel" id="wregPhone" inputmode="numeric" maxlength="10" placeholder="e.g. 0244000000" oninput="sanitizePhoneInput(this)"/></div>
     <div class="fld2"><label>Prison Facility</label><select id="wregFacility"><option>Nsawam Medium Security Prison</option><option>Kumasi Central Prison</option><option>James Fort Prison</option><option>Ankaful Maximum Security Prison</option><option>Sunyani Central Prison</option><option>Ho Central Prison</option><option>Tamale Central Prison</option></select></div>
     <div class="fld2"><label>Skills (select all that apply)</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+      <div class="skillgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
         <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;background:var(--off);transition:all .15s;" onmouseover="this.style.borderColor='var(--g5)'" onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--bd)'">
           <input type="checkbox" name="wregSkills" value="Facility & Cleaning" style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
           Facility &amp; Cleaning</label>
@@ -872,7 +880,7 @@ function renderWorkerDashboard(){
   const awaitingPayoutTotal = awaitingPayout.reduce((s,t)=>s+parseFloat(t.pay),0);
   const ratingDisplay = (_wrk.rating && parseFloat(_wrk.rating)>0) ? parseFloat(_wrk.rating).toFixed(1)+' ★' : '— ';
 
-  const tabs = `<div style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;">
+  const tabs = `<div class="tabrow" style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;">
     <button onclick="WS.workerTab='available';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;background:${tab==='available'?'var(--w)':'transparent'};color:${tab==='available'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='available'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Available${available.length?` (${available.length})`:''}</button>
     <button onclick="WS.workerTab='pending';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;background:${tab==='pending'?'var(--w)':'transparent'};color:${tab==='pending'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='pending'?'0 1px 4px rgba(0,0,0,.08)':'none'}">My Tasks${pendingTasks.length+doneTasks.length+awaitingPayout.length?` (${pendingTasks.length+doneTasks.length+awaitingPayout.length})`:''}</button>
     <button onclick="WS.workerTab='declined';renderWorker();" style="flex:1;padding:8px 10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;background:${tab==='declined'?'var(--w)':'transparent'};color:${tab==='declined'?'var(--ink)':'var(--ink3)'};box-shadow:${tab==='declined'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Declined${declinedTasks.length?` (${declinedTasks.length})`:''}</button>
@@ -1053,7 +1061,7 @@ function renderWorkerDashboard(){
       <div style="background:#fff;border:1.5px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px;">
         <div style="font-size:15px;font-weight:800;color:var(--ink);margin-bottom:4px;">Your Skills</div>
         <div style="font-size:12px;color:var(--ink3);margin-bottom:14px;">Update the categories you're certified and available to work in.</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div class="skillgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
           ${skillOpts.map(s=>`<label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:10px 12px;border:1.5px solid ${mySkills.includes(s)?'var(--g5)':'var(--bd)'};border-radius:9px;background:${mySkills.includes(s)?'var(--g0)':'var(--off)'};transition:all .15s;">
             <input type="checkbox" name="profileSkills" value="${s}" ${mySkills.includes(s)?'checked':''} style="accent-color:var(--g6);width:15px;height:15px;flex-shrink:0;" onchange="this.closest('label').style.borderColor=this.checked?'var(--g5)':'var(--bd)';this.closest('label').style.background=this.checked?'var(--g0)':'var(--off)'">
             ${s}</label>`).join('')}
@@ -1359,7 +1367,7 @@ async function submitEmployerSupport(){
   }
 }
 function empTabs(active){
-  return`<div style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;max-width:560px;">
+  return`<div class="tabrow" style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:24px;max-width:560px;">
     <button onclick="empGo('categories')" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;background:${active==='categories'?'var(--w)':'transparent'};color:${active==='categories'?'var(--ink)':'var(--ink3)'};box-shadow:${active==='categories'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Find Workers</button>
     <button onclick="empGo('post')" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;background:${active==='post'?'var(--w)':'transparent'};color:${active==='post'?'var(--ink)':'var(--ink3)'};box-shadow:${active==='post'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Post a Task</button>
     <button onclick="empGo('history')" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;background:${active==='history'?'var(--w)':'transparent'};color:${active==='history'?'var(--ink)':'var(--ink3)'};box-shadow:${active==='history'?'0 1px 4px rgba(0,0,0,.08)':'none'}">History</button>
