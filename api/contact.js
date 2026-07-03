@@ -43,7 +43,10 @@ try {
   console.error('Resend client failed to initialize (non-fatal):', err);
 }
 
-const RECIPIENTS = ['edwina.ashigbui@ashesi.edu.gh', 'beyondx26@gmail.com'];
+const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL;
+if (!NOTIFY_EMAIL) {
+  console.error('NOTIFY_EMAIL environment variable is not set. Set it in Vercel → Settings → Environment Variables.');
+}
 
 function isValidEmail(email) {
   return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -104,7 +107,7 @@ module.exports = async function handler(req, res) {
     }
 
     // 2. Send the notification email, if Resend is configured.
-    if (resend) {
+    if (resend && NOTIFY_EMAIL) {
       const safeName = name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       const safeMessage = message.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       const categoryLabels = {
@@ -116,13 +119,15 @@ module.exports = async function handler(req, res) {
         employer_support: 'Employer support request',
         employer_report: '⚠️ Employer report — please review'
       };
-      // All categories go to the same two recipients now (matching the
-      // landing page). Support/report categories still get a distinct
-      // subject line so they're easy to spot and triage.
+      // NOTE: using Resend's shared test sender (onboarding@resend.dev), which
+      // can only deliver to the single email address your Resend account is
+      // registered under — sending to any other address (or multiple) will
+      // fail until you verify your own domain in Resend. Once verified,
+      // this can go back to an array with your real intended recipients.
       const subjectLine = `${categoryLabels[safeCategory] || 'New contact request'} — BeyondX`;
       const { error: emailError } = await resend.emails.send({
         from: 'BeyondX Website <onboarding@resend.dev>', // test sender — swap for your own verified domain later
-        to: RECIPIENTS,
+        to: [NOTIFY_EMAIL],
         reply_to: hasValidEmail ? email : undefined,
         subject: subjectLine,
         html: `
@@ -142,7 +147,7 @@ module.exports = async function handler(req, res) {
         return res.status(502).json({ error: 'Saved your request, but the notification email failed to send.' });
       }
     } else {
-      console.error('Skipped email notification: resend client not configured.');
+      console.error('Skipped email notification: resend client or NOTIFY_EMAIL missing.');
     }
 
     return res.status(200).json({ ok: true });
