@@ -633,16 +633,17 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <button class="bout" onclick="closeWrkLogin();openWrkRegister();">Register as a Worker</button>
   </div>
 </div>
+<div class="mov" id="onboardModal">
+  <div class="modal" style="max-width:440px;">
+    <div style="text-align:center;margin-bottom:20px;"><div style="width:46px;height:46px;background:var(--g6);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo"></div></div>
+    <div id="onboardBody"></div>
+  </div>
+</div>
 <div class="mov" id="contactModal">
-  <div class="modal" style="max-width:420px;">
+  <div class="modal" style="max-width:440px;">
     <button class="mc" onclick="closeContactModal()">✕</button>
-    <div style="text-align:center;margin-bottom:20px;"><div style="width:46px;height:46px;background:var(--g6);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo"></div>
-    <div class="mt" style="font-size:18px;">Get in Touch</div><div class="ms" style="margin-bottom:0;">Talk to our partnerships team about open roles, internships, or programme sponsorship.</div></div>
-    <div class="fld2"><label>Your Name</label><input type="text" id="ctName" placeholder="Full name"/></div>
-    <div class="fld2"><label>Email Address</label><input type="email" id="ctEmail" placeholder="yourname@example.com"/></div>
-    <div class="fld2"><label>Message</label><textarea id="ctMessage" rows="4" placeholder="How can we help?" style="width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical;outline:none;"></textarea></div>
-    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="submitContactForm()">Send Message</button>
-    <div style="text-align:center;font-size:12px;color:var(--ink3);margin-top:14px;">Or call us on <a href="tel:0553608309" style="color:var(--g6);text-decoration:none;">055 360 8309</a></div>
+    <div style="text-align:center;margin-bottom:20px;"><div style="width:46px;height:46px;background:var(--g6);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;"><img src="https://www.image2url.com/r2/default/images/1780019087745-037c48ee-49e9-4ae6-a4ab-3427787761eb.png" width="40" height="40" style="border-radius:75%;" alt="BeyondX Logo"></div></div>
+    <div id="contactBody"></div>
   </div>
 </div>
 <div class="mov" id="cropModal">
@@ -1808,9 +1809,11 @@ async function handleEmpRegister(){
     localStorage.setItem('bx_employer_token',data.token);
     localStorage.setItem('bx_employer',JSON.stringify(data.employer));
     document.getElementById('empRegisterModal').classList.remove('open');
-    document.getElementById('eAck').checked=false;
-    document.getElementById('eAckBtn').disabled=true;
-    document.getElementById('empAckModal').classList.add('open');
+    showOnboarding('employer', contact, () => {
+      document.getElementById('eAck').checked=false;
+      document.getElementById('eAckBtn').disabled=true;
+      document.getElementById('empAckModal').classList.add('open');
+    });
   }catch(err){toast('Could not connect to server.');}
 }
 async function handleWrkLogin(){
@@ -1869,9 +1872,11 @@ async function handleWrkRegister(){
     localStorage.setItem('bx_worker',JSON.stringify(data.worker));
     document.getElementById('wrkRegisterModal').classList.remove('open');
     toast(`Welcome! Your Worker ID is ${data.worker.workerId}. Please save it.`);
-    document.getElementById('wAck').checked=false;
-    document.getElementById('wAckBtn').disabled=true;
-    document.getElementById('wrkAckModal').classList.add('open');
+    showOnboarding('worker', fullName, () => {
+      document.getElementById('wAck').checked=false;
+      document.getElementById('wAckBtn').disabled=true;
+      document.getElementById('wrkAckModal').classList.add('open');
+    });
   }catch(err){toast('Could not connect to server.');}
 }
 
@@ -1891,7 +1896,201 @@ function openStmt(type){
   document.getElementById('stmtModal').classList.add('open');
 }
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
-function openContactModal(){document.getElementById('contactModal').classList.add('open');}
+// ═══════════════════════════════════
+// MANDATORY POST-REGISTRATION ONBOARDING
+// (shown right after a worker or employer finishes signing up)
+// ═══════════════════════════════════
+function showOnboarding(role, name, onDone){
+  const firstName = (name||'').split(' ')[0] || 'there';
+  const welcome = `Welcome to BeyondX! Thank you for signing up. We are still in our early stages, currently recruiting more workers and employers to the platform. It will take about two weeks before we have your first task ready to dispatch. We will keep you updated along the way and reach out as soon as a job matches your skills. Thanks for being one of our first members, we are glad to have you.`;
+  const workerQs = [
+    'How did you hear about BeyondX?',
+    'What made you decide to sign up?',
+    'What kind of work do you do or are best at?',
+    'Did you have any questions or concerns before joining?',
+    'Do you use a smartphone, or mostly calls and SMS?',
+    'What days and hours are you usually free to work?'
+  ];
+  const employerQs = [
+    'How did you hear about BeyondX?',
+    'What made you consider trying the platform?',
+    'What kind of tasks or roles are you looking to fill?',
+    'Did you have any concerns or hesitations before reaching out?',
+    'How often do you expect to need workers — one-off or ongoing?',
+    'What would make you trust a new worker enough to hire them?'
+  ];
+  const qs = role==='worker' ? workerQs : employerQs;
+  const intro = role==='worker'
+    ? `Hi! ${firstName}, just a few quick questions so we can get to know you better:`
+    : `Hi! Thanks for your interest in BeyondX. A few quick questions to help us serve you better:`;
+
+  window._onboardRole = role;
+  window._onboardName = name;
+  window._onboardDone = onDone;
+
+  document.getElementById('onboardBody').innerHTML = `
+    <div class="mt" style="font-size:17px;">You're in!</div>
+    <div class="ms" style="margin-bottom:16px;line-height:1.6;">${welcome}</div>
+    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;">${intro}</div>
+    ${qs.map((q,i)=>`<div class="fld2"><label>${i+1}. ${q}</label><textarea id="obq${i}" rows="2" style="width:100%;padding:9px 11px;border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical;outline:none;"></textarea></div>`).join('')}
+    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="submitOnboarding()">Send My Answers</button>
+  `;
+  document.getElementById('onboardModal').classList.add('open');
+}
+
+function submitOnboarding(){
+  const role = window._onboardRole;
+  const name = window._onboardName;
+  const answers = [];
+  for(let i=0;i<6;i++){
+    answers.push(document.getElementById('obq'+i).value.trim());
+  }
+  const message = `New ${role} onboarding via registration.\n\n--- Onboarding Answers ---\n` +
+    answers.map((a,i)=>`${i+1}. ${a||'(no answer)'}`).join('\n');
+
+  toast('Sending…');
+  fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    name,
+    email: role==='worker' ? undefined : (JSON.parse(localStorage.getItem('bx_employer')||'{}').email),
+    phone: role==='worker' ? (JSON.parse(localStorage.getItem('bx_worker')||'{}').phone) : undefined,
+    message,
+    category: role + '_onboarding'
+  })})
+    .then(async r=>{ try{ await r.json(); }catch(e){} })
+    .catch(err=>console.error('Onboarding submit error:',err))
+    .finally(()=>{
+      document.getElementById('onboardModal').classList.remove('open');
+      toast(`Thanks, ${(name||'').split(' ')[0]}! This helps us match you to the right ${role==='worker'?'jobs':'people'}.`);
+      if(window._onboardDone) window._onboardDone();
+    });
+}
+
+let CONTACT = { role:'general', name:'', email:'', message:'' };
+
+function openContactModal(){
+  CONTACT = { role:'general', name:'', email:'', message:'' };
+  renderContactStep1();
+  document.getElementById('contactModal').classList.add('open');
+}
+function closeContactModal(){
+  document.getElementById('contactModal').classList.remove('open');
+}
+
+function renderContactStep1(){
+  const roleBtn = (val,label) => `<button onclick="setContactRole('${val}')" style="flex:1;padding:9px 6px;border-radius:8px;border:1.5px solid ${CONTACT.role===val?'var(--g5)':'var(--bd)'};background:${CONTACT.role===val?'var(--g0)':'#fff'};color:${CONTACT.role===val?'var(--g7)':'var(--ink3)'};font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">${label}</button>`;
+  document.getElementById('contactBody').innerHTML = `
+    <div class="mt" style="font-size:18px;text-align:center;">Get in Touch</div>
+    <div class="ms" style="margin-bottom:16px;text-align:center;">Talk to our partnerships team, or tell us a bit about yourself.</div>
+    <div style="display:flex;gap:6px;margin-bottom:16px;">
+      ${roleBtn('worker','I\\'m a Worker')}
+      ${roleBtn('employer','I\\'m an Employer')}
+      ${roleBtn('general','General')}
+    </div>
+    <div class="fld2"><label>Your Name</label><input type="text" id="ctName" placeholder="Full name" value="${CONTACT.name}"/></div>
+    <div class="fld2"><label>Email Address</label><input type="email" id="ctEmail" placeholder="yourname@example.com" value="${CONTACT.email}"/></div>
+    <div class="fld2"><label>Message</label><textarea id="ctMessage" rows="4" placeholder="How can we help?" style="width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical;outline:none;">${CONTACT.message}</textarea></div>
+    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="submitContactStep1()">${CONTACT.role==='general'?'Send Message':'Continue'}</button>
+    <div style="text-align:center;font-size:12px;color:var(--ink3);margin-top:14px;">Or call us on <a href="tel:0553608309" style="color:var(--g6);text-decoration:none;">055 360 8309</a></div>
+  `;
+}
+function setContactRole(val){
+  CONTACT.role = val;
+  CONTACT.name = document.getElementById('ctName')?.value || CONTACT.name;
+  CONTACT.email = document.getElementById('ctEmail')?.value || CONTACT.email;
+  CONTACT.message = document.getElementById('ctMessage')?.value || CONTACT.message;
+  renderContactStep1();
+}
+
+function submitContactStep1(){
+  const name=document.getElementById('ctName').value.trim();
+  const email=document.getElementById('ctEmail').value.trim();
+  const message=document.getElementById('ctMessage').value.trim();
+  if(!name||!email||!message){toast('Please fill in your name, email, and message.');return;}
+  if(!isValidEmail(email)){toast('Please enter a valid email address.');return;}
+  if(message.length<5){toast('Please write a short message so we know how to help.');return;}
+  CONTACT.name=name; CONTACT.email=email; CONTACT.message=message;
+
+  if(CONTACT.role==='general'){
+    sendContactPayload({name,email,message,category:'get_in_touch'}, () => {
+      closeContactModal();
+      toast(`Thanks, ${name.split(' ')[0]}. Your message has been received — our team will follow up shortly.`);
+    });
+  } else {
+    renderContactStep2();
+  }
+}
+
+function renderContactStep2(){
+  const firstName = CONTACT.name.split(' ')[0];
+  const welcome = `Welcome to BeyondX! Thank you for signing up. We are still in our early stages, currently recruiting more workers and employers to the platform. It will take about two weeks before we have your first task ready to dispatch. We will keep you updated along the way and reach out as soon as a job matches your skills. Thanks for being one of our first members, we are glad to have you.`;
+  const workerQs = [
+    'How did you hear about BeyondX?',
+    'What made you decide to sign up?',
+    'What kind of work do you do or are best at?',
+    'Did you have any questions or concerns before joining?',
+    'Do you use a smartphone, or mostly calls and SMS?',
+    'What days and hours are you usually free to work?'
+  ];
+  const employerQs = [
+    'How did you hear about BeyondX?',
+    'What made you consider trying the platform?',
+    'What kind of tasks or roles are you looking to fill?',
+    'Did you have any concerns or hesitations before reaching out?',
+    'How often do you expect to need workers — one-off or ongoing?',
+    'What would make you trust a new worker enough to hire them?'
+  ];
+  const qs = CONTACT.role==='worker' ? workerQs : employerQs;
+  const intro = CONTACT.role==='worker'
+    ? `Hi! ${firstName}, just a few quick questions so we can get to know you better:`
+    : `Hi! Thanks for your interest in BeyondX. A few quick questions to help us serve you better:`;
+  document.getElementById('contactBody').innerHTML = `
+    <div class="mt" style="font-size:17px;">You're in!</div>
+    <div class="ms" style="margin-bottom:16px;line-height:1.6;">${welcome}</div>
+    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;">${intro}</div>
+    ${qs.map((q,i)=>`<div class="fld2"><label>${i+1}. ${q}</label><textarea id="ctq${i}" rows="2" style="width:100%;padding:9px 11px;border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical;outline:none;"></textarea></div>`).join('')}
+    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="submitContactStep2()">Send My Answers</button>
+    <button style="width:100%;padding:10px;margin-top:6px;background:none;border:none;color:var(--ink3);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="skipContactStep2()">Skip for now</button>
+  `;
+}
+
+function skipContactStep2(){
+  sendContactPayload({name:CONTACT.name,email:CONTACT.email,message:CONTACT.message,category:CONTACT.role==='worker'?'worker_onboarding':'employer_onboarding'}, () => {
+    closeContactModal();
+    toast(`Thanks, ${CONTACT.name.split(' ')[0]}. Welcome to BeyondX — our team will be in touch.`);
+  });
+}
+
+function submitContactStep2(){
+  const qCount = 6;
+  const answers = [];
+  for(let i=0;i<qCount;i++){
+    answers.push(document.getElementById('ctq'+i).value.trim());
+  }
+  const fullMessage = `${CONTACT.message}\n\n--- Onboarding Answers ---\n` +
+    answers.map((a,i)=>`${i+1}. ${a||'(no answer)'}`).join('\n');
+  sendContactPayload({name:CONTACT.name,email:CONTACT.email,message:fullMessage,category:CONTACT.role==='worker'?'worker_onboarding':'employer_onboarding'}, () => {
+    closeContactModal();
+    toast(`Thanks, ${CONTACT.name.split(' ')[0]}! This helps us match you to the right ${CONTACT.role==='worker'?'jobs':'people'}.`);
+  });
+}
+
+function sendContactPayload(payload, onSuccess){
+  toast('Sending…');
+  fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(async r=>{
+      let data={};
+      try{ data=await r.json(); }catch(e){}
+      if(!r.ok){
+        console.error('Contact form failed:',r.status,data);
+        throw new Error(data.error || `Server returned ${r.status}. The contact endpoint may not be deployed yet.`);
+      }
+      onSuccess();
+    })
+    .catch(err=>{
+      console.error('Contact form error:',err);
+      toast(err.message||'Could not send right now — please try again or call us on 055 360 8309.');
+    });
+}
 
 // ═══════════════════════════════════
 // PHOTO CROP (worker photo / employer logo)
@@ -2141,34 +2340,6 @@ async function submitReview(){
   }catch(err){ toast('Could not connect to server.'); }
 }
 
-function closeContactModal(){document.getElementById('contactModal').classList.remove('open');}
-function submitContactForm(){
-  const name=document.getElementById('ctName').value.trim();
-  const email=document.getElementById('ctEmail').value.trim();
-  const message=document.getElementById('ctMessage').value.trim();
-  if(!name||!email||!message){toast('Please fill in your name, email, and message.');return;}
-  if(!isValidEmail(email)){toast('Please enter a valid email address.');return;}
-  if(message.length<5){toast('Please write a short message so we know how to help.');return;}
-  toast('Sending your message…');
-  fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,message,category:'get_in_touch'})})
-    .then(async r=>{
-      let data={};
-      try{ data=await r.json(); }catch(e){ /* response wasn't JSON — likely /api/contact isn't deployed */ }
-      if(!r.ok){
-        console.error('Contact form failed:',r.status,data);
-        throw new Error(data.error || `Server returned ${r.status}. The contact endpoint may not be deployed yet.`);
-      }
-      closeContactModal();
-      document.getElementById('ctName').value='';
-      document.getElementById('ctEmail').value='';
-      document.getElementById('ctMessage').value='';
-      toast(`Thanks, ${name.split(' ')[0]}. Your message has been received — our team will follow up shortly.`);
-    })
-    .catch(err=>{
-      console.error('Contact form error:',err);
-      toast(err.message||'Could not send right now — please try again or call us on 055 360 8309.');
-    });
-}
 
 // ═══════════════════════════════════
 // RESTORE VIEW ON REFRESH
@@ -2214,6 +2385,21 @@ loadHomeLiveData();
     if(last==='dispatch'&&eToken){isEmpLoggedIn=true;updateFindBtn();switchView('dispatch');return;}
     if(last==='meet-the-team'){switchView('meet-the-team');return;}
     if(last==='gallery'){switchView('gallery');return;}
+  }catch(e){}
+})();
+
+(function openRegisterFromQuery(){
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const reg = params.get('register');
+    if(reg === 'worker'){ openWrkRegister(); }
+    else if(reg === 'employer'){ openEmpRegister(); }
+    if(reg){
+      // Clean the URL so refreshing doesn't reopen the modal repeatedly
+      const url = new URL(window.location);
+      url.searchParams.delete('register');
+      window.history.replaceState({}, '', url);
+    }
   }catch(e){}
 })();
 
