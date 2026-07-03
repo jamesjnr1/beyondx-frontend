@@ -1925,6 +1925,7 @@ function showOnboarding(role, name, onDone){
     : `Hi! Thanks for your interest in BeyondX. A few quick questions to help us serve you better:`;
 
   window._onboardRole = role;
+  window._onboardQs = qs;
   window._onboardName = name;
   window._onboardDone = onDone;
 
@@ -1941,12 +1942,13 @@ function showOnboarding(role, name, onDone){
 function submitOnboarding(){
   const role = window._onboardRole;
   const name = window._onboardName;
+  const qs = window._onboardQs || [];
   const answers = [];
   for(let i=0;i<6;i++){
     answers.push(document.getElementById('obq'+i).value.trim());
   }
   const message = `New ${role} onboarding via registration.\n\n--- Onboarding Answers ---\n` +
-    answers.map((a,i)=>`${i+1}. ${a||'(no answer)'}`).join('\n');
+    answers.map((a,i)=>`Q${i+1}: ${qs[i]||''}\nA: ${a||'(no answer)'}`).join('\n\n');
 
   toast('Sending…');
   fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
@@ -2040,6 +2042,7 @@ function renderContactStep2(){
     'What would make you trust a new worker enough to hire them?'
   ];
   const qs = CONTACT.role==='worker' ? workerQs : employerQs;
+  CONTACT.qs = qs;
   const intro = CONTACT.role==='worker'
     ? `Hi! ${firstName}, just a few quick questions so we can get to know you better:`
     : `Hi! Thanks for your interest in BeyondX. A few quick questions to help us serve you better:`;
@@ -2062,12 +2065,13 @@ function skipContactStep2(){
 
 function submitContactStep2(){
   const qCount = 6;
+  const qs = CONTACT.qs || [];
   const answers = [];
   for(let i=0;i<qCount;i++){
     answers.push(document.getElementById('ctq'+i).value.trim());
   }
   const fullMessage = `${CONTACT.message}\n\n--- Onboarding Answers ---\n` +
-    answers.map((a,i)=>`${i+1}. ${a||'(no answer)'}`).join('\n');
+    answers.map((a,i)=>`Q${i+1}: ${qs[i]||''}\nA: ${a||'(no answer)'}`).join('\n\n');
   sendContactPayload({name:CONTACT.name,email:CONTACT.email,message:fullMessage,category:CONTACT.role==='worker'?'worker_onboarding':'employer_onboarding'}, () => {
     closeContactModal();
     toast(`Thanks, ${CONTACT.name.split(' ')[0]}! This helps us match you to the right ${CONTACT.role==='worker'?'jobs':'people'}.`);
