@@ -1,1 +1,151 @@
+// /api/contact.js
+// Vercel Serverless Function — handles the "Get in Touch" modal on beyondx-frontend.
+// Same architecture as the beyondx-landingpage site: saves the lead to Supabase,
+// then emails a notification via Resend.
+//
+// Required environment variables (set in Vercel Project Settings → Environment Variables
+// for THIS project — beyondx-frontend — not just the landing page):
+//   SUPABASE_URL              — your Supabase project URL
+//   SUPABASE_SERVICE_ROLE_KEY — Supabase service role key (server-side only, never expose to the browser)
+//   RESEND_API_KEY            — your Resend API key
+//   NOTIFY_EMAIL              — where notification emails get sent.
+//     IMPORTANT: while using Resend's test sender (onboarding@resend.dev) with
+//     no verified domain, this MUST be the exact email address your Resend
+//     account was signed up with — Resend will silently fail to deliver to
+//     any other address in sandbox mode. Once you verify a real domain, you
+//     can change this to any address you want.
+//
+// You can point this at the SAME Supabase project and Resend account as the
+// landing page (reuse the same env var values), or set up separate ones —
+// either works, this file doesn't care which.
 
+const { createClient } = require('@supabase/supabase-js');
+const { Resend } = require('resend');
+
+let supabase = null;
+try {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error('SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set.');
+  }
+  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+} catch (err) {
+  console.error('Supabase client failed to initialize:', err);
+}
+
+let resend = null;
+try {
+  if (process.env.RESEND_API_KEY) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  } else {
+    console.error('RESEND_API_KEY is not set — email notifications will be skipped.');
+  }
+} catch (err) {
+  console.error('Resend client failed to initialize (non-fatal):', err);
+}
+
+const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL;
+if (!NOTIFY_EMAIL) {
+  console.error('NOTIFY_EMAIL environment variable is not set. Set it in Vercel → Settings → Environment Variables.');
+}
+
+function isValidEmail(email) {
+  return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+function isValidPhone(phone) {
+  return typeof phone === 'string' && /^0[2357]\d{8}$/.test(phone);
+}
+
+module.exports = async function handler(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!supabase) {
+    return res.status(500).json({ error: 'Server is misconfigured (database connection). Please try again later.' });
+  }
+
+  try {
+    // `category` distinguishes what kind of submission this is, e.g.
+    // 'get_in_touch' (public contact form), 'worker_support',
+    // 'worker_report', 'employer_support', 'employer_report'.
+    // `phone` is accepted as an alternative to `email` since workers on
+    // this platform authenticate by phone number and don't have an email
+    // on file — at least one of the two is required.
+    const { name, email, phone, message, category } = req.body || {};
+    const safeCategory = (typeof category === 'string' && category.trim()) ? category.trim() : 'get_in_touch';
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ error: 'A name is required.' });
+    }
+
+    const hasValidEmail = isValidEmail(email);
+    const hasValidPhone = isValidPhone(phone);
+    if (!hasValidEmail && !hasValidPhone) {
+      return res.status(400).json({ error: 'A valid email address or phone number is required.' });
+    }
+
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      return res.status(400).json({ error: 'Please include a message.' });
+    }
+
+    // 1. Save the lead to Supabase so nothing is lost even if the email fails.
+    const { error: dbError } = await supabase
+      .from('frontend_contact_leads')
+      .insert([{
+        name,
+        email: hasValidEmail ? email : null,
+        phone: hasValidPhone ? phone : null,
+        message,
+        source: safeCategory
+      }]);
+
+    if (dbError) {
+      console.error('Supabase insert error:', dbError);
+      // Continue to try sending the email even if the DB write fails —
+      // we'd rather you get notified than lose the lead entirely.
+    }
+
+    // 2. Send the notification email, if Resend is configured.
+    if (resend && NOTIFY_EMAIL) {
+      const safeName = name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const safeMessage = message.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const categoryLabels = {
+        get_in_touch: 'New "Get in Touch" request',
+        worker_support: 'Worker support request',
+        worker_report: '⚠️ Worker report — please review',
+        employer_support: 'Employer support request',
+        employer_report: '⚠️ Employer report — please review'
+      };
+      const subjectLine = `${categoryLabels[safeCategory] || 'New contact request'} — BeyondX`;
+      const { error: emailError } = await resend.emails.send({
+        from: 'BeyondX Website <onboarding@resend.dev>', // test sender — swap for your own verified domain later
+        to: [NOTIFY_EMAIL],
+        reply_to: hasValidEmail ? email : undefined,
+        subject: subjectLine,
+        html: `
+          <div style="font-family: sans-serif; max-width: 480px;">
+            <h2 style="color:#1A4731;">${subjectLine}</h2>
+            <p style="font-size:1.1rem;"><strong>Name:</strong> ${safeName}</p>
+            ${hasValidEmail ? `<p style="font-size:1.1rem;"><strong>Email:</strong> ${email}</p>` : ''}
+            ${hasValidPhone ? `<p style="font-size:1.1rem;"><strong>Phone:</strong> ${phone}</p>` : ''}
+            <p style="font-size:1rem; white-space:pre-wrap;"><strong>Message:</strong><br>${safeMessage}</p>
+            <p style="color:#6B7280; font-size:0.85rem;">${hasValidEmail ? 'Reply directly to this email to respond to them.' : 'No email on file — use the phone number above to follow up.'}</p>
+          </div>
+        `,
+      });
+
+      if (emailError) {
+        console.error('Resend send error:', emailError);
+        return res.status(502).json({ error: 'Saved your request, but the notification email failed to send.' });
+      }
+    } else {
+      console.error('Skipped email notification: resend client or NOTIFY_EMAIL missing.');
+    }
+
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('Unexpected error in /api/contact:', err);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+};
