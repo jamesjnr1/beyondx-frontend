@@ -821,11 +821,10 @@ async function renderWorker() {
   const m = document.getElementById('workerMain');
   if (!m) return;
   m.innerHTML='<div style="padding:40px;text-align:center;color:var(--mu);">Loading...</div>';
-  await loadTasks();
-  // Also load worker's active tasks and paid history from backend
-  await loadMyTasks();
-  await loadWorkerHistory();
-  await loadMyProfile();
+  // These four loads are independent of each other — running them in
+  // parallel instead of one-at-a-time cuts total wait time significantly,
+  // especially over higher-latency connections.
+  await Promise.all([loadTasks(), loadMyTasks(), loadWorkerHistory(), loadMyProfile()]);
   m.innerHTML = renderWorkerDashboard();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1174,6 +1173,29 @@ const CATPRICES={
   "Community Services":140
 };
 let EWORKERS=[];
+function loadEWorkers(){
+  return fetch('https://beyondx-backend-production-1a08.up.railway.app/api/workers',{cache:'no-store'})
+    .then(r=>r.json())
+    .then(data=>{
+      EWORKERS=data.workers.map(w=>({
+        id:w.id,workerId:w.workerId,name:w.fullName,phone:w.phone||null,
+        charge:CATPRICES[(w.skills&&w.skills[0])||'']||parseFloat(w.dailyCharge),rating:parseFloat(w.rating),
+        tasks:w.tasksCompleted,offense:w.offenseLevel,
+        offenseLabel:w.offenseLevel==='major'?'⚠️ Major Offense':w.offenseLevel==='minor'?'Minor Offense':'Clean Record',
+        gps:w.gpsVerified,skills:w.skills,isBusy:!!w.isBusy,
+        bio:w.bio||'Verified worker ready for deployment.',
+        cats:w.skills&&w.skills.length>0?[w.skills[0]]:[],
+        photoUrl:w.photoUrl||null,
+        reviews:w.reviewsReceived||[],
+        seed:w.workerId.toLowerCase().replace('-',''),gender:'m'
+      }));
+      // Re-render categories/workers view now that fresh data has loaded
+      if(EMP.view==='categories'||EMP.view==='workers'){
+        const m2=document.getElementById('empMain');
+        if(m2)m2.innerHTML=EMP.view==='categories'?renderECats():renderEWorkers();
+      }
+    }).catch(()=>{});
+}
 
 function wAvatar(w,sz){
   if(w.photoUrl) return w.photoUrl;
@@ -1193,29 +1215,11 @@ async function renderEmp(){
   if(_orgEl&&_emp.orgName)_orgEl.textContent=_emp.orgName;
   const m=document.getElementById('empMain');if(!m)return;
 
-  // Always fetch workers in background if not loaded yet
-  if(EWORKERS.length===0){
-    fetch('https://beyondx-backend-production-1a08.up.railway.app/api/workers',{cache:'no-store'})
-      .then(r=>r.json())
-      .then(data=>{
-        EWORKERS=data.workers.map(w=>({
-          id:w.id,workerId:w.workerId,name:w.fullName,phone:w.phone||null,
-          charge:CATPRICES[(w.skills&&w.skills[0])||'']||parseFloat(w.dailyCharge),rating:parseFloat(w.rating),
-          tasks:w.tasksCompleted,offense:w.offenseLevel,
-          offenseLabel:w.offenseLevel==='major'?'⚠️ Major Offense':w.offenseLevel==='minor'?'Minor Offense':'Clean Record',
-          gps:w.gpsVerified,skills:w.skills,isBusy:!!w.isBusy,
-          bio:w.bio||'Verified worker ready for deployment.',
-          cats:w.skills&&w.skills.length>0?[w.skills[0]]:[],
-          photoUrl:w.photoUrl||null,
-          reviews:w.reviewsReceived||[],
-          seed:w.workerId.toLowerCase().replace('-',''),gender:'m'
-        }));
-        // Re-render categories now that workers are loaded
-        if(EMP.view==='categories'){
-          const m2=document.getElementById('empMain');
-          if(m2)m2.innerHTML=renderECats();
-        }
-      }).catch(()=>{});
+  // Fetch workers fresh every time Find Workers is opened, not just once —
+  // otherwise dispatches (by this employer or any other) go stale until a
+  // full page reload.
+  if(EMP.view==='categories'||EWORKERS.length===0){
+    loadEWorkers();
   }
 
   if(EMP.view==='categories'){m.innerHTML=renderECats();return;}
@@ -1754,6 +1758,7 @@ async function processDispatchPayment(){
     const data=await resp.json();
     if(!resp.ok){toast(data.error||'Failed to confirm dispatch.');return;}
     TASKS_LOADED=false;
+    EWORKERS=[]; // force a fresh fetch next time Find Workers is opened
     empGo('success');
   }catch(err){
     toast('Could not connect to server.');
