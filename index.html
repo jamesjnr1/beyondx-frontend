@@ -1437,78 +1437,115 @@ async function submitTask(){
   }catch(err){toast('Could not connect to server.');}
 }
 
+let HIST_TASKS=[];
+let HIST_STATE={tab:'attention',completedShown:10};
 async function renderHistory(){
   const m=document.getElementById('empMain');
   const token=localStorage.getItem('bx_employer_token');
+  m.innerHTML=`<div class="ebody">${empTabs('history')}<div style="padding:40px;text-align:center;color:var(--ink3);">Loading history...</div></div>`;
   try{
     const resp=await fetch('https://beyondx-backend-production-1a08.up.railway.app/api/tasks/all',{
       headers:{'Authorization':`Bearer ${token}`},cache:'no-store'
     });
     const data=await resp.json();
-    const tasks=data.tasks||[];
-    const open=tasks.filter(t=>t.status==='open');
-    const accepted=tasks.filter(t=>t.status==='accepted');
-    const pendingConfirm=tasks.filter(t=>t.status==='pending_confirmation');
-    const awaitingPayoutEmp=tasks.filter(t=>t.status==='employer_confirmed');
-    const completed=tasks.filter(t=>t.status==='completed');
-
-    function taskCard(t){
-      const workerInfo=t.acceptedBy?`
-        <div style="background:var(--g0);border:1.5px solid var(--g1);border-radius:10px;padding:12px;margin-top:10px;">
-          <div style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.8px;color:var(--g6);text-transform:uppercase;margin-bottom:6px;">Assigned Worker</div>
-          <div style="font-size:14px;font-weight:700;color:var(--ink);">${t.acceptedBy.fullName}</div>
-          <div style="font-size:12px;color:var(--ink3);margin-top:2px;">${t.acceptedBy.workerId} · ${t.acceptedBy.phone||'No phone on record'}</div>
-        </div>`:'';
-      const confirmBtn=t.status==='pending_confirmation'
-        ?`<button onclick="confirmTaskDone('${t.id}','${(t.acceptedBy?.fullName||'the worker').replace(/'/g,"\\'")}')" style="margin-top:10px;width:100%;padding:9px;background:var(--g7);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Confirm Work is Done ✓</button>`:'';
-      const alreadyRatedWorker=(t.reviews||[]).some(r=>r.fromRole==='employer');
-      const rateBtn=(['employer_confirmed','completed'].includes(t.status) && t.acceptedBy)
-        ?(alreadyRatedWorker
-          ?`<div style="font-size:12px;color:var(--g6);margin-top:10px;">✓ You rated ${t.acceptedBy.fullName}</div>`
-          :`<button onclick="openReviewModal('${t.id}','worker','${(t.acceptedBy.fullName||'this worker').replace(/'/g,"\\'")}')" style="margin-top:10px;width:100%;padding:9px;background:var(--g0);color:var(--g7);border:1.5px solid var(--g4);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Rate This Worker</button>`)
-        :'';
-      const badge=t.status==='open'
-        ?`<span style="background:#e0f5ea;color:var(--g7);font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">OPEN</span>`
-        :t.status==='accepted'
-        ?`<span style="background:#fef6e0;color:#9a6f00;font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">ACCEPTED</span>`
-        :t.status==='pending_confirmation'
-        ?`<span style="background:#fff3cd;color:#856404;font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">WORKER SAYS DONE</span>`
-        :t.status==='employer_confirmed'
-        ?`<span style="background:#e0f5ea;color:var(--g7);font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">AWAITING PAYOUT</span>`
-        :`<span style="background:#f0f8f3;color:var(--g6);font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">COMPLETED</span>`;
-      return`<div style="background:var(--w);border:1.5px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-          <div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--ink);">${t.taskType}</div>
-          ${badge}
-        </div>
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">${t.location} · ${t.duration}</div>
-        ${t.description?`<div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">${t.description}</div>`:''}
-        <div style="font-family:'DM Sans',sans-serif;font-size:15px;font-weight:800;color:var(--g7);">GH₵ ${parseFloat(t.pay).toFixed(0)}</div>
-        ${workerInfo}
-        ${confirmBtn}
-        ${rateBtn}
-      </div>`;
-    }
-
-    function section(title, items, emptyMsg){
-      return`<div style="margin-bottom:28px;">
-        <div style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:1px;color:var(--ink3);text-transform:uppercase;margin-bottom:12px;">${title} (${items.length})</div>
-        ${items.length?items.map(taskCard).join(''):`<div style="font-size:13px;color:var(--ink3);padding:16px;background:var(--off);border-radius:10px;">${emptyMsg}</div>`}
-      </div>`;
-    }
-
-    m.innerHTML=`<div class="ebody"><div style="max-width:600px;">
-      ${empTabs('history')}
-      <div class="ehero" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;"><div><h2>Task History</h2><p>All tasks you have posted on BeyondX.</p></div><button onclick="empGo('history')" style="padding:8px 14px;background:var(--off);border:1.5px solid var(--bd);border-radius:8px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;">Refresh</button></div>
-      ${section('Awaiting Acceptance', open, 'No open tasks. Post a task to get started.')}
-      ${section('In Progress', accepted, 'No tasks currently in progress.')}
-      ${section('Worker Says Done — Confirm', pendingConfirm, 'No tasks awaiting your confirmation.')}
-      ${section('Awaiting Payout', awaitingPayoutEmp, 'No tasks awaiting payout.')}
-      ${section('Completed', completed, 'No completed tasks yet.')}
-    </div></div>`;
+    HIST_TASKS=data.tasks||[];
+    HIST_STATE={tab:'attention',completedShown:10};
+    renderHistoryView();
   }catch(err){
     m.innerHTML=`<div class="ebody">${empTabs('history')}<div style="padding:40px;text-align:center;color:var(--ink3);">Could not load history.</div></div>`;
   }
+}
+
+function taskCard(t){
+  const workerInfo=t.acceptedBy?`
+    <div style="background:var(--g0);border:1.5px solid var(--g1);border-radius:10px;padding:12px;margin-top:10px;">
+      <div style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.8px;color:var(--g6);text-transform:uppercase;margin-bottom:6px;">Assigned Worker</div>
+      <div style="font-size:14px;font-weight:700;color:var(--ink);">${t.acceptedBy.fullName}</div>
+      <div style="font-size:12px;color:var(--ink3);margin-top:2px;">${t.acceptedBy.workerId} · ${t.acceptedBy.phone||'No phone on record'}</div>
+    </div>`:'';
+  const confirmBtn=t.status==='pending_confirmation'
+    ?`<button onclick="confirmTaskDone('${t.id}','${(t.acceptedBy?.fullName||'the worker').replace(/'/g,"\\'")}')" style="margin-top:10px;width:100%;padding:9px;background:var(--g7);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Confirm Work is Done ✓</button>`:'';
+  const alreadyRatedWorker=(t.reviews||[]).some(r=>r.fromRole==='employer');
+  const rateBtn=(['employer_confirmed','completed'].includes(t.status) && t.acceptedBy)
+    ?(alreadyRatedWorker
+      ?`<div style="font-size:12px;color:var(--g6);margin-top:10px;">✓ You rated ${t.acceptedBy.fullName}</div>`
+      :`<button onclick="openReviewModal('${t.id}','worker','${(t.acceptedBy.fullName||'this worker').replace(/'/g,"\\'")}')" style="margin-top:10px;width:100%;padding:9px;background:var(--g0);color:var(--g7);border:1.5px solid var(--g4);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">Rate This Worker</button>`)
+    :'';
+  const badge=t.status==='open'
+    ?`<span style="background:#e0f5ea;color:var(--g7);font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">OPEN</span>`
+    :t.status==='accepted'
+    ?`<span style="background:#fef6e0;color:#9a6f00;font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">ACCEPTED</span>`
+    :t.status==='pending_confirmation'
+    ?`<span style="background:#fff3cd;color:#856404;font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">WORKER SAYS DONE</span>`
+    :t.status==='employer_confirmed'
+    ?`<span style="background:#e0f5ea;color:var(--g7);font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">AWAITING PAYOUT</span>`
+    :`<span style="background:#f0f8f3;color:var(--g6);font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 9px;border-radius:4px;font-weight:600;">COMPLETED</span>`;
+  return`<div style="background:var(--w);border:1.5px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+      <div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--ink);">${t.taskType}</div>
+      ${badge}
+    </div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">${t.location} · ${t.duration}</div>
+    ${t.description?`<div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">${t.description}</div>`:''}
+    <div style="font-family:'DM Sans',sans-serif;font-size:15px;font-weight:800;color:var(--g7);">GH₵ ${parseFloat(t.pay).toFixed(0)}</div>
+    ${workerInfo}
+    ${confirmBtn}
+    ${rateBtn}
+  </div>`;
+}
+
+function historySection(title, items, emptyMsg){
+  return`<div style="margin-bottom:28px;">
+    <div style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:1px;color:var(--ink3);text-transform:uppercase;margin-bottom:12px;">${title} (${items.length})</div>
+    ${items.length?items.map(taskCard).join(''):`<div style="font-size:13px;color:var(--ink3);padding:16px;background:var(--off);border-radius:10px;">${emptyMsg}</div>`}
+  </div>`;
+}
+
+function renderHistoryView(){
+  const m=document.getElementById('empMain');
+  const tasks=HIST_TASKS;
+  const open=tasks.filter(t=>t.status==='open');
+  const accepted=tasks.filter(t=>t.status==='accepted');
+  const pendingConfirm=tasks.filter(t=>t.status==='pending_confirmation');
+  const awaitingPayoutEmp=tasks.filter(t=>t.status==='employer_confirmed');
+  const completed=tasks.filter(t=>t.status==='completed');
+  const needsAttentionCount=open.length+accepted.length+pendingConfirm.length+awaitingPayoutEmp.length;
+
+  const subTabs=`<div class="tabrow" style="display:flex;gap:4px;background:var(--off);border-radius:10px;padding:4px;margin-bottom:22px;max-width:420px;">
+    <button onclick="HIST_STATE.tab='attention';renderHistoryView();" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;background:${HIST_STATE.tab==='attention'?'var(--w)':'transparent'};color:${HIST_STATE.tab==='attention'?'var(--ink)':'var(--ink3)'};box-shadow:${HIST_STATE.tab==='attention'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Needs Attention${needsAttentionCount?` (${needsAttentionCount})`:''}</button>
+    <button onclick="HIST_STATE.tab='completed';renderHistoryView();" style="flex:1;padding:8px 12px;border-radius:8px;border:none;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;background:${HIST_STATE.tab==='completed'?'var(--w)':'transparent'};color:${HIST_STATE.tab==='completed'?'var(--ink)':'var(--ink3)'};box-shadow:${HIST_STATE.tab==='completed'?'0 1px 4px rgba(0,0,0,.08)':'none'}">Completed${completed.length?` (${completed.length})`:''}</button>
+  </div>`;
+
+  let content='';
+  if(HIST_STATE.tab==='attention'){
+    const sections=[
+      ['Awaiting Acceptance', open],
+      ['In Progress', accepted],
+      ['Worker Says Done — Confirm', pendingConfirm],
+      ['Awaiting Payout', awaitingPayoutEmp]
+    ].filter(([_,items])=>items.length>0);
+    content = sections.length
+      ? sections.map(([title,items])=>historySection(title,items,'')).join('')
+      : `<div style="text-align:center;padding:48px 20px;color:var(--ink3);">
+        <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;">Nothing needs your attention right now</div>
+        <div style="font-size:13px;">All caught up — post a task to get started, or check Completed for past work.</div>
+      </div>`;
+  } else {
+    const shown=completed.slice(0,HIST_STATE.completedShown);
+    content = completed.length ? (
+      shown.map(taskCard).join('') +
+      (completed.length>HIST_STATE.completedShown
+        ? `<button onclick="HIST_STATE.completedShown+=10;renderHistoryView();" style="width:100%;padding:11px;background:var(--off);border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;">Show ${Math.min(10,completed.length-HIST_STATE.completedShown)} More</button>`
+        : '')
+    ) : `<div style="text-align:center;padding:48px 20px;color:var(--ink3);"><div style="font-size:13px;">No completed tasks yet.</div></div>`;
+  }
+
+  m.innerHTML=`<div class="ebody"><div style="max-width:600px;">
+    ${empTabs('history')}
+    <div class="ehero" style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;"><div><h2>Task History</h2><p>All tasks you have posted on BeyondX.</p></div><button onclick="empGo('history')" style="padding:8px 14px;background:var(--off);border:1.5px solid var(--bd);border-radius:8px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;">Refresh</button></div>
+    ${subTabs}
+    ${content}
+  </div></div>`;
 }
 async function confirmTaskDone(id,workerName){
   const token=localStorage.getItem('bx_employer_token');
