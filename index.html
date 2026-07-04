@@ -58,6 +58,13 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 .ntab{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--ink3);transition:all .15s;font-family:'DM Sans',sans-serif;}
 .ntab.active{background:var(--w);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08);font-weight:700;}
 .nr{display:flex;align-items:center;gap:8px;}
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:1.5px solid var(--bd);border-radius:8px;cursor:pointer;padding:0;}
+.hamburger span{display:block;width:16px;height:2px;background:var(--ink);border-radius:2px;margin:0 auto;transition:all .2s;}
+.mobmenu{display:none;flex-direction:column;background:var(--w);border-bottom:1.5px solid var(--bd);box-shadow:0 8px 20px rgba(0,0,0,.06);position:sticky;top:65px;z-index:199;}
+.mobmenu.open{display:flex;}
+.mobmenu-a{width:100%;text-align:left;padding:14px 20px;border:none;background:none;font-size:14px;font-weight:600;color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;border-bottom:1px solid var(--off);}
+.mobmenu-a.active{color:var(--g7);}
+.mobmenu-a:last-child{border-bottom:none;}
 .bln{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:1.5px solid var(--bd2);color:var(--ink2);background:transparent;transition:all .15s;}
 .bln:hover{background:var(--off);border-color:var(--bd2);}
 .bln-w{background:var(--g7);color:#fff;border-color:var(--g7);}.bln-w:hover{background:var(--g6);}
@@ -380,6 +387,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   nav{padding:10px 16px;}
   .ntabs{display:none !important;}
   .nr{display:none !important;}
+  .hamburger{display:flex !important;}
 
   /* HERO */
   .hero{padding:56px 20px 70px;}
@@ -444,8 +452,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   .payms{grid-template-columns:1fr !important;}
   .steps{grid-template-columns:1fr;}
 }
-.mobile-btns{display:none;}
-@media(max-width:768px){.mobile-btns{display:flex;gap:8px;position:fixed;bottom:52px;right:16px;z-index:300;flex-direction:column;}}
+
 </style>
 </head>
 <body>
@@ -463,7 +470,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <button class="bln bln-w" onclick="openWorkerLogin()">Worker Login</button>
     <button class="bln" onclick="openEmployerLogin()">Employer Login</button>
   </div>
+  <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="mobmenu" id="mobMenu">
+  <button class="mobmenu-a active" data-view="home" onclick="switchView('home');closeMobileMenu()">Home</button>
+  <button class="mobmenu-a" data-view="meet-the-team" onclick="switchView('meet-the-team');closeMobileMenu()">Meet the Team</button>
+  <button class="mobmenu-a" data-view="gallery" onclick="switchView('gallery');closeMobileMenu()">Gallery</button>
+  <div style="height:1px;background:var(--bd);margin:8px 0;"></div>
+  <button class="mobmenu-a" style="color:var(--g7);font-weight:700;" onclick="openWorkerLogin();closeMobileMenu()">Worker Login</button>
+  <button class="mobmenu-a" onclick="openEmployerLogin();closeMobileMenu()">Employer Login</button>
+</div>
 
 <!-- HOME -->
 <div class="view active" id="view-home">
@@ -479,7 +497,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
         </div>
       </div>
       <div class="fu d4"><div class="hcard">
-        <div class="hcl"><span class="hcl-dot"></span>Live Worker Network · Greater Accra Region</div>
+        <div class="hcl"><span class="hcl-dot"></span>Live Worker Network · Accra Region</div>
         <div id="heroWorkers"><div style="font-size:12px;color:rgba(255,255,255,.4);padding:8px 2px;">Loading live workers…</div></div>
       </div></div>
     </div>
@@ -769,11 +787,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
     <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="handleWrkRegister()">Create My Account</button>
     <p class="mnote">Already have an account? <span style="color:var(--g6);cursor:pointer;font-weight:600;" onclick="document.getElementById('wrkRegisterModal').classList.remove('open');openWorkerLogin()">Sign In</span></p>
   </div>
-</div>
-
-<div class="mobile-btns" id="mobileBtns">
-  <button onclick="openWorkerLogin()" style="padding:10px 16px;background:var(--g7);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.2);">Worker Login</button>
-  <button onclick="openEmployerLogin()" style="padding:10px 16px;background:var(--w);color:var(--ink);border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.1);">Employer Login</button>
 </div>
 
 <script>
@@ -1861,14 +1874,24 @@ function switchView(v){
   const vEl=document.getElementById('view-'+v);
   if(vEl)vEl.classList.add('active');
   document.querySelectorAll('.ntab').forEach(t=>t.classList.toggle('active',t.dataset&&t.dataset.view===v));
+  document.querySelectorAll('.mobmenu-a[data-view]').forEach(t=>t.classList.toggle('active',t.dataset.view===v));
   const nav=document.getElementById('mainNav');
   if(nav)nav.style.display=v==='worker'?'none':'flex';
-  const mb=document.getElementById('mobileBtns');
-  if(mb)mb.style.display=(v==='worker'||v==='dispatch')?'none':'';
+  const mm=document.getElementById('mobMenu');
+  if(mm)mm.style.display=(v==='worker'||v==='dispatch')?'none':'';
+  closeMobileMenu();
   if(v==='dispatch')renderEmp();
   if(v==='worker')renderWorker();
   try{localStorage.setItem('bx_view',v);}catch(e){}
   window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleMobileMenu(){
+  const mm=document.getElementById('mobMenu');
+  if(mm)mm.classList.toggle('open');
+}
+function closeMobileMenu(){
+  const mm=document.getElementById('mobMenu');
+  if(mm)mm.classList.remove('open');
 }
 document.getElementById('navTabs').addEventListener('click',function(e){
   const tab=e.target.closest('[data-view]');if(!tab)return;
