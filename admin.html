@@ -131,6 +131,22 @@ tr:hover td{background:var(--bg);}
 .sec{display:none;}
 .sec.on{display:block;}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--g);color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;display:none;z-index:999;box-shadow:0 8px 20px rgba(0,0,0,.15);}
+.dov{position:fixed;inset:0;background:rgba(13,26,15,.4);z-index:800;display:none;align-items:stretch;justify-content:flex-end;}
+.dov.on{display:flex;}
+.dpanel{width:480px;max-width:92vw;background:var(--s);height:100%;overflow-y:auto;box-shadow:-8px 0 30px rgba(0,0,0,.12);padding:26px;}
+.dpanel-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;padding-bottom:16px;border-bottom:1.5px solid var(--b);}
+.dpanel-t{font-size:18px;font-weight:800;color:var(--ink);}
+.dpanel-s{font-size:12px;color:var(--ink3);margin-top:2px;}
+.dpanel-x{background:none;border:none;font-size:18px;color:var(--ink3);cursor:pointer;padding:2px 6px;}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.dcell{background:var(--g4);border-radius:8px;padding:10px 12px;}
+.dcell-l{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.dcell-v{font-size:14px;font-weight:700;color:var(--ink);}
+.dsec-t{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 10px;}
+.drow{padding:10px 0;border-bottom:1px solid var(--b2);}
+.drow:last-child{border-bottom:none;}
+.trow{cursor:pointer;}
+.trow:hover{background:var(--g4);}
 </style>
 </head>
 <body>
@@ -158,7 +174,6 @@ tr:hover td{background:var(--bg);}
       <div class="sb-grp">People</div>
       <div class="sb-a" onclick="nav('workers',this)">Workers</div>
       <div class="sb-a" onclick="nav('employers',this)">Employers</div>
-      <div class="sb-a" onclick="nav('reviews',this)">Ratings &amp; Reviews</div>
       <div class="sb-grp">History</div>
       <div class="sb-a" onclick="nav('history',this)">Work History</div>
       <div class="sb-a" onclick="nav('transactions',this)">Transactions</div>
@@ -196,15 +211,17 @@ tr:hover td{background:var(--bg);}
       <div class="sec" id="sec-open"><div id="ol"></div></div>
       <div class="sec" id="sec-completed"><div id="cl"></div></div>
       <div class="sec" id="sec-all"><input class="srch" id="xSearch" placeholder="Search all tasks by type, location, employer, or worker…" oninput="rs('all')"/><div id="xl"></div></div>
-      <div class="sec" id="sec-workers"><input class="srch" id="wSearch" placeholder="Search workers by name, ID, phone, or skill…" oninput="rw()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Workers</span><span class="tc-hm" id="wc"></span></div><table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Status</th><th>Skills</th><th>Tasks</th><th>Rating</th><th>Guarantor</th></tr></thead><tbody id="wt"></tbody></table></div></div>
+      <div class="sec" id="sec-workers"><input class="srch" id="wSearch" placeholder="Search workers by name, ID, phone, or skill…" oninput="rw()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Workers</span><span class="tc-hm" id="wc"></span></div><table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Status</th><th>Skills</th><th>Tasks</th><th>Rating</th></tr></thead><tbody id="wt"></tbody></table></div></div>
       <div class="sec" id="sec-history"><div id="historyContent"></div></div>
       <div class="sec" id="sec-transactions"><div id="txContent"></div></div>
       <div class="sec" id="sec-employers"><input class="srch" id="eSearch" placeholder="Search employers by organisation or phone…" oninput="re()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Employers</span><span class="tc-hm" id="ec"></span></div><table><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks</th><th>Completed</th><th>Total Spent</th></tr></thead><tbody id="et"></tbody></table></div></div>
-      <div class="sec" id="sec-reviews"><div id="reviewsContent"></div></div>
     </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="dov" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="dpanel" id="detailPanel"></div>
+</div>
 <script>
 const API='https://beyondx-backend-production-1a08.up.railway.app';
 let pass='',tasks=[],workers=[];
@@ -259,7 +276,7 @@ function nav(id,el){
   document.querySelectorAll('.sb-a').forEach(n=>n.classList.remove('on'));
   document.getElementById('sec-'+id).classList.add('on');
   el.classList.add('on');
-  const T={overview:'Overview',payouts:'Pay Now',active:'In Progress',open:'Open Tasks',completed:'Completed Tasks',all:'All Tasks',workers:'Workers',employers:'Employers',reviews:'Ratings & Reviews',history:'Work History',transactions:'Transactions'};
+  const T={overview:'Overview',payouts:'Pay Now',active:'In Progress',open:'Open Tasks',completed:'Completed Tasks',all:'All Tasks',workers:'Workers',employers:'Employers',history:'Work History',transactions:'Transactions'};
   document.getElementById('pageTitle').textContent=T[id]||id;
   if(id!=='overview')rs(id);
 }
@@ -324,51 +341,85 @@ function rs(id){
   }
   else if(id==='workers')rw();
   else if(id==='employers')re();
-  else if(id==='reviews')rv();
   else if(id==='history')rh();
   else if(id==='transactions')rt();
 }
 function stars(n){ return '★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n)); }
-function rv(){
-  const all=[];
-  tasks.forEach(t=>{
-    (t.reviews||[]).forEach(r=>{
-      all.push({
-        ...r,
-        taskType: t.taskType,
-        workerName: t.acceptedBy?.fullName || 'Unknown Worker',
-        empName: t.employer?.orgName || 'Unknown Employer'
-      });
-    });
-  });
-  all.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+function closeDetail(){ document.getElementById('detailOverlay').classList.remove('on'); }
 
-  const empReviews=all.filter(r=>r.fromRole==='worker');   // written by workers, about employers
-  const workerReviews=all.filter(r=>r.fromRole==='employer'); // written by employers, about workers
-  const avg=(arr)=>arr.length?(arr.reduce((s,r)=>s+r.rating,0)/arr.length):0;
-
-  const summary=`<div class="stats" style="margin-bottom:20px;grid-template-columns:repeat(3,1fr);">    <div class="sc"><div class="sc-l">Total Reviews</div><div class="sc-v">${all.length}</div></div>
-    <div class="sc"><div class="sc-l">Avg Worker Rating</div><div class="sc-v">${workerReviews.length?avg(workerReviews).toFixed(1):'—'}</div></div>
-    <div class="sc"><div class="sc-l">Avg Employer Rating</div><div class="sc-v">${empReviews.length?avg(empReviews).toFixed(1):'—'}</div></div>
+function reviewRow(r,fromLabel){
+  const dateStr=r.createdAt?new Date(r.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+  return`<div class="drow">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div style="font-size:12.5px;font-weight:700;color:var(--ink);">${fromLabel}</div>
+      <span class="stars" style="color:#b8953a;font-size:13px;">${stars(r.rating)}</span>
+    </div>
+    <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;">${r.taskType||''} &middot; ${dateStr}</div>
+    ${r.comment?`<div style="font-size:12.5px;color:var(--ink2);line-height:1.55;">${r.comment}</div>`:`<div style="font-size:11.5px;color:var(--ink3);font-style:italic;">No comment left.</div>`}
   </div>`;
+}
 
-  const row=(r)=>{
-    const isAboutWorker=r.fromRole==='employer';
-    const from=isAboutWorker?r.empName:r.workerName;
-    const about=isAboutWorker?r.workerName:r.empName;
-    const dateStr=r.createdAt?new Date(r.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
-    return`<div class="pc" style="margin-bottom:10px;">
-      <div class="pc-hd">
-        <div><div class="pc-n">${from} <span style="color:var(--ink3);font-weight:400;">rated</span> ${about}</div><div class="pc-tk">${r.taskType} &middot; ${dateStr}</div></div>
-        <div style="text-align:right;"><span class="stars" style="color:#b8953a;font-size:14px;">${stars(r.rating)}</span></div>
-      </div>
-      ${r.comment?`<div style="font-size:12.5px;color:var(--ink2);margin-top:8px;line-height:1.6;">${r.comment}</div>`:`<div style="font-size:12px;color:var(--ink3);font-style:italic;margin-top:8px;">No comment left.</div>`}
-    </div>`;
-  };
+function showWorkerDetail(workerId){
+  const w=workers.find(x=>x.id===workerId || x.workerId===workerId);
+  if(!w) return;
+  const wTasks=tasks.filter(t=>t.workerId===w.id || t.acceptedBy?.workerId===w.workerId);
+  const reviewsAbout=[]; // employer -> worker reviews, i.e. reviews ABOUT this worker
+  wTasks.forEach(t=>(t.reviews||[]).forEach(r=>{
+    if(r.fromRole==='employer') reviewsAbout.push({...r, taskType:t.taskType, empName:t.employer?.orgName||'An Employer'});
+  }));
+  reviewsAbout.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
 
-  document.getElementById('reviewsContent').innerHTML = all.length
-    ? summary + `<div class="tc-h" style="padding:0 0 10px;"><span class="tc-ht">All Reviews</span><span class="tc-hm">${all.length}</span></div>` + all.map(row).join('')
-    : summary + `<div class="empty">No reviews yet.</div>`;
+  document.getElementById('detailPanel').innerHTML=`
+    <div class="dpanel-h">
+      <div><div class="dpanel-t">${w.fullName}</div><div class="dpanel-s">${w.workerId} &middot; ${w.isBusy?'<span style="color:#b91c1c;">On a Job</span>':'<span style="color:var(--g3);">Available</span>'}</div></div>
+      <button class="dpanel-x" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="dgrid">
+      <div class="dcell"><div class="dcell-l">Phone</div><div class="dcell-v">${w.phone||'&mdash;'}</div></div>
+      <div class="dcell"><div class="dcell-l">Day Rate</div><div class="dcell-v">GH&#8373; ${w.dailyCharge}</div></div>
+      <div class="dcell"><div class="dcell-l">Tasks Completed</div><div class="dcell-v">${w.tasksCompleted}</div></div>
+      <div class="dcell"><div class="dcell-l">Total Earned</div><div class="dcell-v">GH&#8373; ${parseFloat(w.totalEarned||0).toFixed(0)}</div></div>
+      <div class="dcell"><div class="dcell-l">Rating</div><div class="dcell-v">${w.rating>0?parseFloat(w.rating).toFixed(1)+' &#9733;':'&mdash;'}</div></div>
+      <div class="dcell"><div class="dcell-l">Offense Level</div><div class="dcell-v" style="text-transform:capitalize;">${w.offenseLevel||'none'}</div></div>
+    </div>
+    <div class="dsec-t">Skills</div>
+    <div style="font-size:12.5px;color:var(--ink2);">${(w.skills||[]).join(', ')||'&mdash;'}</div>
+    <div class="dsec-t">Guarantor</div>
+    <div style="font-size:12.5px;color:var(--ink2);">${w.guarantorName?`${w.guarantorName} &middot; ${w.guarantorPhone||'&mdash;'}<br><span style="color:var(--ink3)">${w.guarantorRelationship||''}</span>`:'No guarantor on file.'}</div>
+    <div class="dsec-t">Reviews from Employers (${reviewsAbout.length})</div>
+    ${reviewsAbout.length?reviewsAbout.map(r=>reviewRow(r,r.empName)).join(''):'<div style="font-size:12.5px;color:var(--ink3);">No reviews yet.</div>'}
+  `;
+  document.getElementById('detailOverlay').classList.add('on');
+}
+
+function showEmployerDetail(employerId){
+  const eTasks=tasks.filter(t=>t.employerId===employerId);
+  if(!eTasks.length) return;
+  const e=eTasks[0].employer;
+  const completed=eTasks.filter(t=>t.status==='completed');
+  const spent=eTasks.reduce((s,t)=>s+parseFloat(t.pay),0);
+  const reviewsAbout=[]; // worker -> employer reviews, i.e. reviews ABOUT this employer
+  eTasks.forEach(t=>(t.reviews||[]).forEach(r=>{
+    if(r.fromRole==='worker') reviewsAbout.push({...r, taskType:t.taskType, workerName:t.acceptedBy?.fullName||'A Worker'});
+  }));
+  reviewsAbout.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const avgRating=reviewsAbout.length?(reviewsAbout.reduce((s,r)=>s+r.rating,0)/reviewsAbout.length):0;
+
+  document.getElementById('detailPanel').innerHTML=`
+    <div class="dpanel-h">
+      <div><div class="dpanel-t">${e.orgName}</div><div class="dpanel-s">${e.phone||'&mdash;'}</div></div>
+      <button class="dpanel-x" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="dgrid">
+      <div class="dcell"><div class="dcell-l">Tasks Posted</div><div class="dcell-v">${eTasks.length}</div></div>
+      <div class="dcell"><div class="dcell-l">Completed</div><div class="dcell-v">${completed.length}</div></div>
+      <div class="dcell"><div class="dcell-l">Total Spent</div><div class="dcell-v">GH&#8373; ${spent.toFixed(0)}</div></div>
+      <div class="dcell"><div class="dcell-l">Rating</div><div class="dcell-v">${avgRating>0?avgRating.toFixed(1)+' &#9733;':'&mdash;'}</div></div>
+    </div>
+    <div class="dsec-t">Reviews from Workers (${reviewsAbout.length})</div>
+    ${reviewsAbout.length?reviewsAbout.map(r=>reviewRow(r,r.workerName)).join(''):'<div style="font-size:12.5px;color:var(--ink3);">No reviews yet.</div>'}
+  `;
+  document.getElementById('detailOverlay').classList.add('on');
 }
 function pc(t){
   const w=t.acceptedBy;const wp=parseFloat(t.pay).toFixed(2);const fp=(parseFloat(t.pay)*.15).toFixed(2);
@@ -385,14 +436,14 @@ function rw(){
   const q=(document.getElementById('wSearch')?.value||'').toLowerCase();
   const list=q?workers.filter(w=>[w.fullName,w.workerId,w.phone,...(w.skills||[])].join(' ').toLowerCase().includes(q)):workers;
   document.getElementById('wc').textContent=list.length+' of '+workers.length+' registered';
-  document.getElementById('wt').innerHTML=list.map(w=>`<tr><td class="tn">${w.fullName}</td><td class="tm">${w.workerId}</td><td class="tm">${w.phone||'&mdash;'}</td><td>${w.isBusy?'<span style="color:#b91c1c;font-weight:600;font-size:11px;">On a Job</span>':'<span style="color:var(--g3);font-weight:600;font-size:11px;">Available</span>'}</td><td style="font-size:11px;color:var(--ink3)">${(w.skills||[]).slice(0,2).join(', ')+(w.skills?.length>2?'&hellip;':'')}</td><td class="tg">${w.tasksCompleted}</td><td>${w.rating>0?parseFloat(w.rating).toFixed(1)+'&star;':'&mdash;'}</td><td style="font-size:11px;">${w.guarantorName?`${w.guarantorName} &middot; ${w.guarantorPhone||'&mdash;'}<br><span style="color:var(--ink3)">${w.guarantorRelationship||''}</span>`:'<span style="color:var(--ink3)">&mdash;</span>'}</td></tr>`).join('')||`<tr><td colspan="8" class="empty">No matches</td></tr>`;
+  document.getElementById('wt').innerHTML=list.map(w=>`<tr class="trow" onclick="showWorkerDetail('${w.id}')"><td class="tn">${w.fullName}</td><td class="tm">${w.workerId}</td><td class="tm">${w.phone||'&mdash;'}</td><td>${w.isBusy?'<span style="color:#b91c1c;font-weight:600;font-size:11px;">On a Job</span>':'<span style="color:var(--g3);font-weight:600;font-size:11px;">Available</span>'}</td><td style="font-size:11px;color:var(--ink3)">${(w.skills||[]).slice(0,2).join(', ')+(w.skills?.length>2?'&hellip;':'')}</td><td class="tg">${w.tasksCompleted}</td><td>${w.rating>0?parseFloat(w.rating).toFixed(1)+'&star;':'&mdash;'}</td></tr>`).join('')||`<tr><td colspan="7" class="empty">No matches</td></tr>`;
 }
 function re(){
   const q=(document.getElementById('eSearch')?.value||'').toLowerCase();
   let emps=[...new Map(tasks.filter(t=>t.employer).map(t=>[t.employerId,{...t.employer,eid:t.employerId}])).values()];
   if(q)emps=emps.filter(e=>(e.orgName+' '+(e.phone||'')).toLowerCase().includes(q));
   document.getElementById('ec').textContent=emps.length+' registered';
-  document.getElementById('et').innerHTML=emps.map(e=>{const et=tasks.filter(t=>t.employerId===e.eid);const ed=et.filter(t=>t.status==='completed');const sp=et.reduce((s,t)=>s+parseFloat(t.pay),0);return`<tr><td class="tn">${e.orgName}</td><td class="tm">${e.phone||'&mdash;'}</td><td style="font-weight:600">${et.length}</td><td class="tg">${ed.length}</td><td class="tg">GH&#8373; ${sp.toFixed(0)}</td></tr>`;}).join('')||`<tr><td colspan="5" class="empty">No matches</td></tr>`;
+  document.getElementById('et').innerHTML=emps.map(e=>{const et=tasks.filter(t=>t.employerId===e.eid);const ed=et.filter(t=>t.status==='completed');const sp=et.reduce((s,t)=>s+parseFloat(t.pay),0);return`<tr class="trow" onclick="showEmployerDetail('${e.eid}')"><td class="tn">${e.orgName}</td><td class="tm">${e.phone||'&mdash;'}</td><td style="font-weight:600">${et.length}</td><td class="tg">${ed.length}</td><td class="tg">GH&#8373; ${sp.toFixed(0)}</td></tr>`;}).join('')||`<tr><td colspan="5" class="empty">No matches</td></tr>`;
 }
 async function mkp(id,name,amount){
   if(!confirm('Confirm you sent GH₵'+amount+' to '+name+'?'))return;
@@ -404,14 +455,15 @@ function rh(){
   const html = completed.length ? `
     <div class="tc" style="margin-bottom:12px;">
       <div class="tc-h"><span class="tc-ht">Work History</span><span class="tc-hm">${completed.length} completed tasks</span></div>
-      <table><thead><tr><th>Task</th><th>Worker</th><th>Employer</th><th>Date</th><th>Amount</th><th>Worker Paid</th></tr></thead>
+      <table><thead><tr><th>Task</th><th>Location</th><th>Worker</th><th>Employer</th><th>Date</th><th>Amount</th><th>Worker Paid</th></tr></thead>
       <tbody>${completed.map(t=>`<tr>
         <td class="tn">${t.taskType}</td>
+        <td style="font-size:11px;color:var(--ink3)">${t.location||'&mdash;'}</td>
         <td>${t.acceptedBy?.fullName||'—'}</td>
         <td>${t.employer?.orgName||'—'}</td>
         <td class="tm">${new Date(t.createdAt).toLocaleDateString()}</td>
         <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
-        <td class="tg">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(0)}</td>
+        <td class="tg">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
       </tr>`).join('')}</tbody></table>
     </div>` : `<div class="empty">No completed tasks yet</div>`;
   document.getElementById('historyContent').innerHTML = html;
@@ -435,7 +487,7 @@ function rt(){
         <td>${t.acceptedBy?.fullName||'—'}</td>
         <td class="tm">${new Date(t.createdAt).toLocaleDateString()}</td>
         <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
-        <td class="tg">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(0)}</td>
+        <td class="tg">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
         <td class="tm">GH&#8373; ${(parseFloat(t.pay)*0.15).toFixed(0)}</td>
       </tr>`).join('')}</tbody></table>` : `<div class="empty">No transactions yet</div>`}
     </div>`;
