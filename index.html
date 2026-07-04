@@ -774,9 +774,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   <button onclick="openEmployerLogin()" style="padding:10px 16px;background:var(--w);color:var(--ink);border:1.5px solid var(--bd);border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.1);">Employer Login</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-emailjs.init('YPgDxDhg1HjKZK3H6');
 // ═══════════════════════════════════
 // WORKER DATA & STATE
 // ═══════════════════════════════════
@@ -1125,16 +1123,16 @@ async function markTaskDone(id){
     const task = MY_TASKS.find(t=>t.id===id);
     const workerPay = task ? parseFloat(task.pay).toFixed(2) : '—';
 
-    // Send email notification to BeyondX
-    emailjs.send('service_zos658j','template_et2vlfs',{
-      worker_name:  worker.fullName || 'Unknown Worker',
-      worker_id:    worker.workerId || '—',
-      worker_phone: worker.phone || 'Not provided',
-      task_type:    task?.taskType || '—',
-      location:     task?.location || '—',
-      employer_name:task?.employer?.orgName || '—',
-      amount:       workerPay
-    }).catch(e=>console.log('Email error:',e));
+    // Send notification via the same email system as everything else on the site
+    fetch('/api/contact',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        name: worker.fullName || 'Unknown Worker',
+        phone: worker.phone || undefined,
+        message: `Worker ${worker.fullName||'Unknown'} (${worker.workerId||'—'}) marked a task as done.\n\nTask: ${task?.taskType||'—'}\nLocation: ${task?.location||'—'}\nEmployer: ${task?.employer?.orgName||'—'}\nAmount: GHS ${workerPay}`,
+        category: 'task_completed'
+      })
+    }).catch(e=>console.log('Notification error:',e));
 
     toast('Marked as done! Waiting for employer to confirm.');
     await loadMyTasks();
@@ -1173,6 +1171,7 @@ const CATPRICES={
   "Community Services":140
 };
 let EWORKERS=[];
+let EWORKERS_LOADED=false;
 function loadEWorkers(){
   return fetch('https://beyondx-backend-production-1a08.up.railway.app/api/workers',{cache:'no-store'})
     .then(r=>r.json())
@@ -1189,6 +1188,7 @@ function loadEWorkers(){
         reviews:w.reviewsReceived||[],
         seed:w.workerId.toLowerCase().replace('-',''),gender:'m'
       }));
+      EWORKERS_LOADED=true;
       // Re-render categories/workers view now that fresh data has loaded
       if(EMP.view==='categories'||EMP.view==='workers'){
         const m2=document.getElementById('empMain');
@@ -1525,9 +1525,14 @@ async function confirmTaskDone(id,workerName){
 }
 function renderECats(){
   const rows=ECATS.map((c,i)=>{
+    const total=EWORKERS.filter(w=>w.cats.includes(c.name)).length;
     const n=EWORKERS.filter(w=>w.cats.includes(c.name)&&!w.isBusy).length;
-    const badge=n>0
+    const badge=!EWORKERS_LOADED
+      ?`<span style="font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink3);background:var(--off);border:1px solid var(--bd);padding:3px 10px;border-radius:20px;">Loading…</span>`
+      :n>0
       ?`<span style="font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;color:var(--g6);background:var(--g0);border:1px solid var(--g1);padding:3px 10px;border-radius:20px;">${n} available</span>`
+      :total>0
+      ?`<span style="font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;color:#b91c1c;background:#fde8e8;border:1px solid #f5c6c6;padding:3px 10px;border-radius:20px;">${total} on a job</span>`
       :`<span style="font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink3);background:var(--off);border:1px solid var(--bd);padding:3px 10px;border-radius:20px;">No workers yet</span>`;
     return`<div onclick="EMP.cat=ECATS[${i}];empGo('workers')" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--off)'" onmouseout="this.style.background='transparent'">
       <div>
@@ -1572,7 +1577,7 @@ function renderEWorkers(){
     const ob=w.offense==='none'?`<span class="on on-n">Clean Record</span>`:w.offense==='minor'?`<span class="on on-m">Minor Offense</span>`:`<span class="on on-x">${w.offenseLabel}</span>`;
     const st='★'.repeat(Math.floor(w.rating))+'☆'.repeat(5-Math.floor(w.rating));
     const busyBadge=w.isBusy?`<span style="background:#fde8e8;color:#b91c1c;font-family:'DM Sans',sans-serif;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;">On a Job</span>`:`<span style="background:#e0f5ea;color:var(--g7);font-family:'DM Sans',sans-serif;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;">Available</span>`;
-    return`<div class="ewc" style="${w.isBusy?'opacity:.7;':''}"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><div class="wph"><img src="${wAvatar(w,68)}" alt="${w.name}" style="width:100%;height:100%;object-fit:cover;"/></div><div style="flex:1;"><div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--g9);margin-bottom:3px;">${w.name}</div><div style="font-family:'DM Sans',sans-serif;font-size:10px;color:var(--mu);">${w.workerId}</div></div>${busyBadge}</div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span class="stars">${st}</span><span style="font-size:13px;color:var(--mu);">${w.rating}</span></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">${ob}<div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:800;color:var(--g7);">GH₵ ${w.charge}<span style="font-size:11px;font-weight:400;color:var(--mu);">/day</span></div></div><div style="font-size:12px;color:var(--mu);margin-bottom:12px;">${w.tasks} tasks · ${w.months} months</div><button class="wvb" onclick="EMP.worker=EWORKERS[${i}];empGo('profile')">View Profile →</button></div>`;
+    return`<div class="ewc" style="${w.isBusy?'opacity:.7;':''}"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><div class="wph"><img src="${wAvatar(w,68)}" alt="${w.name}" style="width:100%;height:100%;object-fit:cover;"/></div><div style="flex:1;"><div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--g9);margin-bottom:3px;">${w.name}</div><div style="font-family:'DM Sans',sans-serif;font-size:10px;color:var(--mu);">${w.workerId}</div></div>${busyBadge}</div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;"><span class="stars">${st}</span><span style="font-size:13px;color:var(--mu);">${w.rating}</span></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">${ob}<div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:800;color:var(--g7);">GH₵ ${w.charge}<span style="font-size:11px;font-weight:400;color:var(--mu);">/day</span></div></div><div style="font-size:12px;color:var(--mu);margin-bottom:12px;">${w.tasks} task${w.tasks===1?'':'s'} completed</div><button class="wvb" onclick="EMP.worker=EWORKERS[${i}];empGo('profile')">View Profile →</button></div>`;
   }).join('');
   return`<div class="ebody"><div class="ebc"><span class="ebcl" onclick="empGo('categories')">All Categories</span><span style="opacity:.4;">›</span><span style="color:var(--g9);font-weight:600;">${EMP.cat.name}</span></div><div class="ehero"><h2>${EMP.cat.name}</h2><p>${EMP.cat.desc} &nbsp;·&nbsp; <strong>${availCount} available now</strong>${ws.length>availCount?` · ${ws.length-availCount} on a job`:''}</p></div><div class="ewg">${cards}</div></div>`;
 }
@@ -1758,7 +1763,7 @@ async function processDispatchPayment(){
     const data=await resp.json();
     if(!resp.ok){toast(data.error||'Failed to confirm dispatch.');return;}
     TASKS_LOADED=false;
-    EWORKERS=[]; // force a fresh fetch next time Find Workers is opened
+    EWORKERS=[];EWORKERS_LOADED=false; // force a fresh fetch next time Find Workers is opened
     empGo('success');
   }catch(err){
     toast('Could not connect to server.');
@@ -2009,34 +2014,91 @@ function showOnboarding(role, name, onDone){
     'How often do you expect to need workers — one-off or ongoing?',
     'What would make you trust a new worker enough to hire them?'
   ];
-  const qs = role==='worker' ? workerQs : employerQs;
-  const intro = role==='worker'
-    ? `Hi! ${firstName}, just a few quick questions so we can get to know you better:`
-    : `Hi! Thanks for your interest in BeyondX. A few quick questions to help us serve you better:`;
-
   window._onboardRole = role;
-  window._onboardQs = qs;
+  window._onboardQs = role==='worker' ? workerQs : employerQs;
   window._onboardName = name;
   window._onboardDone = onDone;
+  window._onboardWelcome = welcome;
+  window._onboardFirstName = firstName;
+  window._onboardAnswers = new Array(window._onboardQs.length).fill('');
+  window._onboardStep = -1; // -1 = welcome screen, 0..n-1 = questions
 
-  document.getElementById('onboardBody').innerHTML = `
-    <div class="mt" style="font-size:17px;">You're in!</div>
-    <div class="ms" style="margin-bottom:16px;line-height:1.6;">${welcome}</div>
-    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;">${intro}</div>
-    ${qs.map((q,i)=>`<div class="fld2"><label>${i+1}. ${q}</label><textarea id="obq${i}" rows="2" style="width:100%;padding:9px 11px;border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical;outline:none;"></textarea></div>`).join('')}
-    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="submitOnboarding()">Send My Answers</button>
-  `;
+  renderOnboardStep();
   document.getElementById('onboardModal').classList.add('open');
+}
+
+function renderOnboardStep(){
+  const step = window._onboardStep;
+  const qs = window._onboardQs;
+  const role = window._onboardRole;
+  const body = document.getElementById('onboardBody');
+
+  if(step === -1){
+    const intro = role==='worker'
+      ? `Hi ${window._onboardFirstName}! Just a few quick questions so we can get to know you better.`
+      : `Thanks for your interest in BeyondX! A few quick questions to help us serve you better.`;
+    body.innerHTML = `
+      <div style="text-align:center;">
+        <div class="mt" style="font-size:20px;margin-bottom:10px;">You're in!</div>
+        <div class="ms" style="line-height:1.7;font-size:13.5px;margin-bottom:22px;text-align:left;">${window._onboardWelcome}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:22px;line-height:1.5;">${intro}</div>
+        <button class="bsb" style="width:100%;padding:13px;border-radius:10px;font-size:14.5px;" onclick="onboardNext()">Let's Go →</button>
+      </div>
+    `;
+    return;
+  }
+
+  const total = qs.length;
+  const pct = Math.round(((step+1)/total)*100);
+  const isLast = step === total-1;
+  body.innerHTML = `
+    <div style="margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--g6);text-transform:uppercase;">Question ${step+1} of ${total}</span>
+      </div>
+      <div style="height:5px;background:var(--off);border-radius:99px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:var(--g5);border-radius:99px;transition:width .25s;"></div>
+      </div>
+    </div>
+    <div style="font-size:17px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:18px;min-height:48px;">${qs[step]}</div>
+    <textarea id="onboardAnswerInput" rows="4" placeholder="Type your answer…" style="width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:10px;font-size:14.5px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical;outline:none;margin-bottom:20px;">${window._onboardAnswers[step]||''}</textarea>
+    <div style="display:flex;gap:10px;">
+      ${step>0?`<button class="bout" style="flex:1;" onclick="onboardBack()">← Back</button>`:''}
+      <button class="bsb" style="flex:2;padding:13px;border-radius:10px;font-size:14.5px;" onclick="${isLast?'onboardFinish()':'onboardNext()'}">${isLast?'Send My Answers':'Next →'}</button>
+    </div>
+  `;
+  // Autofocus for a smoother feel
+  setTimeout(()=>{ const el=document.getElementById('onboardAnswerInput'); if(el) el.focus(); }, 50);
+}
+
+function onboardNext(){
+  const step = window._onboardStep;
+  if(step >= 0){
+    const val = document.getElementById('onboardAnswerInput');
+    if(val) window._onboardAnswers[step] = val.value.trim();
+  }
+  window._onboardStep++;
+  renderOnboardStep();
+}
+function onboardBack(){
+  const step = window._onboardStep;
+  const val = document.getElementById('onboardAnswerInput');
+  if(val) window._onboardAnswers[step] = val.value.trim();
+  window._onboardStep--;
+  renderOnboardStep();
+}
+function onboardFinish(){
+  const step = window._onboardStep;
+  const val = document.getElementById('onboardAnswerInput');
+  if(val) window._onboardAnswers[step] = val.value.trim();
+  submitOnboarding();
 }
 
 function submitOnboarding(){
   const role = window._onboardRole;
   const name = window._onboardName;
   const qs = window._onboardQs || [];
-  const answers = [];
-  for(let i=0;i<6;i++){
-    answers.push(document.getElementById('obq'+i).value.trim());
-  }
+  const answers = window._onboardAnswers || [];
   const message = `New ${role} onboarding via registration.\n\n--- Onboarding Answers ---\n` +
     answers.map((a,i)=>`Q${i+1}: ${qs[i]||''}\nA: ${a||'(no answer)'}`).join('\n\n');
 
@@ -2125,8 +2187,6 @@ function submitContactStep1(){
 }
 
 function renderContactStep2(){
-  const firstName = CONTACT.name.split(' ')[0];
-  const welcome = `Welcome to BeyondX! Thank you for signing up. We are still in our early stages, currently recruiting more workers and employers to the platform. It will take about two weeks before we have your first task ready to dispatch. We will keep you updated along the way and reach out as soon as a job matches your skills. Thanks for being one of our first members, we are glad to have you.`;
   const workerQs = [
     'How did you hear about BeyondX?',
     'What made you decide to sign up?',
@@ -2143,19 +2203,68 @@ function renderContactStep2(){
     'How often do you expect to need workers — one-off or ongoing?',
     'What would make you trust a new worker enough to hire them?'
   ];
-  const qs = CONTACT.role==='worker' ? workerQs : employerQs;
-  CONTACT.qs = qs;
-  const intro = CONTACT.role==='worker'
-    ? `Hi! ${firstName}, just a few quick questions so we can get to know you better:`
-    : `Hi! Thanks for your interest in BeyondX. A few quick questions to help us serve you better:`;
-  document.getElementById('contactBody').innerHTML = `
-    <div class="mt" style="font-size:17px;">You're in!</div>
-    <div class="ms" style="margin-bottom:16px;line-height:1.6;">${welcome}</div>
-    <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;">${intro}</div>
-    ${qs.map((q,i)=>`<div class="fld2"><label>${i+1}. ${q}</label><textarea id="ctq${i}" rows="2" style="width:100%;padding:9px 11px;border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical;outline:none;"></textarea></div>`).join('')}
-    <button class="bsb" style="width:100%;padding:11px;margin-top:6px;border-radius:9px;font-size:14px;" onclick="submitContactStep2()">Send My Answers</button>
-    <button style="width:100%;padding:10px;margin-top:6px;background:none;border:none;color:var(--ink3);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="skipContactStep2()">Skip for now</button>
+  CONTACT.qs = CONTACT.role==='worker' ? workerQs : employerQs;
+  CONTACT.answers = new Array(CONTACT.qs.length).fill('');
+  CONTACT.step = -1;
+  CONTACT.welcome = `Welcome to BeyondX! Thank you for signing up. We are still in our early stages, currently recruiting more workers and employers to the platform. It will take about two weeks before we have your first task ready to dispatch. We will keep you updated along the way and reach out as soon as a job matches your skills. Thanks for being one of our first members, we are glad to have you.`;
+  renderContactStepWizard();
+}
+
+function renderContactStepWizard(){
+  const step = CONTACT.step;
+  const qs = CONTACT.qs;
+  const firstName = CONTACT.name.split(' ')[0];
+  const body = document.getElementById('contactBody');
+
+  if(step === -1){
+    const intro = CONTACT.role==='worker'
+      ? `Hi ${firstName}! Just a few quick questions so we can get to know you better.`
+      : `Thanks for your interest in BeyondX! A few quick questions to help us serve you better.`;
+    body.innerHTML = `
+      <div style="text-align:center;">
+        <div class="mt" style="font-size:20px;margin-bottom:10px;">You're in!</div>
+        <div class="ms" style="line-height:1.7;font-size:13.5px;margin-bottom:22px;text-align:left;">${CONTACT.welcome}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:22px;line-height:1.5;">${intro}</div>
+        <button class="bsb" style="width:100%;padding:13px;border-radius:10px;font-size:14.5px;" onclick="contactWizardNext()">Let's Go →</button>
+        <button style="width:100%;padding:10px;margin-top:6px;background:none;border:none;color:var(--ink3);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="skipContactStep2()">Skip for now</button>
+      </div>
+    `;
+    return;
+  }
+
+  const total = qs.length;
+  const pct = Math.round(((step+1)/total)*100);
+  const isLast = step === total-1;
+  body.innerHTML = `
+    <div style="margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--g6);text-transform:uppercase;">Question ${step+1} of ${total}</span>
+      </div>
+      <div style="height:5px;background:var(--off);border-radius:99px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:var(--g5);border-radius:99px;transition:width .25s;"></div>
+      </div>
+    </div>
+    <div style="font-size:17px;font-weight:700;color:var(--ink);line-height:1.4;margin-bottom:18px;min-height:48px;">${qs[step]}</div>
+    <textarea id="contactWizardInput" rows="4" placeholder="Type your answer…" style="width:100%;padding:14px;border:1.5px solid var(--bd);border-radius:10px;font-size:14.5px;font-family:'DM Sans',sans-serif;color:var(--ink);resize:vertical;outline:none;margin-bottom:20px;">${CONTACT.answers[step]||''}</textarea>
+    <div style="display:flex;gap:10px;">
+      ${step>0?`<button class="bout" style="flex:1;" onclick="contactWizardBack()">← Back</button>`:''}
+      <button class="bsb" style="flex:2;padding:13px;border-radius:10px;font-size:14.5px;" onclick="${isLast?'submitContactStep2()':'contactWizardNext()'}">${isLast?'Send My Answers':'Next →'}</button>
+    </div>
   `;
+  setTimeout(()=>{ const el=document.getElementById('contactWizardInput'); if(el) el.focus(); }, 50);
+}
+
+function contactWizardNext(){
+  const step=CONTACT.step;
+  if(step>=0){ const el=document.getElementById('contactWizardInput'); if(el) CONTACT.answers[step]=el.value.trim(); }
+  CONTACT.step++;
+  renderContactStepWizard();
+}
+function contactWizardBack(){
+  const step=CONTACT.step;
+  const el=document.getElementById('contactWizardInput'); if(el) CONTACT.answers[step]=el.value.trim();
+  CONTACT.step--;
+  renderContactStepWizard();
 }
 
 function skipContactStep2(){
@@ -2166,12 +2275,10 @@ function skipContactStep2(){
 }
 
 function submitContactStep2(){
-  const qCount = 6;
+  const step=CONTACT.step;
+  const el=document.getElementById('contactWizardInput'); if(el) CONTACT.answers[step]=el.value.trim();
   const qs = CONTACT.qs || [];
-  const answers = [];
-  for(let i=0;i<qCount;i++){
-    answers.push(document.getElementById('ctq'+i).value.trim());
-  }
+  const answers = CONTACT.answers || [];
   const fullMessage = `${CONTACT.message}\n\n--- Onboarding Answers ---\n` +
     answers.map((a,i)=>`Q${i+1}: ${qs[i]||''}\nA: ${a||'(no answer)'}`).join('\n\n');
   sendContactPayload({name:CONTACT.name,email:CONTACT.email,message:fullMessage,category:CONTACT.role==='worker'?'worker_onboarding':'employer_onboarding'}, () => {
@@ -2449,7 +2556,7 @@ async function submitReview(){
     if(!resp.ok){ toast(data.error||'Could not submit review.'); return; }
     document.getElementById('reviewModal').classList.remove('open');
     toast('Thanks for your feedback!');
-    if(REVIEW.kind==='worker'){ TASKS_LOADED=false; empGo('history'); }
+    if(REVIEW.kind==='worker'){ empGo('history'); }
     else if(REVIEW.kind==='employer'){ renderWorker(); }
   }catch(err){ toast('Could not connect to server.'); }
 }
