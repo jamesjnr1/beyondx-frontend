@@ -196,7 +196,7 @@ tr:hover td{background:var(--bg);}
       <div class="sec" id="sec-open"><div id="ol"></div></div>
       <div class="sec" id="sec-completed"><div id="cl"></div></div>
       <div class="sec" id="sec-all"><input class="srch" id="xSearch" placeholder="Search all tasks by type, location, employer, or worker…" oninput="rs('all')"/><div id="xl"></div></div>
-      <div class="sec" id="sec-workers"><input class="srch" id="wSearch" placeholder="Search workers by name, ID, phone, or skill…" oninput="rw()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Workers</span><span class="tc-hm" id="wc"></span></div><table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Skills</th><th>Tasks</th><th>Rating</th></tr></thead><tbody id="wt"></tbody></table></div></div>
+      <div class="sec" id="sec-workers"><input class="srch" id="wSearch" placeholder="Search workers by name, ID, phone, or skill…" oninput="rw()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Workers</span><span class="tc-hm" id="wc"></span></div><table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Status</th><th>Skills</th><th>Tasks</th><th>Rating</th><th>Guarantor</th></tr></thead><tbody id="wt"></tbody></table></div></div>
       <div class="sec" id="sec-history"><div id="historyContent"></div></div>
       <div class="sec" id="sec-transactions"><div id="txContent"></div></div>
       <div class="sec" id="sec-employers"><input class="srch" id="eSearch" placeholder="Search employers by organisation or phone…" oninput="re()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Employers</span><span class="tc-hm" id="ec"></span></div><table><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks</th><th>Completed</th><th>Total Spent</th></tr></thead><tbody id="et"></tbody></table></div></div>
@@ -210,13 +210,13 @@ const API='https://beyondx-backend-production-1a08.up.railway.app';
 let pass='',tasks=[],workers=[];
 function login(){
   pass=document.getElementById('adminPass').value;
-  Promise.all([fetch(API+'/admin/all',{headers:{'x-admin-password':pass}}).then(r=>{if(!r.ok)throw new Error();return r.json();}),fetch(API+'/api/workers').then(r=>r.json())])
+  Promise.all([fetch(API+'/admin/all',{headers:{'x-admin-password':pass}}).then(r=>{if(!r.ok)throw new Error();return r.json();}),fetch(API+'/admin/workers',{headers:{'x-admin-password':pass}}).then(r=>r.json())])
   .then(([td,wd])=>{tasks=td.tasks;workers=wd.workers||[];document.getElementById('loginScreen').style.display='none';document.getElementById('app').style.display='flex';render();})
   .catch(()=>document.getElementById('err').style.display='block');
 }
 async function load(){
   try{
-    const[td,wd]=await Promise.all([fetch(API+'/admin/all',{headers:{'x-admin-password':pass}}).then(r=>r.json()),fetch(API+'/api/workers').then(r=>r.json())]);
+    const[td,wd]=await Promise.all([fetch(API+'/admin/all',{headers:{'x-admin-password':pass}}).then(r=>r.json()),fetch(API+'/admin/workers',{headers:{'x-admin-password':pass}}).then(r=>r.json())]);
     tasks=td.tasks;workers=wd.workers||[];
     const t=new Date().toLocaleTimeString();
     document.getElementById('tbTime').textContent='Updated '+t;
@@ -385,7 +385,7 @@ function rw(){
   const q=(document.getElementById('wSearch')?.value||'').toLowerCase();
   const list=q?workers.filter(w=>[w.fullName,w.workerId,w.phone,...(w.skills||[])].join(' ').toLowerCase().includes(q)):workers;
   document.getElementById('wc').textContent=list.length+' of '+workers.length+' registered';
-  document.getElementById('wt').innerHTML=list.map(w=>`<tr><td class="tn">${w.fullName}</td><td class="tm">${w.workerId}</td><td class="tm">${w.phone||'&mdash;'}</td><td style="font-size:11px;color:var(--ink3)">${(w.skills||[]).slice(0,2).join(', ')+(w.skills?.length>2?'&hellip;':'')}</td><td class="tg">${w.tasksCompleted}</td><td>${w.rating>0?parseFloat(w.rating).toFixed(1)+'&star;':'&mdash;'}</td></tr>`).join('')||`<tr><td colspan="6" class="empty">No matches</td></tr>`;
+  document.getElementById('wt').innerHTML=list.map(w=>`<tr><td class="tn">${w.fullName}</td><td class="tm">${w.workerId}</td><td class="tm">${w.phone||'&mdash;'}</td><td>${w.isBusy?'<span style="color:#b91c1c;font-weight:600;font-size:11px;">On a Job</span>':'<span style="color:var(--g3);font-weight:600;font-size:11px;">Available</span>'}</td><td style="font-size:11px;color:var(--ink3)">${(w.skills||[]).slice(0,2).join(', ')+(w.skills?.length>2?'&hellip;':'')}</td><td class="tg">${w.tasksCompleted}</td><td>${w.rating>0?parseFloat(w.rating).toFixed(1)+'&star;':'&mdash;'}</td><td style="font-size:11px;">${w.guarantorName?`${w.guarantorName} &middot; ${w.guarantorPhone||'&mdash;'}<br><span style="color:var(--ink3)">${w.guarantorRelationship||''}</span>`:'<span style="color:var(--ink3)">&mdash;</span>'}</td></tr>`).join('')||`<tr><td colspan="8" class="empty">No matches</td></tr>`;
 }
 function re(){
   const q=(document.getElementById('eSearch')?.value||'').toLowerCase();
