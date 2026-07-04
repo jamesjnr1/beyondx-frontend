@@ -299,7 +299,7 @@ function ro(){
   const uniq=[...new Set(tasks.map(t=>t.employerId))].length;
   document.getElementById('sg').innerHTML=`
     <div class="sc dk"><div class="sc-l">Total Tasks</div><div class="sc-v">${tasks.length}</div><div class="sc-s">${co.length} completed &middot; ${op.length} open</div></div>
-    <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v">GH&#8373; ${rev.toFixed(0)}</div><div class="sc-s">GH&#8373; ${(rev*.15).toFixed(0)} platform fees</div></div>
+    <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v">GH&#8373; ${(rev*1.15).toFixed(0)}</div><div class="sc-s">GH&#8373; ${(rev*.15).toFixed(0)} platform fees</div></div>
     <div class="sc"><div class="sc-l">Pending Payouts</div><div class="sc-v">GH&#8373; ${pend.toFixed(0)}</div><div class="sc-s ${pend>0?'w':''}">${py.length} worker${py.length!==1?'s':''} waiting</div></div>
     <div class="sc"><div class="sc-l">Network</div><div class="sc-v">${workers.length} workers</div><div class="sc-s">${uniq} employer${uniq!==1?'s':''}</div></div>`;
   const complRate=tasks.length?(co.length/tasks.length*100):0;
@@ -476,7 +476,7 @@ function rt(){
   const html = `
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
       <div class="sc"><div class="sc-l">Total Transactions</div><div class="sc-v">${paid.length}</div></div>
-      <div class="sc dk"><div class="sc-l">Total Revenue</div><div class="sc-v">GH&#8373; ${totalRev.toFixed(0)}</div></div>
+      <div class="sc dk"><div class="sc-l">Total Revenue</div><div class="sc-v">GH&#8373; ${(totalRev*1.15).toFixed(0)}</div></div>
       <div class="sc"><div class="sc-l">Platform Earnings</div><div class="sc-v">GH&#8373; ${(totalRev*0.15).toFixed(0)}</div></div>
     </div>
     <div class="tc">
@@ -487,7 +487,7 @@ function rt(){
         <td>${t.employer?.orgName||'—'}</td>
         <td>${t.acceptedBy?.fullName||'—'}</td>
         <td class="tm">${new Date(t.createdAt).toLocaleDateString()}</td>
-        <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
+        <td class="tm">GH&#8373; ${(parseFloat(t.pay)*1.15).toFixed(0)}</td>
         <td class="tg">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
         <td class="tm">GH&#8373; ${(parseFloat(t.pay)*0.15).toFixed(0)}</td>
       </tr>`).join('')}</tbody></table>` : `<div class="empty">No transactions yet</div>`}
