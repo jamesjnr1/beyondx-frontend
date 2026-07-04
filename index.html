@@ -58,13 +58,23 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 .ntab{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--ink3);transition:all .15s;font-family:'DM Sans',sans-serif;}
 .ntab.active{background:var(--w);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08);font-weight:700;}
 .nr{display:flex;align-items:center;gap:8px;}
-.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:1.5px solid var(--bd);border-radius:8px;cursor:pointer;padding:0;}
-.hamburger span{display:block;width:16px;height:2px;background:var(--ink);border-radius:2px;margin:0 auto;transition:all .2s;}
-.mobmenu{display:none;flex-direction:column;background:var(--w);border-bottom:1.5px solid var(--bd);box-shadow:0 8px 20px rgba(0,0,0,.06);position:sticky;top:65px;z-index:199;}
-.mobmenu.open{display:flex;}
-.mobmenu-a{width:100%;text-align:left;padding:14px 20px;border:none;background:none;font-size:14px;font-weight:600;color:var(--ink3);cursor:pointer;font-family:'DM Sans',sans-serif;border-bottom:1px solid var(--off);}
-.mobmenu-a.active{color:var(--g7);}
-.mobmenu-a:last-child{border-bottom:none;}
+.hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:4px;width:42px;height:42px;background:var(--off);border:1.5px solid var(--bd);border-radius:10px;cursor:pointer;padding:0;transition:background .15s,border-color .15s;}
+.hamburger:active{background:var(--g0);}
+.hamburger span{display:block;width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .25s ease,opacity .2s ease;}
+.hamburger.open{background:var(--g0);border-color:var(--g4);}
+.hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+.mobmenu{display:flex;flex-direction:column;background:var(--w);border-bottom:1.5px solid var(--bd);box-shadow:0 12px 28px rgba(0,0,0,.08);position:sticky;top:65px;z-index:199;max-height:0;overflow:hidden;opacity:0;transition:max-height .3s ease,opacity .25s ease;padding:0 4px;}
+.mobmenu.open{max-height:420px;opacity:1;padding:8px 4px;}
+.mobmenu-a{width:100%;text-align:left;padding:15px 16px;border:none;background:none;border-radius:10px;font-size:15px;font-weight:600;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:space-between;transition:background .12s;}
+.mobmenu-a:active{background:var(--off);}
+.mobmenu-a.active{color:var(--g7);background:var(--g0);}
+.mobmenu-a.mobmenu-primary{background:var(--g7);color:#fff;margin-top:6px;justify-content:center;}
+.mobmenu-a.mobmenu-primary:active{background:var(--g6);}
+.mobmenu-a.mobmenu-outline{border:1.5px solid var(--bd);justify-content:center;color:var(--ink2);}
+.mobmenu-divider{height:1px;background:var(--bd);margin:8px 6px;}
+
 .bln{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:1.5px solid var(--bd2);color:var(--ink2);background:transparent;transition:all .15s;}
 .bln:hover{background:var(--off);border-color:var(--bd2);}
 .bln-w{background:var(--g7);color:#fff;border-color:var(--g7);}.bln-w:hover{background:var(--g6);}
@@ -475,12 +485,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   </button>
 </nav>
 <div class="mobmenu" id="mobMenu">
-  <button class="mobmenu-a active" data-view="home" onclick="switchView('home');closeMobileMenu()">Home</button>
-  <button class="mobmenu-a" data-view="meet-the-team" onclick="switchView('meet-the-team');closeMobileMenu()">Meet the Team</button>
-  <button class="mobmenu-a" data-view="gallery" onclick="switchView('gallery');closeMobileMenu()">Gallery</button>
-  <div style="height:1px;background:var(--bd);margin:8px 0;"></div>
-  <button class="mobmenu-a" style="color:var(--g7);font-weight:700;" onclick="openWorkerLogin();closeMobileMenu()">Worker Login</button>
-  <button class="mobmenu-a" onclick="openEmployerLogin();closeMobileMenu()">Employer Login</button>
+  <button class="mobmenu-a active" data-view="home" onclick="switchView('home');closeMobileMenu()">Home <span style="opacity:.4;">›</span></button>
+  <button class="mobmenu-a" data-view="meet-the-team" onclick="switchView('meet-the-team');closeMobileMenu()">Meet the Team <span style="opacity:.4;">›</span></button>
+  <button class="mobmenu-a" data-view="gallery" onclick="switchView('gallery');closeMobileMenu()">Gallery <span style="opacity:.4;">›</span></button>
+  <div class="mobmenu-divider"></div>
+  <button class="mobmenu-a mobmenu-primary" onclick="openWorkerLogin();closeMobileMenu()">Worker Login</button>
+  <button class="mobmenu-a mobmenu-outline" onclick="openEmployerLogin();closeMobileMenu()">Employer Login</button>
 </div>
 
 <!-- HOME -->
@@ -1887,11 +1897,15 @@ function switchView(v){
 }
 function toggleMobileMenu(){
   const mm=document.getElementById('mobMenu');
+  const hb=document.getElementById('hamburgerBtn');
   if(mm)mm.classList.toggle('open');
+  if(hb)hb.classList.toggle('open');
 }
 function closeMobileMenu(){
   const mm=document.getElementById('mobMenu');
+  const hb=document.getElementById('hamburgerBtn');
   if(mm)mm.classList.remove('open');
+  if(hb)hb.classList.remove('open');
 }
 document.getElementById('navTabs').addEventListener('click',function(e){
   const tab=e.target.closest('[data-view]');if(!tab)return;
