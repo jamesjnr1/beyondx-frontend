@@ -504,7 +504,7 @@ function rm(){
   const sendForm=`<div class="tc" style="margin-bottom:16px;">
     <div class="tc-h"><span class="tc-ht">Send Custom SMS</span></div>
     <div style="padding:16px;">
-      <input id="customSmsPhone" placeholder="Phone number, e.g. 0244000000" style="width:100%;padding:9px 12px;border:1.5px solid var(--b);border-radius:8px;font-size:12.5px;margin-bottom:8px;font-family:var(--f);"/>
+      <textarea id="customSmsPhone" placeholder="Phone number(s) — one per line, or separated by commas. e.g. 0244000000, 0501234567" rows="2" style="width:100%;padding:9px 12px;border:1.5px solid var(--b);border-radius:8px;font-size:12.5px;font-family:var(--f);resize:vertical;margin-bottom:8px;"></textarea>
       <textarea id="customSmsMessage" placeholder="Message..." rows="3" style="width:100%;padding:9px 12px;border:1.5px solid var(--b);border-radius:8px;font-size:12.5px;font-family:var(--f);resize:vertical;margin-bottom:10px;"></textarea>
       <button onclick="sendCustomSms()" style="padding:9px 18px;background:var(--g2);color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--f);">Send SMS</button>
     </div>
@@ -531,22 +531,26 @@ function rm(){
     </div>`;
 }
 async function sendCustomSms(){
-  const phone=document.getElementById('customSmsPhone').value.trim();
+  const raw=document.getElementById('customSmsPhone').value.trim();
   const message=document.getElementById('customSmsMessage').value.trim();
-  if(!phone||!message){showToast('Please enter both a phone number and a message.');return;}
-  showToast('Sending…');
-  try{
-    const r=await fetch(API+'/admin/send-sms',{method:'POST',headers:{'Content-Type':'application/json','x-admin-password':pass},body:JSON.stringify({phone,message})});
-    const data=await r.json();
-    if(!r.ok){showToast(data.error||'Failed to send.');return;}
-    showToast('SMS sent!');
-    document.getElementById('customSmsPhone').value='';
-    document.getElementById('customSmsMessage').value='';
-    const sd=await fetch(API+'/admin/sms-logs',{headers:{'x-admin-password':pass}}).then(r=>r.json()).catch(()=>({logs:[]}));
-    smsLogs=sd.logs||[];
-    checkSmsBadge();
-    rm();
-  }catch(e){showToast('Connection error while sending.');}
+  if(!raw||!message){showToast('Please enter at least one phone number and a message.');return;}
+  const phones=raw.split(/[\n,]+/).map(p=>p.trim()).filter(Boolean);
+  if(!phones.length){showToast('Please enter at least one valid phone number.');return;}
+  showToast(`Sending to ${phones.length} recipient${phones.length>1?'s':''}…`);
+  let sent=0,failed=0;
+  for(const phone of phones){
+    try{
+      const r=await fetch(API+'/admin/send-sms',{method:'POST',headers:{'Content-Type':'application/json','x-admin-password':pass},body:JSON.stringify({phone,message})});
+      if(r.ok)sent++;else failed++;
+    }catch(e){failed++;}
+  }
+  showToast(failed?`Sent to ${sent}, failed for ${failed}.`:`Sent to all ${sent} recipient${sent>1?'s':''}!`);
+  document.getElementById('customSmsPhone').value='';
+  document.getElementById('customSmsMessage').value='';
+  const sd=await fetch(API+'/admin/sms-logs',{headers:{'x-admin-password':pass}}).then(r=>r.json()).catch(()=>({logs:[]}));
+  smsLogs=sd.logs||[];
+  checkSmsBadge();
+  rm();
 }
 function rt(){
   const paid = tasks.filter(t=>t.status==='completed');
