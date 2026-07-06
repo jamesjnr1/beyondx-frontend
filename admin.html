@@ -192,6 +192,7 @@ tr:hover td{background:var(--bg);}
         <button class="btn-r" onclick="load()">Refresh</button>
         <button class="btn-r" style="color:#b91c1c;border-color:#f3c9c9;" onclick="confirmClearData()">Clear All Data</button>
         <button class="btn-r" style="color:#b91c1c;border-color:#f3c9c9;" onclick="confirmClearEmployers()">Delete All Employers</button>
+        <button class="btn-r" style="color:var(--g2);border-color:var(--b);" onclick="sendDormantReminders()">Send Dormant Reminders</button>
       </div>
     </div>
     <div class="body">
@@ -271,6 +272,16 @@ function confirmClearEmployers(){
   if(typed !== 'DELETE EMPLOYERS'){ if(typed !== null) showToast('Cancelled — you must type DELETE EMPLOYERS exactly.'); return; }
   clearAllEmployers();
 }
+async function sendDormantReminders(){
+  if(!confirm('This will text every worker who hasn\'t logged in for 7+ days, reminding them to stay active. Continue?'))return;
+  showToast('Checking for dormant workers…');
+  try{
+    const r=await fetch(API+'/admin/send-dormant-reminders',{method:'POST',headers:{'x-admin-password':pass}});
+    const data=await r.json();
+    if(!r.ok){showToast(data.error||'Failed to send reminders.');return;}
+    showToast(data.notified?`Reminder sent to ${data.notified} dormant worker${data.notified>1?'s':''}.`:'No dormant workers found — everyone\'s active!');
+  }catch(e){showToast('Connection error while sending reminders.');}
+}
 async function clearAllEmployers(){
   showToast('Deleting all employers…');
   try{
@@ -308,7 +319,7 @@ function ro(){
   const uniq=[...new Set(tasks.map(t=>t.employerId))].length;
   document.getElementById('sg').innerHTML=`
     <div class="sc dk"><div class="sc-l">Total Tasks</div><div class="sc-v">${tasks.length}</div><div class="sc-s">${co.length} completed &middot; ${op.length} open</div></div>
-    <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v">GH&#8373; ${(rev*1.15).toFixed(0)}</div><div class="sc-s">GH&#8373; ${(rev*.15).toFixed(0)} platform fees</div></div>
+    <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v">GH&#8373; ${rev.toFixed(0)}</div><div class="sc-s">GH&#8373; ${(rev*.15).toFixed(0)} platform fees</div></div>
     <div class="sc"><div class="sc-l">Pending Payouts</div><div class="sc-v">GH&#8373; ${pend.toFixed(0)}</div><div class="sc-s ${pend>0?'w':''}">${py.length} worker${py.length!==1?'s':''} waiting</div></div>
     <div class="sc"><div class="sc-l">Network</div><div class="sc-v">${workers.length} workers</div><div class="sc-s">${uniq} employer${uniq!==1?'s':''}</div></div>`;
   const complRate=tasks.length?(co.length/tasks.length*100):0;
@@ -433,13 +444,13 @@ function showEmployerDetail(employerId){
   document.getElementById('detailOverlay').classList.add('on');
 }
 function pc(t){
-  const w=t.acceptedBy;const wp=parseFloat(t.pay).toFixed(2);const fp=(parseFloat(t.pay)*.15).toFixed(2);
+  const w=t.acceptedBy;const wp=(parseFloat(t.pay)*0.85).toFixed(2);const fp=(parseFloat(t.pay)*.15).toFixed(2);
   return`<div class="pc"><div class="pc-hd"><div><div class="pc-n">${w?.fullName||'Unknown Worker'}</div><div class="pc-tk">${t.taskType} &middot; ${t.location} &middot; ${t.duration}</div></div><div style="text-align:right"><div class="pc-aml">Send to worker</div><div class="pc-am">GH&#8373; ${wp}</div></div></div><div class="pc-g"><div class="pc-f"><div class="pc-fl">Mobile Money Number</div><div class="pc-fv ph">${w?.phone||'Not on record'}</div></div><div class="pc-f"><div class="pc-fl">Worker ID</div><div class="pc-fv">${w?.workerId||'&mdash;'}</div></div><div class="pc-f"><div class="pc-fl">Employer</div><div class="pc-fv">${t.employer?.orgName||'&mdash;'}</div></div><div class="pc-f"><div class="pc-fl">BeyondX Keeps</div><div class="pc-fv">GH&#8373; ${fp}</div></div></div><div class="pc-nt">Send GH&#8373; ${wp} via Mobile Money to the number above, then confirm below.</div><button class="btn-p" onclick="mkp('${t.id}','${w?.fullName||''}','${wp}')">I Have Sent GH&#8373; ${wp} &mdash; Mark as Paid</button></div>`;
 }
 function tl(list){
   if(!list.length)return`<div class="empty">No tasks here</div>`;
   const bm={open:['bo','Open'],accepted:['ba','In Progress'],pending_confirmation:['bp','Awaiting Payment'],completed:['bd','Completed']};
-  return list.map(t=>{const w=t.acceptedBy;const[bc,bl]=bm[t.status]||['bo','Unknown'];const wp=parseFloat(t.pay).toFixed(2);
+  return list.map(t=>{const w=t.acceptedBy;const[bc,bl]=bm[t.status]||['bo','Unknown'];const wp=(parseFloat(t.pay)*0.85).toFixed(2);
   return`<div class="tsk"><div class="tsk-tp"><div><div class="tsk-n">${t.taskType}</div><div class="tsk-m">${t.location} &middot; ${t.duration} &middot; ${new Date(t.createdAt).toLocaleDateString()}</div></div><span class="badge ${bc}">${bl}</span></div><div class="tsk-b"><div class="tr"><span class="tr-k">Employer</span><span class="tr-v">${t.employer?.orgName||'&mdash;'}</span></div><div class="tr"><span class="tr-k">Worker</span><span class="tr-v">${w?.fullName||'Unassigned'}${w?.phone?' &middot; '+w.phone:''}</span></div><div class="tr"><span class="tr-k">Employer Paid</span><span class="tr-v">GH&#8373; ${parseFloat(t.pay).toFixed(2)}</span></div><div class="tr"><span class="tr-k">Worker Gets</span><span class="tr-v g">GH&#8373; ${wp}</span></div></div>${t.status==='pending_confirmation'?`<button class="btn-ps" onclick="mkp('${t.id}','${w?.fullName||''}','${wp}')">Confirm Payment Sent</button>`:''}</div>`;
   }).join('');
 }
@@ -474,7 +485,7 @@ function rh(){
         <td>${t.employer?.orgName||'—'}</td>
         <td class="tm">${new Date(t.createdAt).toLocaleDateString()}</td>
         <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
-        <td class="tg">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
+        <td class="tg">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(0)}</td>
       </tr>`).join('')}</tbody></table>
     </div>` : `<div class="empty">No completed tasks yet</div>`;
   document.getElementById('historyContent').innerHTML = html;
@@ -543,7 +554,7 @@ function rt(){
   const html = `
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
       <div class="sc"><div class="sc-l">Total Transactions</div><div class="sc-v">${paid.length}</div></div>
-      <div class="sc dk"><div class="sc-l">Total Revenue</div><div class="sc-v">GH&#8373; ${(totalRev*1.15).toFixed(0)}</div></div>
+      <div class="sc dk"><div class="sc-l">Total Revenue</div><div class="sc-v">GH&#8373; ${totalRev.toFixed(0)}</div></div>
       <div class="sc"><div class="sc-l">Platform Earnings</div><div class="sc-v">GH&#8373; ${(totalRev*0.15).toFixed(0)}</div></div>
     </div>
     <div class="tc">
@@ -554,8 +565,8 @@ function rt(){
         <td>${t.employer?.orgName||'—'}</td>
         <td>${t.acceptedBy?.fullName||'—'}</td>
         <td class="tm">${new Date(t.createdAt).toLocaleDateString()}</td>
-        <td class="tm">GH&#8373; ${(parseFloat(t.pay)*1.15).toFixed(0)}</td>
-        <td class="tg">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
+        <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
+        <td class="tg">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(0)}</td>
         <td class="tm">GH&#8373; ${(parseFloat(t.pay)*0.15).toFixed(0)}</td>
       </tr>`).join('')}</tbody></table>` : `<div class="empty">No transactions yet</div>`}
     </div>`;
