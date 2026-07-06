@@ -229,7 +229,7 @@ tr:hover td{background:var(--bg);}
 </div>
 <script>
 const API='https://beyondx-backend-production-1a08.up.railway.app';
-let pass='',tasks=[],workers=[],smsLogs=[];
+let pass='',tasks=[],workers=[],smsLogs=[],smsBroadcastMode='specific';
 function login(){
   pass=document.getElementById('adminPass').value;
   Promise.all([fetch(API+'/admin/all',{headers:{'x-admin-password':pass}}).then(r=>{if(!r.ok)throw new Error();return r.json();}),fetch(API+'/admin/workers',{headers:{'x-admin-password':pass}}).then(r=>r.json()),fetch(API+'/admin/sms-logs',{headers:{'x-admin-password':pass}}).then(r=>r.json()).catch(()=>({logs:[]}))])
@@ -504,7 +504,13 @@ function rm(){
   const sendForm=`<div class="tc" style="margin-bottom:16px;">
     <div class="tc-h"><span class="tc-ht">Send Custom SMS</span></div>
     <div style="padding:16px;">
-      <textarea id="customSmsPhone" placeholder="Phone number(s) — one per line, or separated by commas. e.g. 0244000000, 0501234567" rows="2" style="width:100%;padding:9px 12px;border:1.5px solid var(--b);border-radius:8px;font-size:12.5px;font-family:var(--f);resize:vertical;margin-bottom:8px;"></textarea>
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+        <button type="button" onclick="smsBroadcastMode='specific';rm();" style="padding:6px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--f);border:1.5px solid ${smsBroadcastMode==='specific'?'var(--g2)':'var(--b)'};background:${smsBroadcastMode==='specific'?'var(--g2)':'transparent'};color:${smsBroadcastMode==='specific'?'#fff':'var(--ink3)'};">Specific Number(s)</button>
+        <button type="button" onclick="smsBroadcastMode='workers';rm();" style="padding:6px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--f);border:1.5px solid ${smsBroadcastMode==='workers'?'var(--g2)':'var(--b)'};background:${smsBroadcastMode==='workers'?'var(--g2)':'transparent'};color:${smsBroadcastMode==='workers'?'#fff':'var(--ink3)'};">All Workers (${workers.length})</button>
+        <button type="button" onclick="smsBroadcastMode='employers';rm();" style="padding:6px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--f);border:1.5px solid ${smsBroadcastMode==='employers'?'var(--g2)':'var(--b)'};background:${smsBroadcastMode==='employers'?'var(--g2)':'transparent'};color:${smsBroadcastMode==='employers'?'#fff':'var(--ink3)'};">All Employers</button>
+        <button type="button" onclick="smsBroadcastMode='both';rm();" style="padding:6px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:var(--f);border:1.5px solid ${smsBroadcastMode==='both'?'var(--g2)':'var(--b)'};background:${smsBroadcastMode==='both'?'var(--g2)':'transparent'};color:${smsBroadcastMode==='both'?'#fff':'var(--ink3)'};">Everyone</button>
+      </div>
+      ${smsBroadcastMode==='specific'?`<textarea id="customSmsPhone" placeholder="Phone number(s) — one per line, or separated by commas. e.g. 0244000000, 0501234567" rows="2" style="width:100%;padding:9px 12px;border:1.5px solid var(--b);border-radius:8px;font-size:12.5px;font-family:var(--f);resize:vertical;margin-bottom:8px;"></textarea>`:`<div style="background:var(--off);border:1.5px solid var(--b);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:var(--ink3);">${smsBroadcastMode==='workers'?`Will send to all ${workers.length} registered workers.`:smsBroadcastMode==='employers'?`Will send to all registered employers.`:`Will send to every registered worker and employer.`}</div>`}
       <textarea id="customSmsMessage" placeholder="Message..." rows="3" style="width:100%;padding:9px 12px;border:1.5px solid var(--b);border-radius:8px;font-size:12.5px;font-family:var(--f);resize:vertical;margin-bottom:10px;"></textarea>
       <button onclick="sendCustomSms()" style="padding:9px 18px;background:var(--g2);color:#fff;border:none;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--f);">Send SMS</button>
     </div>
@@ -531,11 +537,30 @@ function rm(){
     </div>`;
 }
 async function sendCustomSms(){
-  const raw=document.getElementById('customSmsPhone').value.trim();
   const message=document.getElementById('customSmsMessage').value.trim();
-  if(!raw||!message){showToast('Please enter at least one phone number and a message.');return;}
-  const phones=raw.split(/[\n,]+/).map(p=>p.trim()).filter(Boolean);
-  if(!phones.length){showToast('Please enter at least one valid phone number.');return;}
+  if(!message){showToast('Please enter a message.');return;}
+
+  let phones=[];
+  if(smsBroadcastMode==='specific'){
+    const raw=document.getElementById('customSmsPhone').value.trim();
+    if(!raw){showToast('Please enter at least one phone number.');return;}
+    phones=raw.split(/[\n,]+/).map(p=>p.trim()).filter(Boolean);
+    if(!phones.length){showToast('Please enter at least one valid phone number.');return;}
+  } else {
+    showToast('Gathering recipients…');
+    let employerPhones=[];
+    if(smsBroadcastMode==='employers'||smsBroadcastMode==='both'){
+      try{
+        const ed=await fetch(API+'/admin/employers',{headers:{'x-admin-password':pass}}).then(r=>r.json());
+        employerPhones=(ed.employers||[]).map(e=>e.phone).filter(Boolean);
+      }catch(e){showToast('Could not load employer list.');return;}
+    }
+    const workerPhones=(smsBroadcastMode==='workers'||smsBroadcastMode==='both')?workers.map(w=>w.phone).filter(Boolean):[];
+    phones=[...new Set([...workerPhones,...employerPhones])];
+    if(!phones.length){showToast('No recipients with phone numbers found.');return;}
+    if(!confirm(`This will send this message to ${phones.length} recipient${phones.length>1?'s':''} (${smsBroadcastMode}). Continue?`))return;
+  }
+
   showToast(`Sending to ${phones.length} recipient${phones.length>1?'s':''}…`);
   let sent=0,failed=0;
   for(const phone of phones){
@@ -545,7 +570,8 @@ async function sendCustomSms(){
     }catch(e){failed++;}
   }
   showToast(failed?`Sent to ${sent}, failed for ${failed}.`:`Sent to all ${sent} recipient${sent>1?'s':''}!`);
-  document.getElementById('customSmsPhone').value='';
+  const phoneField=document.getElementById('customSmsPhone');
+  if(phoneField)phoneField.value='';
   document.getElementById('customSmsMessage').value='';
   const sd=await fetch(API+'/admin/sms-logs',{headers:{'x-admin-password':pass}}).then(r=>r.json()).catch(()=>({logs:[]}));
   smsLogs=sd.logs||[];
