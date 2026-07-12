@@ -280,6 +280,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 .btnpro{width:100%;padding:12px;background:var(--g7);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;margin-top:14px;}
 .btnpro:hover{background:var(--g6);}
 .pay-wrap{max-width:480px;margin:0 auto;}
+@keyframes payStepFade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.pay-step{animation:payStepFade .28s ease;}
 .paysum{background:var(--g8);color:#fff;border-radius:14px;padding:16px 20px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;}
 .psl{font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.8px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:4px;}
 .psn{font-size:14px;font-weight:600;color:#fff;}
@@ -1321,7 +1323,7 @@ function wAvatar(w,sz){
   return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
 
-const EMP={view:'categories',cat:null,worker:null,days:1,payMethod:'mtn',selectedWorkers:[],workersShown:12};
+const EMP={view:'categories',cat:null,worker:null,days:1,payMethod:'mtn',selectedWorkers:[],workersShown:12,paymentStep:'method'};
 function empGo(v){EMP.view=v;renderEmp();}
 async function renderEmp(){
   const _emp=JSON.parse(localStorage.getItem('bx_employer')||'{}');
@@ -1803,7 +1805,7 @@ function renderEConfirm(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fld"><label>Start Date</label><input type="date" value="${new Date().toISOString().slice(0,10)}"/></div><div class="fld"><label>Duration</label><select onchange="EMP.days=+this.value;empGo('confirm')"><option value="1"${EMP.days===1?' selected':''}>1 Day</option><option value="0.5"${EMP.days===0.5?' selected':''}>Half Day</option><option value="2"${EMP.days===2?' selected':''}>2 Days</option><option value="3"${EMP.days===3?' selected':''}>3 Days</option></select></div></div>
     <div class="fld"><label>Location / Organisation</label><input type="text" id="ptLocDisp" placeholder="e.g. Accra Business Hub, Osu"/></div>
     <div class="pbox"><div class="pr"><span class="pkey">Total (${EMP.days} day${EMP.days>1?'s':''})</span><span class="pval">GH₵ ${total}</span></div><div class="pr"><span class="pkey">Platform fee (15%)</span><span class="pval">GH₵ ${fee}</span></div><div class="pr"><span class="pkey">Worker receives</span><span class="pval">GH₵ ${workerReceives}</span></div></div>
-    <button class="btnpro" onclick="EMP.selectedTaskType=document.getElementById('ptTaskTypeDisp').value;EMP.selectedLocation=document.getElementById('ptLocDisp').value;empGo('payment')">Proceed to Payment →</button>
+    <button class="btnpro" onclick="EMP.selectedTaskType=document.getElementById('ptTaskTypeDisp').value;EMP.selectedLocation=document.getElementById('ptLocDisp').value;EMP.paymentStep='method';empGo('payment')">Proceed to Payment →</button>
   </div></div>`;
 }
 function renderEPayment(){
@@ -1814,11 +1816,25 @@ function renderEPayment(){
     {id:'airtel',name:'AirtelTigo Money',kind:'ussd',ussd:'*500#',logo:`<div class="paym-lg" style="background:#FF2E00;"><span style="font-family:'DM Sans',sans-serif;font-weight:800;font-size:9px;color:#fff;">ATM</span></div>`}
   ];
   const selected=methods.find(m=>m.id===EMP.payMethod)||methods[0];
-  const ms=methods.map(m=>`<div class="paym${EMP.payMethod===m.id?' sel':''}" onclick="EMP.payMethod='${m.id}';empGo('payment')" style="cursor:pointer;">
-    ${m.logo}
-    <div class="paym-n">${m.name}</div>
-  </div>`).join('');
+  // STEP 1 -- choose a payment method only, nothing else on screen
+  if(EMP.paymentStep!=='details'){
+    const msStep1=methods.map(m=>`<div class="paym" onclick="EMP.payMethod='${m.id}';EMP.paymentStep='details';empGo('payment')" style="cursor:pointer;">
+      ${m.logo}
+      <div class="paym-n">${m.name}</div>
+      <span style="margin-left:auto;color:var(--mu);font-size:16px;">›</span>
+    </div>`).join('');
+    return`<div class="ebody"><div class="pay-wrap pay-step">
+      <div class="ebc"><span class="ebcl" onclick="empGo('confirm')">← Back to Confirm</span></div>
+      <div class="paysum">
+        <div><div class="psl">Dispatching</div><div class="psn">${w.name} · ${EMP.days} day${EMP.days>1?'s':''}</div></div>
+        <div><div class="psl">Total</div><div class="psa">GH₵ ${total}</div></div>
+      </div>
+      <div style="font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin:26px 0 14px;">Choose Payment Method</div>
+      <div class="payms" style="grid-template-columns:1fr;gap:10px;">${msStep1}</div>
+    </div></div>`;
+  }
 
+  // STEP 2 -- details for the chosen method only
   const ussdBlock=`
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;gap:12px;align-items:flex-start;">
@@ -1850,15 +1866,14 @@ function renderEPayment(){
         <div style="font-size:13px;color:var(--ink2);">Enter your <strong>Mobile Money PIN</strong> to confirm the payment on your phone</div>
       </div>`;
 
-  return`<div class="ebody"><div class="pay-wrap">
-    <div class="ebc"><span class="ebcl" onclick="empGo('confirm')">← Back to Confirm</span></div>
+  return`<div class="ebody"><div class="pay-wrap pay-step">
+    <div class="ebc"><span class="ebcl" onclick="EMP.paymentStep='method';empGo('payment')">← Change Payment Method</span></div>
     <div class="paysum">
       <div><div class="psl">Dispatching</div><div class="psn">${w.name} · ${EMP.days} day${EMP.days>1?'s':''}</div></div>
       <div><div class="psl">Total</div><div class="psa">GH₵ ${total}</div></div>
     </div>
 
-    <div style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:10px;">Select Payment Method</div>
-    <div class="payms" style="margin-bottom:20px;grid-template-columns:1fr 1fr;">${ms}</div>
+    <div style="display:flex;align-items:center;gap:12px;margin:20px 0 6px;padding:12px 16px;background:var(--off);border-radius:12px;">${selected.logo}<span style="font-size:14px;font-weight:700;color:var(--ink);">${selected.name}</span></div>
 
     <!-- Payment Instructions -->
     <div style="background:var(--g0);border:1.5px solid var(--g1);border-radius:14px;padding:20px;margin-bottom:16px;">
@@ -1947,7 +1962,7 @@ function renderEConfirmMulti(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fld"><label>Start Date</label><input type="date" value="${new Date().toISOString().slice(0,10)}"/></div><div class="fld"><label>Duration</label><select onchange="EMP.days=+this.value;empGo('confirmMulti')"><option value="1"${EMP.days===1?' selected':''}>1 Day</option><option value="0.5"${EMP.days===0.5?' selected':''}>Half Day</option><option value="2"${EMP.days===2?' selected':''}>2 Days</option><option value="3"${EMP.days===3?' selected':''}>3 Days</option></select></div></div>
     <div class="fld"><label>Location / Organisation</label><input type="text" id="ptLocDisp" placeholder="e.g. Accra Business Hub, Osu"/></div>
     <div class="pbox"><div class="pr"><span class="pkey">Total (${workers.length} workers × ${EMP.days} day${EMP.days>1?'s':''})</span><span class="pval">GH₵ ${total}</span></div><div class="pr"><span class="pkey">Platform fee (15%)</span><span class="pval">GH₵ ${fee}</span></div><div class="pr"><span class="pkey">Workers receive (combined)</span><span class="pval">GH₵ ${workersReceiveTotal}</span></div></div>
-    <button class="btnpro" onclick="EMP.selectedTaskType=document.getElementById('ptTaskTypeDisp').value;EMP.selectedLocation=document.getElementById('ptLocDisp').value;empGo('paymentMulti')">Proceed to Payment →</button>
+    <button class="btnpro" onclick="EMP.selectedTaskType=document.getElementById('ptTaskTypeDisp').value;EMP.selectedLocation=document.getElementById('ptLocDisp').value;EMP.paymentStep='method';empGo('paymentMulti')">Proceed to Payment →</button>
   </div></div>`;
 }
 
@@ -1962,10 +1977,26 @@ function renderEPaymentMulti(){
     {id:'airtel',name:'AirtelTigo Money',ussd:'*500#',logo:`<div class="paym-lg" style="background:#FF2E00;"><span style="font-family:'DM Sans',sans-serif;font-weight:800;font-size:9px;color:#fff;">ATM</span></div>`}
   ];
   const selected=methods.find(m=>m.id===EMP.payMethod)||methods[0];
-  const ms=methods.map(m=>`<div class="paym${EMP.payMethod===m.id?' sel':''}" onclick="EMP.payMethod='${m.id}';empGo('paymentMulti')" style="cursor:pointer;">
-    ${m.logo}
-    <div class="paym-n">${m.name}</div>
-  </div>`).join('');
+
+  // STEP 1 -- choose a payment method only, nothing else on screen
+  if(EMP.paymentStep!=='details'){
+    const msStep1=methods.map(m=>`<div class="paym" onclick="EMP.payMethod='${m.id}';EMP.paymentStep='details';empGo('paymentMulti')" style="cursor:pointer;">
+      ${m.logo}
+      <div class="paym-n">${m.name}</div>
+      <span style="margin-left:auto;color:var(--mu);font-size:16px;">›</span>
+    </div>`).join('');
+    return`<div class="ebody"><div class="pay-wrap pay-step">
+      <div class="ebc"><span class="ebcl" onclick="empGo('confirmMulti')">← Back to Confirm</span></div>
+      <div class="paysum">
+        <div><div class="psl">Dispatching</div><div class="psn">${workers.length} worker${workers.length>1?'s':''} · ${EMP.days} day${EMP.days>1?'s':''}</div></div>
+        <div><div class="psl">Total</div><div class="psa">GH₵ ${total}</div></div>
+      </div>
+      <div style="font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin:26px 0 14px;">Choose Payment Method</div>
+      <div class="payms" style="grid-template-columns:1fr;gap:10px;">${msStep1}</div>
+    </div></div>`;
+  }
+
+  // STEP 2 -- details for the chosen method only
   const ussdBlock=`
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;gap:12px;align-items:flex-start;">
@@ -1996,14 +2027,13 @@ function renderEPaymentMulti(){
         <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
         <div style="font-size:13px;color:var(--ink2);">Enter your <strong>Mobile Money PIN</strong> to confirm the payment on your phone</div>
       </div>`;
-  return`<div class="ebody"><div class="pay-wrap">
-    <div class="ebc"><span class="ebcl" onclick="empGo('confirmMulti')">← Back to Confirm</span></div>
+  return`<div class="ebody"><div class="pay-wrap pay-step">
+    <div class="ebc"><span class="ebcl" onclick="EMP.paymentStep='method';empGo('paymentMulti')">← Change Payment Method</span></div>
     <div class="paysum">
       <div><div class="psl">Dispatching</div><div class="psn">${workers.length} worker${workers.length>1?'s':''} · ${EMP.days} day${EMP.days>1?'s':''}</div></div>
       <div><div class="psl">Total</div><div class="psa">GH₵ ${total}</div></div>
     </div>
-    <div style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.8px;color:var(--mu);text-transform:uppercase;margin-bottom:10px;">Select Payment Method</div>
-    <div class="payms" style="margin-bottom:20px;grid-template-columns:1fr 1fr;">${ms}</div>
+    <div style="display:flex;align-items:center;gap:12px;margin:20px 0 6px;padding:12px 16px;background:var(--off);border-radius:12px;">${selected.logo}<span style="font-size:14px;font-weight:700;color:var(--ink);">${selected.name}</span></div>
     <div style="background:var(--g0);border:1.5px solid var(--g1);border-radius:14px;padding:20px;margin-bottom:16px;">
       <div style="font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.8px;color:var(--g6);text-transform:uppercase;margin-bottom:12px;">How to Pay</div>
       ${ussdBlock}
