@@ -287,12 +287,13 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
 .psn{font-size:14px;font-weight:600;color:#fff;}
 .psa{font-family:'DM Sans',sans-serif;font-size:26px;font-weight:900;color:var(--g3);}
 .payms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
-.paym{border:2px solid var(--bd);border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .15s;background:var(--w);}
+.paym{border:1.5px solid var(--bd);border-radius:14px;padding:14px 16px;cursor:pointer;transition:all .15s;background:var(--w);display:flex;align-items:center;gap:14px;}
 .paym:hover{border-color:var(--g5);}
 .paym.sel{border-color:var(--g5);background:var(--g0);}
-.paym-lg{width:36px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:.5px;color:#fff;margin-bottom:8px;}
-.paym-n{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--g9);}
+.paym-lg{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:.5px;color:#fff;flex-shrink:0;overflow:hidden;}
+.paym-n{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--g9);flex:1;}
 .paym-d{font-size:11px;color:var(--mu);margin-top:2px;}
+.paym-chev{color:var(--mu);font-size:20px;flex-shrink:0;}
 .pinput{background:var(--w);border:1.5px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px;}
 .pfx{padding:9px 12px;background:var(--g0);border:1.5px solid var(--bd);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--g8);font-weight:600;white-space:nowrap;}
 .paybtn{width:100%;padding:13px;background:var(--g7);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;}
@@ -526,7 +527,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   <section class="hero">
     <div class="hgrid" style="grid-template-columns:1fr 360px;max-width:1280px;margin:0 auto;">
       <div>
-        <div class="htag fu">Reintegration Pogramme</div>
+        <div class="htag fu">Reintegration Programme</div>
         <h1 class="hh1 fu d1">Go Beyond.<br><em>Hire Purpose.</em></h1>
         <p class="hsub fu d2">Workers are fully vetted and selected based on their skills—not hired out of charity. They bring the exact capabilities required to complete your tasks effectively, while also offering a cost-efficient solution.</p>
         <div class="hacts">
