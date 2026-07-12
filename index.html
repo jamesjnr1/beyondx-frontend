@@ -526,7 +526,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:12px 3
   <section class="hero">
     <div class="hgrid" style="grid-template-columns:1fr 360px;max-width:1280px;margin:0 auto;">
       <div>
-        <div class="htag fu">Reintegration Programme</div>
+        <div class="htag fu">Reintegration Pogramme</div>
         <h1 class="hh1 fu d1">Go Beyond.<br><em>Hire Purpose.</em></h1>
         <p class="hsub fu d2">Workers are fully vetted and selected based on their skills—not hired out of charity. They bring the exact capabilities required to complete your tasks effectively, while also offering a cost-efficient solution.</p>
         <div class="hacts">
@@ -1836,34 +1836,39 @@ function renderEPayment(){
 
   // STEP 2 -- details for the chosen method only
   const ussdBlock=`
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
-          <div style="font-size:13px;color:var(--ink2);">Dial <strong style="font-family:'DM Sans',sans-serif;">${selected.ussd}</strong> on your phone</div>
+      <div style="display:flex;gap:14px;">
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
+          <div style="width:2px;flex:1;background:var(--g5);opacity:.35;margin:4px 0;"></div>
         </div>
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
-          <div style="font-size:13px;color:var(--ink2);">Select <strong>Send Money</strong> and enter this number:</div>
+        <div style="font-size:13px;color:var(--ink2);padding-bottom:18px;padding-top:4px;">Dial <strong style="font-family:'DM Sans',sans-serif;">${selected.ussd}</strong> on your phone</div>
+      </div>
+      <div style="display:flex;gap:14px;">
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
+          <div style="width:2px;flex:1;background:var(--g5);opacity:.35;margin:4px 0;"></div>
+        </div>
+        <div style="flex:1;padding-bottom:18px;padding-top:4px;">
+          <div style="font-size:13px;color:var(--ink2);margin-bottom:12px;">Select <strong>Send Money</strong> and enter this number:</div>
+          <div style="background:var(--w);border:1.5px solid var(--bd);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Amount to Send</div>
+            <div style="font-family:'DM Sans',sans-serif;font-size:28px;font-weight:900;color:var(--g7);margin-bottom:16px;">GH₵ ${total}</div>
+            <div style="display:flex;border-top:1px solid var(--bd);padding-top:12px;">
+              <div style="flex:1;text-align:left;">
+                <div style="font-family:'DM Sans',sans-serif;font-size:9.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Name</div>
+                <div style="font-size:13px;font-weight:700;color:var(--ink);">Elikem Ama Nyaho</div>
+              </div>
+              <div style="flex:1;text-align:right;">
+                <div style="font-family:'DM Sans',sans-serif;font-size:9.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Number</div>
+                <div style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.5px;">0545213741</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div style="background:var(--w);border:1.5px solid var(--bd);border-radius:10px;padding:16px;margin:14px 0;">
-        <div style="font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink3);text-transform:uppercase;margin-bottom:8px;">Send Payment To</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-size:13px;color:var(--ink3);">Name</span>
-          <span style="font-size:14px;font-weight:700;color:var(--ink);">Elikem Ama Nyaho</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-size:13px;color:var(--ink3);">Number</span>
-          <span style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;color:var(--g7);letter-spacing:1px;">0545213741</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:13px;color:var(--ink3);">Amount</span>
-          <span style="font-family:'DM Sans',sans-serif;font-size:20px;font-weight:900;color:var(--g7);">GH₵ ${total}</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
-        <div style="font-size:13px;color:var(--ink2);">Enter your <strong>Mobile Money PIN</strong> to confirm the payment on your phone</div>
+      <div style="display:flex;gap:14px;">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
+        <div style="font-size:13px;color:var(--ink2);padding-top:4px;">Enter your <strong>Mobile Money PIN</strong> to confirm the payment on your phone</div>
       </div>`;
 
   return`<div class="ebody"><div class="pay-wrap pay-step">
@@ -1998,34 +2003,39 @@ function renderEPaymentMulti(){
 
   // STEP 2 -- details for the chosen method only
   const ussdBlock=`
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
-          <div style="font-size:13px;color:var(--ink2);">Dial <strong style="font-family:'DM Sans',sans-serif;">${selected.ussd}</strong> on your phone</div>
+      <div style="display:flex;gap:14px;">
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
+          <div style="width:2px;flex:1;background:var(--g5);opacity:.35;margin:4px 0;"></div>
         </div>
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
-          <div style="font-size:13px;color:var(--ink2);">Select <strong>Send Money</strong> and enter this number:</div>
+        <div style="font-size:13px;color:var(--ink2);padding-bottom:18px;padding-top:4px;">Dial <strong style="font-family:'DM Sans',sans-serif;">${selected.ussd}</strong> on your phone</div>
+      </div>
+      <div style="display:flex;gap:14px;">
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
+          <div style="width:2px;flex:1;background:var(--g5);opacity:.35;margin:4px 0;"></div>
+        </div>
+        <div style="flex:1;padding-bottom:18px;padding-top:4px;">
+          <div style="font-size:13px;color:var(--ink2);margin-bottom:12px;">Select <strong>Send Money</strong> and enter this number:</div>
+          <div style="background:var(--w);border:1.5px solid var(--bd);border-radius:12px;padding:18px;text-align:center;">
+            <div style="font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Amount to Send</div>
+            <div style="font-family:'DM Sans',sans-serif;font-size:28px;font-weight:900;color:var(--g7);margin-bottom:16px;">GH₵ ${total}</div>
+            <div style="display:flex;border-top:1px solid var(--bd);padding-top:12px;">
+              <div style="flex:1;text-align:left;">
+                <div style="font-family:'DM Sans',sans-serif;font-size:9.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Name</div>
+                <div style="font-size:13px;font-weight:700;color:var(--ink);">Elikem Ama Nyaho</div>
+              </div>
+              <div style="flex:1;text-align:right;">
+                <div style="font-family:'DM Sans',sans-serif;font-size:9.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Number</div>
+                <div style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.5px;">0545213741</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div style="background:var(--w);border:1.5px solid var(--bd);border-radius:10px;padding:16px;margin:14px 0;">
-        <div style="font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink3);text-transform:uppercase;margin-bottom:8px;">Send Payment To</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-size:13px;color:var(--ink3);">Name</span>
-          <span style="font-size:14px;font-weight:700;color:var(--ink);">Elikem Ama Nyaho</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-size:13px;color:var(--ink3);">Number</span>
-          <span style="font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;color:var(--g7);letter-spacing:1px;">0545213741</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:13px;color:var(--ink3);">Amount</span>
-          <span style="font-family:'DM Sans',sans-serif;font-size:20px;font-weight:900;color:var(--g7);">GH₵ ${total}</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:flex-start;">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
-        <div style="font-size:13px;color:var(--ink2);">Enter your <strong>Mobile Money PIN</strong> to confirm the payment on your phone</div>
+      <div style="display:flex;gap:14px;">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--g7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
+        <div style="font-size:13px;color:var(--ink2);padding-top:4px;">Enter your <strong>Mobile Money PIN</strong> to confirm the payment on your phone</div>
       </div>`;
   return`<div class="ebody"><div class="pay-wrap pay-step">
     <div class="ebc"><span class="ebcl" onclick="EMP.paymentStep='method';empGo('paymentMulti')">← Change Payment Method</span></div>
