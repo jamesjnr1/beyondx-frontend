@@ -215,11 +215,11 @@ tr:hover td{background:var(--bg);}
       <div class="sec" id="sec-open"><div id="ol"></div></div>
       <div class="sec" id="sec-completed"><div id="cl"></div></div>
       <div class="sec" id="sec-all"><input class="srch" id="xSearch" placeholder="Search all tasks by type, location, employer, or worker…" oninput="rs('all')"/><div id="xl"></div></div>
-      <div class="sec" id="sec-workers"><input class="srch" id="wSearch" placeholder="Search workers by name, ID, phone, or skill…" oninput="rw()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Workers</span><span class="tc-hm" id="wc"></span></div><table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Status</th><th>Skills</th><th>Tasks</th><th>Rating</th></tr></thead><tbody id="wt"></tbody></table></div></div>
+      <div class="sec" id="sec-workers"><input class="srch" id="wSearch" placeholder="Search workers by name, ID, phone, or skill…" oninput="wSearchInput()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Workers</span><span class="tc-hm" id="wc"></span></div><table><thead><tr><th>Name</th><th>Worker ID</th><th>Phone</th><th>Status</th><th>Skills</th><th>Tasks</th><th>Rating</th></tr></thead><tbody id="wt"></tbody></table><div id="wtMore"></div></div></div>
       <div class="sec" id="sec-history"><div id="historyContent"></div></div>
       <div class="sec" id="sec-transactions"><div id="txContent"></div></div>
       <div class="sec" id="sec-messages"><div id="messagesContent"></div></div>
-      <div class="sec" id="sec-employers"><input class="srch" id="eSearch" placeholder="Search employers by organisation or phone…" oninput="re()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Employers</span><span class="tc-hm" id="ec"></span></div><table><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks</th><th>Completed</th><th>Total Spent</th></tr></thead><tbody id="et"></tbody></table></div></div>
+      <div class="sec" id="sec-employers"><input class="srch" id="eSearch" placeholder="Search employers by organisation or phone…" oninput="eSearchInput()"/><div class="tc"><div class="tc-h"><span class="tc-ht">Employers</span><span class="tc-hm" id="ec"></span></div><table><thead><tr><th>Organisation</th><th>Phone</th><th>Tasks</th><th>Completed</th><th>Total Spent</th></tr></thead><tbody id="et"></tbody></table><div id="etMore"></div></div></div>
     </div>
   </div>
 </div>
@@ -230,6 +230,10 @@ tr:hover td{background:var(--bg);}
 <script>
 const API='https://beyondx-backend-production-1a08.up.railway.app';
 let pass='',tasks=[],workers=[],smsLogs=[],smsBroadcastMode='specific';
+let wtShown=20,etShown=20,histShown=20,txShown=20,smsShown=20;
+function showMoreHtml(remaining,onclick){
+  return remaining>0?`<div style="text-align:center;padding:14px;"><button onclick="${onclick}" style="padding:9px 20px;background:var(--off);border:1.5px solid var(--b);border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--f);color:var(--ink2);">Show More (${remaining} remaining)</button></div>`:'';
+}
 function login(){
   pass=document.getElementById('adminPass').value;
   Promise.all([fetch(API+'/admin/all',{headers:{'x-admin-password':pass}}).then(r=>{if(!r.ok)throw new Error();return r.json();}),fetch(API+'/admin/workers',{headers:{'x-admin-password':pass}}).then(r=>r.json()),fetch(API+'/admin/sms-logs',{headers:{'x-admin-password':pass}}).then(r=>r.json()).catch(()=>({logs:[]}))])
@@ -458,15 +462,21 @@ function rw(){
   const q=(document.getElementById('wSearch')?.value||'').toLowerCase();
   const list=q?workers.filter(w=>[w.fullName,w.workerId,w.phone,...(w.skills||[])].join(' ').toLowerCase().includes(q)):workers;
   document.getElementById('wc').textContent=list.length+' of '+workers.length+' registered';
-  document.getElementById('wt').innerHTML=list.map(w=>`<tr class="trow" onclick="showWorkerDetail('${w.id}')"><td class="tn">${w.fullName}</td><td class="tm">${w.workerId}</td><td class="tm">${w.phone||'&mdash;'}</td><td>${w.isBusy?'<span style="color:#b91c1c;font-weight:600;font-size:11px;">On a Job</span>':'<span style="color:var(--g3);font-weight:600;font-size:11px;">Available</span>'}</td><td style="font-size:11px;color:var(--ink3)">${(w.skills||[]).slice(0,2).join(', ')+(w.skills?.length>2?'&hellip;':'')}</td><td class="tg">${w.tasksCompleted}</td><td>${w.rating>0?parseFloat(w.rating).toFixed(1)+'&star;':'&mdash;'}</td></tr>`).join('')||`<tr><td colspan="7" class="empty">No matches</td></tr>`;
+  const shown=list.slice(0,wtShown);
+  document.getElementById('wt').innerHTML=shown.map(w=>`<tr class="trow" onclick="showWorkerDetail('${w.id}')"><td class="tn">${w.fullName}</td><td class="tm">${w.workerId}</td><td class="tm">${w.phone||'&mdash;'}</td><td>${w.isBusy?'<span style="color:#b91c1c;font-weight:600;font-size:11px;">On a Job</span>':'<span style="color:var(--g3);font-weight:600;font-size:11px;">Available</span>'}</td><td style="font-size:11px;color:var(--ink3)">${(w.skills||[]).slice(0,2).join(', ')+(w.skills?.length>2?'&hellip;':'')}</td><td class="tg">${w.tasksCompleted}</td><td>${w.rating>0?parseFloat(w.rating).toFixed(1)+'&star;':'&mdash;'}</td></tr>`).join('')||`<tr><td colspan="7" class="empty">No matches</td></tr>`;
+  document.getElementById('wtMore').innerHTML=showMoreHtml(list.length-wtShown,'wtShown+=20;rw();');
 }
+function wSearchInput(){wtShown=20;rw();}
 function re(){
   const q=(document.getElementById('eSearch')?.value||'').toLowerCase();
   let emps=[...new Map(tasks.filter(t=>t.employer).map(t=>[t.employerId,{...t.employer,eid:t.employerId}])).values()];
   if(q)emps=emps.filter(e=>(e.orgName+' '+(e.phone||'')).toLowerCase().includes(q));
   document.getElementById('ec').textContent=emps.length+' registered';
-  document.getElementById('et').innerHTML=emps.map(e=>{const et=tasks.filter(t=>t.employerId===e.eid);const ed=et.filter(t=>t.status==='completed');const sp=et.reduce((s,t)=>s+parseFloat(t.pay),0);return`<tr class="trow" onclick="showEmployerDetail('${e.eid}')"><td class="tn">${e.orgName}</td><td class="tm">${e.phone||'&mdash;'}</td><td style="font-weight:600">${et.length}</td><td class="tg">${ed.length}</td><td class="tg">GH&#8373; ${sp.toFixed(0)}</td></tr>`;}).join('')||`<tr><td colspan="5" class="empty">No matches</td></tr>`;
+  const shown=emps.slice(0,etShown);
+  document.getElementById('et').innerHTML=shown.map(e=>{const et=tasks.filter(t=>t.employerId===e.eid);const ed=et.filter(t=>t.status==='completed');const sp=et.reduce((s,t)=>s+parseFloat(t.pay),0);return`<tr class="trow" onclick="showEmployerDetail('${e.eid}')"><td class="tn">${e.orgName}</td><td class="tm">${e.phone||'&mdash;'}</td><td style="font-weight:600">${et.length}</td><td class="tg">${ed.length}</td><td class="tg">GH&#8373; ${sp.toFixed(0)}</td></tr>`;}).join('')||`<tr><td colspan="5" class="empty">No matches</td></tr>`;
+  document.getElementById('etMore').innerHTML=showMoreHtml(emps.length-etShown,'etShown+=20;re();');
 }
+function eSearchInput(){etShown=20;re();}
 async function mkp(id,name,amount){
   if(!confirm('Confirm you sent GH₵'+amount+' to '+name+'?'))return;
   try{const r=await fetch(API+'/admin/tasks/'+id+'/paid',{method:'PATCH',headers:{'x-admin-password':pass}});if(r.ok){showToast(name+' marked as paid');await load();}else showToast('Failed. Try again.');}catch(e){showToast('Connection error');}
@@ -474,11 +484,12 @@ async function mkp(id,name,amount){
 
 function rh(){
   const completed = tasks.filter(t=>t.status==='completed');
+  const shown = completed.slice(0,histShown);
   const html = completed.length ? `
     <div class="tc" style="margin-bottom:12px;">
       <div class="tc-h"><span class="tc-ht">Work History</span><span class="tc-hm">${completed.length} completed tasks</span></div>
       <table><thead><tr><th>Task</th><th>Location</th><th>Worker</th><th>Employer</th><th>Date</th><th>Amount</th><th>Worker Paid</th></tr></thead>
-      <tbody>${completed.map(t=>`<tr>
+      <tbody>${shown.map(t=>`<tr>
         <td class="tn">${t.taskType}</td>
         <td style="font-size:11px;color:var(--ink3)">${t.location||'&mdash;'}</td>
         <td>${t.acceptedBy?.fullName||'—'}</td>
@@ -487,6 +498,7 @@ function rh(){
         <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
         <td class="tg">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(0)}</td>
       </tr>`).join('')}</tbody></table>
+      ${showMoreHtml(completed.length-histShown,'histShown+=20;rh();')}
     </div>` : `<div class="empty">No completed tasks yet</div>`;
   document.getElementById('historyContent').innerHTML = html;
 }
@@ -516,7 +528,7 @@ function rm(){
     </div>
   </div>`;
 
-  const rows=smsLogs.map(l=>`<tr>
+  const rows=smsLogs.slice(0,smsShown).map(l=>`<tr>
     <td class="tm">${new Date(l.createdAt).toLocaleString()}</td>
     <td class="tm">${l.phone}</td>
     <td style="font-size:11px;max-width:280px;color:var(--ink3)">${(l.message||'').slice(0,70)}${l.message&&l.message.length>70?'…':''}</td>
@@ -534,6 +546,7 @@ function rm(){
     <div class="tc">
       <div class="tc-h"><span class="tc-ht">Recent SMS</span><span class="tc-hm">${smsLogs.length}</span></div>
       <table><thead><tr><th>Time</th><th>Phone</th><th>Message</th><th>Status</th></tr></thead><tbody>${rows||'<tr><td colspan="4" class="empty">No messages sent yet</td></tr>'}</tbody></table>
+      ${showMoreHtml(smsLogs.length-smsShown,'smsShown+=20;rm();')}
     </div>`;
 }
 async function sendCustomSms(){
@@ -590,7 +603,7 @@ function rt(){
     <div class="tc">
       <div class="tc-h"><span class="tc-ht">Transaction Log</span><span class="tc-hm">${paid.length} transactions</span></div>
       ${paid.length ? `<table><thead><tr><th>Task</th><th>Employer</th><th>Worker</th><th>Date</th><th>Total</th><th>Worker Cut</th><th>Platform Fee</th></tr></thead>
-      <tbody>${paid.map(t=>`<tr>
+      <tbody>${paid.slice(0,txShown).map(t=>`<tr>
         <td class="tn">${t.taskType}</td>
         <td>${t.employer?.orgName||'—'}</td>
         <td>${t.acceptedBy?.fullName||'—'}</td>
@@ -598,7 +611,7 @@ function rt(){
         <td class="tm">GH&#8373; ${parseFloat(t.pay).toFixed(0)}</td>
         <td class="tg">GH&#8373; ${(parseFloat(t.pay)*0.85).toFixed(0)}</td>
         <td class="tm">GH&#8373; ${(parseFloat(t.pay)*0.15).toFixed(0)}</td>
-      </tr>`).join('')}</tbody></table>` : `<div class="empty">No transactions yet</div>`}
+      </tr>`).join('')}</tbody></table>${showMoreHtml(paid.length-txShown,'txShown+=20;rt();')}` : `<div class="empty">No transactions yet</div>`}
     </div>`;
   document.getElementById('txContent').innerHTML = html;
 }
