@@ -5,6 +5,7 @@
   "description": "BeyondX frontend with a serverless contact endpoint",
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
+    "@vercel/speed-insights": "^2.0.0",
     "resend": "^4.0.0"
   }
 }
