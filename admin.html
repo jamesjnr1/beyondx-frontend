@@ -669,7 +669,7 @@ function anLabel(row,preferred){
   for(const k in row){ if(typeof row[k]==='string' && row[k]!=='') return row[k]; }
   return '(none)';
 }
-function anCount(row){ const v=row.count!=null?row.count:(row.views!=null?row.views:(row.total!=null?row.total:0)); return Number(v)||0; }
+function anCount(row){ const v=row.pageviews!=null?row.pageviews:(row.count!=null?row.count:(row.views!=null?row.views:0)); return Number(v)||0; }
 function anPeople(row){ return row.visitors!=null?Number(row.visitors):null; }
 function anNum(n){ return n==null?'—':Number(n).toLocaleString(); }
 
@@ -720,12 +720,12 @@ function renderAnalytics(d){
     <div class="sc"><div class="sc-l">Views Per Visitor</div><div class="sc-v">${t.visitors?(t.pageViews/t.visitors).toFixed(1):'—'}</div><div class="sc-s">Last ${d.range?d.range.days:anDays} days</div></div>`;
 
   /* Visitors over time — same bar treatment as the revenue chart */
-  const rows=(d.overTime||[]).slice().sort((a,b)=>String(anLabel(a,'date')).localeCompare(String(anLabel(b,'date'))));
+  const rows=(d.overTime||[]).slice().sort((a,b)=>String(anLabel(a,'timestamp')).localeCompare(String(anLabel(b,'timestamp'))));
   const bars=document.getElementById('anBars');
   if(rows.length){
     const max=Math.max(...rows.map(anCount),1);
     bars.innerHTML=rows.map(r=>{
-      const raw=anLabel(r,'date'); const c=anCount(r);
+      const raw=anLabel(r,'timestamp'); const c=anCount(r);
       const dt=new Date(raw); const lbl=isNaN(dt)?String(raw).slice(-2):dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).slice(0,2);
       return `<div class="bar-col" title="${anEsc(raw)}: ${anNum(c)} views"><div class="bar-fill" style="height:${Math.max(c/max*100,2)}%"></div><div class="bar-lbl">${lbl}</div></div>`;
     }).join('');
@@ -735,8 +735,8 @@ function renderAnalytics(d){
   }
 
   anBarList(document.getElementById('anPages'),d.topPages,'requestPath');
-  anBarList(document.getElementById('anRefs'),d.referrers,'referrer');
-  anBarList(document.getElementById('anDevices'),d.devices,'device');
+  anBarList(document.getElementById('anRefs'),d.referrers,'referrerHostname');
+  anBarList(document.getElementById('anDevices'),d.devices,'deviceType');
   anBarList(document.getElementById('anCountries'),d.countries,'country');
 
   const ev=(d.events||[]).slice().sort((a,b)=>anCount(b)-anCount(a));
@@ -744,6 +744,9 @@ function renderAnalytics(d){
     ? ev.map(r=>`<tr><td class="tn">${anEsc(anLabel(r,'eventName'))}</td><td class="tg">${anNum(anCount(r))}</td><td class="tm">${anNum(anPeople(r))}</td></tr>`).join('')
     : `<tr><td colspan="3"><div class="empty">No tracked clicks yet — add the event snippet to the site.</div></td></tr>`;
 
+  if(d.problems&&d.problems.length){
+    anAlert('Some panels could not load', anEsc(d.problems.join(' · ')));
+  }
   document.getElementById('anUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 }
 

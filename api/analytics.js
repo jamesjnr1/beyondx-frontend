@@ -41,16 +41,20 @@ async function query(path, params) {
 }
 
 // Any query that fails returns null rather than breaking the whole dashboard.
+const problems = []
 async function safe(label, fn) {
   try {
     return await fn()
   } catch (err) {
     console.error(`[analytics] ${label} failed:`, err.message)
+    problems.push(`${label}: ${err.message.slice(0, 160)}`)
     return null
   }
 }
 
 module.exports = async function handler(req, res) {
+  problems.length = 0
+
   // --- gate: keep this endpoint from being world-readable ---
   const secret = process.env.ADMIN_API_SECRET
   if (secret && req.headers['x-admin-secret'] !== secret) {
@@ -74,12 +78,12 @@ module.exports = async function handler(req, res) {
     await Promise.all([
       safe('totals', () => query('visits/count', range)),
       safe('prevTotals', () => query('visits/count', prevRange)),
-      safe('overTime', () => query('visits/aggregate', { ...range, by: 'date' })),
-      safe('topPages', () => query('visits/aggregate', { ...range, by: 'requestPath' })),
-      safe('referrers', () => query('visits/aggregate', { ...range, by: 'referrer' })),
-      safe('devices', () => query('visits/aggregate', { ...range, by: 'device' })),
-      safe('countries', () => query('visits/aggregate', { ...range, by: 'country' })),
-      safe('events', () => query('events/aggregate', { ...range, by: 'eventName' })),
+      safe('overTime', () => query('visits/aggregate', { ...range, by: 'day' })),
+      safe('topPages', () => query('visits/aggregate', { ...range, by: 'requestPath', limit: 8 })),
+      safe('referrers', () => query('visits/aggregate', { ...range, by: 'referrerHostname', limit: 8 })),
+      safe('devices', () => query('visits/aggregate', { ...range, by: 'deviceType', limit: 8 })),
+      safe('countries', () => query('visits/aggregate', { ...range, by: 'country', limit: 8 })),
+      safe('events', () => query('events/aggregate', { ...range, by: 'eventName', limit: 20 })),
     ])
 
   const pct = (now, before) => {
@@ -87,10 +91,11 @@ module.exports = async function handler(req, res) {
     return Math.round(((now - before) / before) * 100)
   }
 
-  const visitors = totals?.data?.visitors ?? totals?.visitors ?? null
-  const pageViews = totals?.data?.count ?? totals?.count ?? null
-  const prevVisitors = prevTotals?.data?.visitors ?? prevTotals?.visitors ?? null
-  const prevPageViews = prevTotals?.data?.count ?? prevTotals?.count ?? null
+  // visits/count returns { data: { pageviews, visitors } }
+  const visitors = totals?.data?.visitors ?? null
+  const pageViews = totals?.data?.pageviews ?? null
+  const prevVisitors = prevTotals?.data?.visitors ?? null
+  const prevPageViews = prevTotals?.data?.pageviews ?? null
 
   const eventRows = events?.data ?? []
   const totalClicks = eventRows.reduce((sum, r) => sum + (r.count || 0), 0)
@@ -111,6 +116,7 @@ module.exports = async function handler(req, res) {
     devices: devices?.data ?? [],
     countries: countries?.data ?? [],
     events: eventRows,
+    problems,
     generatedAt: new Date().toISOString(),
   })
 }
