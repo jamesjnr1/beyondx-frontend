@@ -7,10 +7,11 @@
 //   VERCEL_TOKEN        Account token, created at vercel.com/account/tokens
 //   VERCEL_PROJECT_ID   Project → Settings → General → Project ID
 //   VERCEL_TEAM_ID      Only if the project sits under a team (optional for personal accounts)
-//   ADMIN_API_SECRET    Any long random string; the admin page must send it back
+//   ADMIN_API_SECRET    Set this to your existing admin password
 //
+// CommonJS, matching api/contact.js in this project.
 // Usage from the admin page:
-//   fetch('/api/analytics?days=14', { headers: { 'x-admin-secret': ADMIN_SECRET } })
+//   fetch('/api/analytics?days=14', { headers: { 'x-admin-secret': adminPassword } })
 
 const API = 'https://api.vercel.com/v1/query/web-analytics'
 
@@ -49,7 +50,7 @@ async function safe(label, fn) {
   }
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // --- gate: keep this endpoint from being world-readable ---
   const secret = process.env.ADMIN_API_SECRET
   if (secret && req.headers['x-admin-secret'] !== secret) {
